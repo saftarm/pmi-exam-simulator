@@ -1,0 +1,15 @@
+{
+  "name": "testapi-fullstack",
+  "version": "1.0.0",
+  "description": "Root package.json to run React client and ASP.NET API simultaneously",
+  "scripts": {
+    "dev": "concurrently \"npm:dev:api\" \"npm:dev:client\"",
+    "dev:client": "cd reactclient && npm run dev",
+    "dev:api": "cd TestAPI && dotnet run",
+    "install:client": "cd reactclient && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+

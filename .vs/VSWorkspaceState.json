@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\TestAPI",
+    "\\TestAPI\\bin",
+    "\\TestAPI\\Controllers",
+    "\\TestAPI\\Persistence",
+    "\\TestAPI\\Persistence\\Implementation",
+    "\\TestAPI\\Services",
+    "\\TestAPI\\Services\\Implementation"
+  ],
+  "SelectedNode": "\\TestAPI.slnx",
+  "PreviewInSolutionExplorer": false
+}
