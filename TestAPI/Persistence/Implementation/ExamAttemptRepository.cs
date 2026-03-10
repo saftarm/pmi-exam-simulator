@@ -58,9 +58,6 @@ namespace TestAPI.Persistence.Implementation
             return await _context.AnswerOptions.ToListAsync();
         }
 
-
-        
-
     }
 }
 
