@@ -12,9 +12,11 @@ namespace TestAPI.Services.Interfaces
 
         public Task<int> StartAttemptAsync(int userId, int examId);
 
-        public Task FinishAttemptAsync(int examAttemptId, UpdatedExamAttemptDto updatedExamAttemptDto);
+        // public  Task<int> FinishAttemptAsync(int examAttemptId, IEnumerable<UserExamResponse> incomingResponses);
 
-        public Task<int> CalculateScore (UserExamResponse userExamResponse);
+        public  Task<int> CalculateScore (IEnumerable<UserExamResponse> userExamResponses);
+
+
         // public Task<int> FinishAttempt(FinishExamAttemptRequest request);
         //  public Task<ExamAttempt> FinishAttempt(int examAttemptId);
 

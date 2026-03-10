@@ -26,7 +26,6 @@ namespace TestAPI.Controllers
         // ----  Actions -----
 
         [HttpPost("start/{examId}")]
-
         public async Task<IActionResult> StartExam(int examId) {
 
 
@@ -38,12 +37,13 @@ namespace TestAPI.Controllers
 
 
 
-        [HttpPost("finish/{examId}")]
+        // [HttpPost("finish/")]
 
-        public async Task<IActionResult> FinishAttempt(int examAttemptId, List<UserExamResponse> userExamResponse)
-        {
-            await _examAttemptService.FinishAttemptAsync(examAttemptId, userExamResponses);
-        }
+        // public async Task<IActionResult> FinishAttempt([FromBody] FinishExamAttemptRequest finishExamAttemptRequest)
+        // {
+        //     var examAttemptId = await _examAttemptService.FinishAttemptAsync(finishExamAttemptRequest.ExamAttemptId, finishExamAttemptRequest.userExamResponses);
+        //     return Ok(examAttemptId);
+        // }
 
 
 

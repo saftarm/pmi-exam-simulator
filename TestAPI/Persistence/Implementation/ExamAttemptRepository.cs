@@ -26,7 +26,6 @@ namespace TestAPI.Persistence.Implementation
             .Include(r => r.UserExamResponses)
             .FirstOrDefaultAsync(a => a.Id == examAttemptId); 
             
-            
             return examAttempt;
         }
 
@@ -46,14 +45,13 @@ namespace TestAPI.Persistence.Implementation
             return examAttempt.Id;
           }
 
-        public async Task<int> UpdateAsync (int examAttemptId, UpdatedExamAttemptDto updatedExamAttemptDto) {
+        public async Task<int> Update (ExamAttempt updatedExamAttempt) {
             
-            var examAttempt = await _context.ExamAttempts.FindAsync(examAttemptId);
+            var examAttempt = await _context.ExamAttempts.FindAsync(updatedExamAttempt.Id);
 
-            examAttempt.sco
+            _context.ExamAttempts.Update(examAttempt);
 
-
-            return 
+            return updatedExamAttempt.Id;
         }
 
         public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsAsync() {

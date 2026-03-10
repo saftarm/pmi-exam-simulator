@@ -764,3 +764,4 @@ C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\refin
 C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\TestAPI.pdb
 C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\TestAPI.genruntimeconfig.cache
 C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\ref\TestAPI.dll
+C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\TestAPI.sourcelink.json

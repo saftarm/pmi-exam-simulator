@@ -10,7 +10,9 @@ namespace TestAPI.Persistence.Interfaces
 
         public Task<int> AddAsync(ExamAttempt examAttempt);
 
-        // public Task<int> UpdateAsync (int examAttemptId, ExamAttempt examAttempt);
+        public Task<IEnumerable<AnswerOption>> GetAnswerOptionsAsync();
+
+        public Task<int> Update (ExamAttempt updatedExamAttempt);
 
 
     }

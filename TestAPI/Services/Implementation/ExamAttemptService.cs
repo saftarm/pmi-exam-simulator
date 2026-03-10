@@ -9,6 +9,8 @@ using TestAPI.Enums;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using TestAPI.Data;
 using NuGet.Common;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 
 namespace TestAPI.Services.Implementation
@@ -41,7 +43,6 @@ namespace TestAPI.Services.Implementation
             };
             return examAttemptDto;
         }
-
         
         public async Task<ExamAttemptDto> GetByUserId (int userId) {
             var examAttempt = await _examAttemptRepository.GetByUserId(userId);
@@ -68,20 +69,39 @@ namespace TestAPI.Services.Implementation
         }
 
 
-        public async Task FinishAttemptAsync(int examAttemptId, IEnumerable<UserExamResponse> userExamResponses)
-        {
+        // public async Task<int> FinishAttemptAsync(int examAttemptId, IEnumerable<UserExamResponseDto> userExamResponseDtos)
+        // {
+            
+        //     var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
 
-            var score = CalculateScore(userExamResponses);
+        //     var incomingResponses = new List<UserExamResponse>();
 
-
-            var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
-
-            examAttempt.Score  = await CalculateScore(examAttempt.UserExamResponses);
-            examAttempt.Status = ExamStatus.Completed;
-            examAttempt.UserExamResponses.Select(r => r.)
+        //      var answerOptions = await _examAttemptRepository.GetAnswerOptionsAsync();
+            
 
 
-        }
+        //     examAttempt.UserExamResponses.Add()
+
+        //     foreach(var incoming in incomingResponses) {
+
+        //         var option = answerOptions.FirstOrDefault(o => o.Id == incoming.SelectedOptionId);
+        //         if(option.IsCorrect) {
+        //             var newUserExamResponse = new UserExamResponse {
+        //                 ExamAttemptId =,
+        //                 QuestionId,
+        //                 SelectedOptionId,
+        //                 IsCorrect,
+        //             }
+        //         }
+        //     }
+
+        //     examAttempt.Score  = await CalculateScore(examAttempt.UserExamResponses);
+        //     examAttempt.Status = ExamStatus.Completed;
+
+        //     return await _examAttemptRepository.Update(examAttempt);
+
+
+        // }
 
 
         public async Task<int> CalculateScore (IEnumerable<UserExamResponse> userExamResponses) {
@@ -89,19 +109,14 @@ namespace TestAPI.Services.Implementation
             var answerOptions = await _examAttemptRepository.GetAnswerOptionsAsync();
 
             foreach(var option in userExamResponses){
-                var currentOption = answerOptions.FirstOrDefault(o => o.Id == option.Id)
+                var currentOption = answerOptions.FirstOrDefault(o => o.Id == option.SelectedOptionId);
                 if(currentOption.IsCorrect){
-                    option.IsCorrect = true;
-                }
-            }
-
-            foreach(var answer in answerOptions) {
-                if(answer.IsCorrect) {
                     score += 10;
                 }
             }
             return score;
         }
+        
 
 
         public async Task StartAttempt(int examId, int userId) {
