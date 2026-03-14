@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TestAPI.Models;
 using TestAPI.Entities;
-using System.Security.Cryptography;
+using TestAPI.Models;
 
 namespace TestAPI.Data
 {
@@ -23,11 +22,13 @@ namespace TestAPI.Data
 
         public DbSet<Exam> Exams { get; set; }
 
-        public DbSet<ExamAttempt> ExamAttempts {get;set;}
+        public DbSet<ExamAttempt> ExamAttempts { get; set; }
 
-        public DbSet<UserExamResponse> UserExamResponses {get;set;}
+        public DbSet<UserExamResponse> UserExamResponses { get; set; }
 
-        public DbSet<ExamQuestion> ExamsQuestions {get;set;}
+        public DbSet<ExamQuestion> ExamsQuestions { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
 
         // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         // {
@@ -44,22 +45,24 @@ namespace TestAPI.Data
             modelBuilder.Entity<Question>()
             .HasKey(q => q.Id);
 
-            // modelBuilder.Entity<Question>()
-            // .HasMany(q => q.Exams)
-            // .WithMany(e => e.Questions);
-
 
             modelBuilder.Entity<AnswerOption>().
             HasOne(o => o.Question)
             .WithMany(q => q.AnswerOptions)
             .HasForeignKey(o => o.QuestionId)
+            .HasConstraintName("FK_AnswerOptions_Exams_ExamId")
             .OnDelete(DeleteBehavior.Cascade);
 
+
+            modelBuilder.Entity<AnswerOption>()
+            .HasOne(e => e.Exam)
+            .WithMany(o => o.AnswerOptions)
+            .HasForeignKey(e => e.ExamId);
 
             modelBuilder.Entity<ExamAttempt>()
             .HasOne(ea => ea.User)
             .WithMany(u => u.ExamAttempts)
-            .HasForeignKey(ea => ea.UserId) 
+            .HasForeignKey(ea => ea.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserExamResponse>()
@@ -71,16 +74,23 @@ namespace TestAPI.Data
             .Property(e => e.Status)
             .HasConversion<string>();
 
-        
+
+            modelBuilder.Entity<Exam>()
+            .HasOne(e => e.Category)
+            .WithMany(c => c.Exams)
+            .HasForeignKey(e => e.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
 
 
         }
-        
-
-     
 
 
-        
+
+
+
+
 
 
 

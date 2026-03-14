@@ -19,17 +19,8 @@ namespace TestAPI.Persistence.Implementation
         }
 
         // Add 
-        public async Task<int> AddAsync(CreateQuestionDto createQuestionDto)
+        public async Task<int> AddAsync(Question newQuestion)
         {
-            var newQuestion = new Question {
-                Text = createQuestionDto.Text,
-                AnswerOptions = createQuestionDto.AnswerOptionsDtos.Select(
-                    o => new AnswerOption{
-                        Text = o.Text,
-                        IsCorrect = o.IsCorrect
-                    }
-                ).ToList()
-            };
 
             await _context.Questions.AddAsync(newQuestion);
             await _context.SaveChangesAsync();

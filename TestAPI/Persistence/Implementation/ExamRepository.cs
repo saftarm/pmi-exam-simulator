@@ -41,14 +41,9 @@ namespace TestAPI.Persistence.Implementation
 
 
         public async Task DeleteAsync(int examId) {
-            var examInDb = await _context.Exams.FindAsync(examId);
+            await _context.Exams.Where(e => e.Id == examId).ExecuteDeleteAsync();
 
-            if(examInDb == null) {
-                throw new ArgumentException($"Exam with id {examId} not found");
-            }
-
-
-            _context.Exams.Remove(examInDb);
+            
             await _context.SaveChangesAsync();
 
         }

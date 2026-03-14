@@ -1,0 +1,338 @@
+/* ── Exam Details Page ─────────────────────────── */
+.ed-page {
+    min-height: 100vh;
+    width: 100%;
+    background-color: #0f0f0f;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 40px 5vw 80px;
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden;
+}
+
+    /* Grid background */
+    .ed-page::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: linear-gradient(#2e2e2e 1px, transparent 1px), linear-gradient(90deg, #2e2e2e 1px, transparent 1px);
+        background-size: 60px 60px;
+        opacity: 0.25;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+/* Glow orb */
+.ed-orb {
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(800px, 100vw);
+    height: min(800px, 100vw);
+    background: radial-gradient(circle, rgba(108,99,255,0.16) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Header ────────────────────────────────────── */
+.ed-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+}
+
+.ed-back-btn {
+    background: #1a1a1a;
+    color: #888888;
+    border: 1px solid #2e2e2e;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.2s ease;
+}
+
+    .ed-back-btn:hover {
+        color: #ffffff;
+        border-color: #6c63ff;
+    }
+
+.ed-header-badge {
+    background-color: #1a1a1a;
+    color: #6c63ff;
+    border: 1px solid #2e2e2e;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ── Hero ──────────────────────────────────────── */
+.ed-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+}
+
+.ed-hero-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.ed-eyebrow {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #6c63ff;
+    margin-bottom: 12px;
+}
+
+.ed-title {
+    font-size: clamp(24px, 4vw, 42px);
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    margin: 0 0 12px 0;
+}
+
+.ed-subtitle {
+    font-size: 15px;
+    color: #888888;
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0;
+}
+
+/* Stats box */
+.ed-stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 16px;
+    padding: 20px 28px;
+    box-sizing: border-box;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.ed-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ed-stat-num {
+    font-size: 26px;
+    font-weight: 800;
+    color: #6c63ff;
+}
+
+.ed-stat-lbl {
+    font-size: 11px;
+    color: #555555;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ed-stat-divider {
+    width: 1px;
+    height: 40px;
+    background: #2e2e2e;
+    flex-shrink: 0;
+}
+
+/* ── Section title ─────────────────────────────── */
+.ed-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 20px 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Questions ─────────────────────────────────── */
+.ed-questions {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 48px;
+}
+
+.ed-question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ed-question-card {
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    gap: 20px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+    .ed-question-card:hover {
+        border-color: rgba(108, 99, 255, 0.3);
+    }
+
+.ed-question-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6c63ff;
+    background: rgba(108, 99, 255, 0.12);
+    border: 1px solid rgba(108, 99, 255, 0.25);
+    border-radius: 8px;
+    padding: 6px 12px;
+    height: fit-content;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ed-question-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.ed-question-text {
+    font-size: 15px;
+    color: #ffffff;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+}
+
+/* Answer options */
+.ed-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ed-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #141414;
+    border: 1px solid #2e2e2e;
+    border-radius: 10px;
+    padding: 10px 16px;
+    transition: border-color 0.2s ease;
+}
+
+    .ed-option:hover {
+        border-color: rgba(108, 99, 255, 0.3);
+    }
+
+.ed-option-letter {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6c63ff;
+    background: rgba(108, 99, 255, 0.12);
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ed-option-text {
+    font-size: 14px;
+    color: #888888;
+    line-height: 1.5;
+}
+
+/* ── CTA ───────────────────────────────────────── */
+.ed-cta {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.ed-start-btn {
+    background: #6c63ff;
+    color: #ffffff;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 28px rgba(108, 99, 255, 0.35);
+}
+
+    .ed-start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 44px rgba(108, 99, 255, 0.5);
+    }
+
+/* ── State messages ────────────────────────────── */
+.ed-state-msg {
+    color: #888888;
+    font-size: 15px;
+    text-align: center;
+    margin-top: 80px;
+    position: relative;
+    z-index: 1;
+}
+
+.ed-state-error {
+    color: #f87171;
+}
+
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 768px) {
+    .ed-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ed-stats {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ed-stat-divider {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .ed-page {
+        padding: 24px 4vw 60px;
+    }
+
+    .ed-question-card {
+        flex-direction: column;
+        gap: 12px;
+    }
+}

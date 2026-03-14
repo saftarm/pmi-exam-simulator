@@ -1,14 +1,15 @@
 {
   "ExpandedNodes": [
     "",
+    "\\reactclient",
+    "\\reactclient\\src",
     "\\TestAPI",
-    "\\TestAPI\\bin",
     "\\TestAPI\\Controllers",
     "\\TestAPI\\Persistence",
     "\\TestAPI\\Persistence\\Implementation",
     "\\TestAPI\\Services",
     "\\TestAPI\\Services\\Implementation"
   ],
-  "SelectedNode": "\\TestAPI.slnx",
+  "SelectedNode": "\\reactclient\\src\\App.jsx",
   "PreviewInSolutionExplorer": false
 }

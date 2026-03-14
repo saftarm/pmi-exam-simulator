@@ -12,10 +12,10 @@ namespace TestAPI.Services.Implementation
         private readonly IExamAttemptRepository _examAttemptRepository;
         private readonly IQuestionRepository _questionRepository;
 
-        
 
 
-    
+
+
         public ExamService(IExamRepository examRepository, IQuestionRepository questionRepository, IExamAttemptRepository examAttemptRepository)
         {
             _examRepository = examRepository;
@@ -25,15 +25,19 @@ namespace TestAPI.Services.Implementation
         }
 
         // Get Summary
-        public async Task<IEnumerable<ExamSummaryDto>> GetSummaryAsync() {
+        public async Task<IEnumerable<ExamSummaryDto>> GetSummaryAsync()
+        {
             var exams = await _examRepository.GetAllAsync();
-            if(exams == null) {
+            if (exams == null)
+            {
                 throw new Exception("No exams found");
             }
             var examSummaryDtos = new List<ExamSummaryDto>();
 
-            foreach(var exam in exams) {
-                var examSummaryDto = new ExamSummaryDto {
+            foreach (var exam in exams)
+            {
+                var examSummaryDto = new ExamSummaryDto
+                {
                     Id = exam.Id,
                     Title = exam.Title,
                     DurationInMinutes = exam.DurationInMinutes,
@@ -45,60 +49,70 @@ namespace TestAPI.Services.Implementation
             return examSummaryDtos;
         }
 
-        public async Task<ExamDetailsDto> GetDetailsByIdAsync(int examId) {
-            
-            var questions = await _examRepository.GetQuestionsByExamIdAsync(examId);
-            
-                var examDetailsDto = new ExamDetailsDto {
+        public async Task<ExamDetailsDto> GetDetailsByIdAsync(int examId)
+        {
 
-                    QuestionDtos = questions.Select( q => new QuestionDto {
-                        Text = q.Text,
-                        AnswerOptionsDtos = q.AnswerOptions.Select(o => new AnswerOptionDto{
-                            Text = o.Text,
-                        }).ToList()
-                    }
-                    ).ToList()
-                    
-                
+            var questions = await _examRepository.GetQuestionsByExamIdAsync(examId);
+
+            var examDetailsDto = new ExamDetailsDto
+            {
+
+                QuestionDtos = questions.Select(q => new QuestionDto
+                {
+                    Id = q.Id,
+                    Title = q.Text,
+                    AnswerOptionsDtos = q.AnswerOptions.Select(o => new AnswerOptionDto
+                    {
+                        Id = o.Id,
+                        Text = o.Text,
+                    }).ToList()
+                }
+                ).ToList()
+
             };
-            
-            
+
+
             return examDetailsDto;
         }
 
 
 
-        public async Task<ExamDto> GetByIdAsync(int examId) {
+        public async Task<ExamSummaryDto> GetByIdAsync(int examId)
+        {
             var exam = await _examRepository.GetByIdAsync(examId);
 
-            if(exam == null) {
+            if (exam == null)
+            {
                 throw new Exception("Exam not found");
             }
-            var examDto = new ExamDto {
+            var examSummaryDto = new ExamSummaryDto
+            {
+                Id = exam.Id,
                 Title = exam.Title,
                 DurationInMinutes = exam.DurationInMinutes,
                 NumberOfQuestions = exam.NumberOfQuestions
             };
-            return examDto;
+            return examSummaryDto;
         }
 
         public async Task CompileExam(CompileExamDto compileExamDto)
         {
 
-            if(compileExamDto.QuestionIds == null) {
+            if (compileExamDto.QuestionIds == null)
+            {
                 throw new ArgumentException("Question Ids are not defined");
             }
 
 
             var numberOfQuestions = compileExamDto.QuestionIds.Count;
 
-            var newExam = new Exam 
+            var newExam = new Exam
 
             {
                 Title = compileExamDto.Title,
                 NumberOfQuestions = numberOfQuestions,
-                DurationInMinutes = compileExamDto.DurationInMinutes
-
+                DurationInMinutes = compileExamDto.DurationInMinutes,
+                CategoryId = compileExamDto.CategoryId
 
             };
 
@@ -107,7 +121,7 @@ namespace TestAPI.Services.Implementation
             {
                 await _examRepository.AddQuestionToExamAsync(compileExamDto.QuestionIds[i], newExam);
             }
-            
+
         }
 
 
@@ -117,19 +131,23 @@ namespace TestAPI.Services.Implementation
             var exam = await _examRepository.GetByIdAsync(examId);
             return exam;
         }
-        
 
-        public async Task DeleteAsync(int examId) {
+
+        public async Task DeleteAsync(int examId)
+        {
 
             await _examRepository.DeleteAsync(examId);
         }
 
 
-        public async Task<int> CalculateScore(int examAttemptId) {
+        public async Task<int> CalculateScore(int examAttemptId)
+        {
             var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
-            
-            foreach(var answerOption in examAttempt.UserExamResponses){
-                if(answerOption.IsCorrect){
+
+            foreach (var answerOption in examAttempt.UserExamResponses)
+            {
+                if (answerOption.IsCorrect)
+                {
                     examAttempt.Score += 10;
                 }
 

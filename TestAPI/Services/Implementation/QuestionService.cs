@@ -1,4 +1,6 @@
-﻿using TestAPI.DTO;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using System.Data;
+using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.Services.Interfaces;
@@ -17,23 +19,27 @@ namespace TestAPI.Services.Implementation
 
         }
 
+        private static QuestionDto MapToQuestionDto(Question question) {
+
+            if(question.AnswerOptions == null ){
+                throw new Exception("Answer Options not found");
+            }
+            return new QuestionDto {
+                Id = question.Id,
+                Title = question.Text,
+                AnswerOptionsDtos = question.AnswerOptions.Select(o => 
+                new AnswerOptionDto {
+                    Id = o.Id,
+                    Text = o.Text!
+                }).ToList()
+            }; 
+        }
+
         public async Task<IEnumerable<QuestionDto>> GetAllAsync() {
             var questions = await _questionRepository.GetAllAsync();
-            var questionDtos = new List<QuestionDto>();
 
-            foreach(var question in questions) {
 
-                var questionDto = new QuestionDto {
-                    Text = question.Text,
-                    AnswerOptionsDtos =  question.AnswerOptions.Select
-                    (o => new AnswerOptionDto {
-                        Text = o.Text
-                    }).ToList()
-                };
-                questionDtos.Add(questionDto);
-        }
-        return questionDtos;
-
+            return questions.Select(MapToQuestionDto).ToList();
         }
 
         public async Task<QuestionDto> GetByIdAsync(int questionId)
@@ -41,32 +47,39 @@ namespace TestAPI.Services.Implementation
 
             var question = await _questionRepository.GetByIdAsync(questionId);
 
+            var questionDto = MapToQuestionDto(question);
+
             if(question == null) {
-                throw new Exception("Question not found");
+                throw new KeyNotFoundException("Question not found");
             }
-            var questionDto = new QuestionDto {
-                Text = question.Text,
-                AnswerOptionsDtos = question.AnswerOptions.Select(
-                    o => new AnswerOptionDto {
-                        Text = o.Text,
-                    }  
-                ).ToList()
-            };
+            // var questionDto = new QuestionDto {
+            //     Id = question.Id,
+            //     Text = question.Text,
+            //     AnswerOptionsDtos = question.AnswerOptions!.Select(
+            //         o => new AnswerOptionDto {
+            //             Id = o.Id,
+            //             Text = o.Text!,
+            //         }  
+            //     ).ToList()
+            // };
            return questionDto;
-        }
+        }   
 
-
-
-        // Request object:
-        // transactionID : 1349348594
-        // data {
-        // }
         public async Task<int> CreateAsync(CreateQuestionDto createQuestionDto)
         {
-            
-           return await _questionRepository.AddAsync(createQuestionDto);
-        }
+            var newQuestion = new Question {
+                Text = createQuestionDto.Text,
+                AnswerOptions = createQuestionDto.AnswerOptionsDtos.Select(
+                    o => new AnswerOption{
+                        Text = o.Text,
+                        IsCorrect = o.IsCorrect
+                    }
+                ).ToList()
+            };
 
+            
+           return await _questionRepository.AddAsync(newQuestion);
+        }
 
 
         public async Task DeleteQuestion(int questionId)

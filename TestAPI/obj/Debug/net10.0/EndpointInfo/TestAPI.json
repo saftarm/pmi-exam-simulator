@@ -123,7 +123,129 @@
         }
       }
     },
-    "/api/ExamAttempt/start/{examId}": {
+    "/api/Category/{id}": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Category": {
+      "post": {
+        "tags": [
+          "Category"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Category/AddExam": {
+      "post": {
+        "tags": [
+          "Category"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddExamsToCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddExamsToCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddExamsToCategoryDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExamAttempt/{examId}": {
       "post": {
         "tags": [
           "ExamAttempt"
@@ -135,14 +257,43 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExamAttempt/save": {
+      "post": {
+        "tags": [
+          "ExamAttempt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveResponseRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveResponseRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveResponseRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -177,7 +328,34 @@
         }
       }
     },
-    "/api/ExamAttempt/ExamAttempt/{attemptId}": {
+    "/api/ExamAttempt/responses/{examAttemptId}": {
+      "post": {
+        "tags": [
+          "ExamAttempt"
+        ],
+        "parameters": [
+          {
+            "name": "examAttemptId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/{attemptId}": {
       "get": {
         "tags": [
           "ExamAttempt"
@@ -203,17 +381,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExamAttempt"
+                  "$ref": "#/components/schemas/ExamAttemptDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExamAttempt"
+                  "$ref": "#/components/schemas/ExamAttemptDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExamAttempt"
+                  "$ref": "#/components/schemas/ExamAttemptDto"
                 }
               }
             }
@@ -265,7 +443,7 @@
         }
       }
     },
-    "/api/Exam": {
+    "/api/Summary": {
       "get": {
         "tags": [
           "Exam"
@@ -278,7 +456,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Exam"
+                    "$ref": "#/components/schemas/ExamSummaryDto"
                   }
                 }
               },
@@ -286,7 +464,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Exam"
+                    "$ref": "#/components/schemas/ExamSummaryDto"
                   }
                 }
               },
@@ -294,7 +472,60 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Exam"
+                    "$ref": "#/components/schemas/ExamSummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Details{id}": {
+      "get": {
+        "tags": [
+          "Exam"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExamDetailsDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExamDetailsDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExamDetailsDto"
                   }
                 }
               }
@@ -421,113 +652,10 @@
         }
       }
     },
-    "/api/Exam/Start/{examId}": {
-      "post": {
-        "tags": [
-          "Exam"
-        ],
-        "parameters": [
-          {
-            "name": "examId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExamAttempt"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExamAttempt"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExamAttempt"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Exam/{examAttemptId}/Submit": {
-      "post": {
-        "tags": [
-          "Exam"
-        ],
-        "parameters": [
-          {
-            "name": "examAttemptId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "pattern": "^-?(?:0|[1-9]\\d*)$",
-                  "type": [
-                    "integer",
-                    "string"
-                  ],
-                  "format": "int32"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "pattern": "^-?(?:0|[1-9]\\d*)$",
-                  "type": [
-                    "integer",
-                    "string"
-                  ],
-                  "format": "int32"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "pattern": "^-?(?:0|[1-9]\\d*)$",
-                  "type": [
-                    "integer",
-                    "string"
-                  ],
-                  "format": "int32"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Exam/{id}/ExamAttempt": {
+    "/api/Question/{id}": {
       "get": {
         "tags": [
-          "Exam"
+          "Question"
         ],
         "parameters": [
           {
@@ -546,70 +674,58 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionDto"
+                }
+              }
+            }
           }
         }
-      }
-    },
-    "/api/Exam/FinishExamAttempt{examAttemptId}": {
-      "post": {
+      },
+      "put": {
         "tags": [
-          "Exam"
+          "Question"
         ],
         "parameters": [
           {
-            "name": "examAttemptId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Question/GetAllQuestions": {
-      "get": {
-        "tags": [
-          "Question"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Question/Add": {
-      "post": {
-        "tags": [
-          "Question"
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/QuestionDto"
+                "$ref": "#/components/schemas/UpdateQuestionDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/QuestionDto"
+                "$ref": "#/components/schemas/UpdateQuestionDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/QuestionDto"
+                "$ref": "#/components/schemas/UpdateQuestionDto"
               }
             }
           },
@@ -620,9 +736,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Question/Delete/{id}": {
+      },
       "delete": {
         "tags": [
           "Question"
@@ -634,10 +748,7 @@
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -649,99 +760,10 @@
         }
       }
     },
-    "/api/Question/Update/{questionId}": {
-      "put": {
-        "tags": [
-          "Question"
-        ],
-        "parameters": [
-          {
-            "name": "questionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/QuestionDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/QuestionDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/QuestionDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Question/GetExamsByQuestion/{id}": {
+    "/api/Question": {
       "get": {
         "tags": [
           "Question"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Question/GetQuestion/{questionId}": {
-      "get": {
-        "tags": [
-          "Question"
-        ],
-        "parameters": [
-          {
-            "name": "questionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
-              "format": "int32"
-            }
-          }
         ],
         "responses": {
           "200": {
@@ -749,25 +771,32 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Question"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Question"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Question"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionDto"
+                  }
                 }
               }
             }
           }
         }
-      }
-    },
-    "/api/Question/CheckAnswer": {
+      },
       "post": {
         "tags": [
           "Question"
@@ -776,17 +805,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserResponseDto"
+                "$ref": "#/components/schemas/CreateQuestionDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserResponseDto"
+                "$ref": "#/components/schemas/CreateQuestionDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserResponseDto"
+                "$ref": "#/components/schemas/CreateQuestionDto"
               }
             }
           },
@@ -802,6 +831,36 @@
   },
   "components": {
     "schemas": {
+      "AddExamsToCategoryDto": {
+        "required": [
+          "categoryId"
+        ],
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "examIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        }
+      },
       "AnswerOption": {
         "type": "object",
         "properties": {
@@ -821,6 +880,14 @@
             ],
             "format": "int32"
           },
+          "examId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "question": {
             "oneOf": [
               {
@@ -828,6 +895,16 @@
               },
               {
                 "$ref": "#/components/schemas/Question"
+              }
+            ]
+          },
+          "exam": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Exam"
               }
             ]
           },
@@ -845,11 +922,72 @@
       "AnswerOptionDto": {
         "type": "object",
         "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "text": {
             "type": "string"
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           },
-          "isCorrect": {
-            "type": "boolean"
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "exams": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Exam"
+            }
+          }
+        }
+      },
+      "CategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "examSummaryDtos": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ExamSummaryDto"
+            }
           }
         }
       },
@@ -861,6 +999,14 @@
               "null",
               "string"
             ]
+          },
+          "categoryId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           },
           "durationInMinutes": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -886,35 +1032,69 @@
           }
         }
       },
-      "CreateExamDto": {
+      "CreateAnswerOptionDto": {
         "type": "object",
         "properties": {
+          "text": {
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "title": {
             "type": [
               "null",
               "string"
             ]
           },
-          "numberOfQuestions": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
+          "examIds": {
             "type": [
-              "integer",
-              "string"
+              "null",
+              "array"
             ],
-            "format": "int32"
-          },
-          "durationInMinutes": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "items": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
           }
         }
       },
-      "DifficultyLevel": {
-        "type": "integer"
+      "CreateQuestionDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "answerOptionsDtos": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CreateAnswerOptionDto"
+            }
+          }
+        }
       },
       "Exam": {
         "type": "object",
@@ -931,6 +1111,24 @@
             "type": [
               "null",
               "string"
+            ]
+          },
+          "categoryId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "category": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Category"
+              }
             ]
           },
           "numberOfQuestions": {
@@ -950,13 +1148,22 @@
               "$ref": "#/components/schemas/Question"
             }
           },
-          "examQuestions": {
+          "answerOptions": {
             "type": [
               "null",
               "array"
             ],
             "items": {
-              "$ref": "#/components/schemas/Exam"
+              "$ref": "#/components/schemas/AnswerOption"
+            }
+          },
+          "examsQuestions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ExamQuestion"
             }
           },
           "durationInMinutes": {
@@ -996,6 +1203,12 @@
             ],
             "format": "int32"
           },
+          "examTitle": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "user": {
             "oneOf": [
               {
@@ -1003,6 +1216,16 @@
               },
               {
                 "$ref": "#/components/schemas/User"
+              }
+            ]
+          },
+          "exam": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Exam"
               }
             ]
           },
@@ -1050,7 +1273,43 @@
             ],
             "format": "int32"
           },
-          "userId": {
+          "correctAnswersCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "examTitle": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/ExamStatus"
+          }
+        }
+      },
+      "ExamDetailsDto": {
+        "type": "object",
+        "properties": {
+          "questionDtos": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/QuestionDto"
+            }
+          }
+        }
+      },
+      "ExamQuestion": {
+        "type": "object",
+        "properties": {
+          "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
@@ -1066,13 +1325,81 @@
             ],
             "format": "int32"
           },
-          "status": {
-            "$ref": "#/components/schemas/ExamStatus"
+          "exam": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Exam"
+              }
+            ]
+          },
+          "questionId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "question": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Question"
+              }
+            ]
           }
         }
       },
       "ExamStatus": {
         "type": "integer"
+      },
+      "ExamSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "numberOfQuestions": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "durationInMinutes": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
       },
       "LoginUserRequest": {
         "type": "object",
@@ -1108,9 +1435,6 @@
               "string"
             ]
           },
-          "questionType": {
-            "$ref": "#/components/schemas/QuestionType"
-          },
           "answerOptions": {
             "type": [
               "null",
@@ -1128,23 +1452,34 @@
             "items": {
               "$ref": "#/components/schemas/Exam"
             }
+          },
+          "examsQuestions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ExamQuestion"
+            }
           }
         }
       },
       "QuestionDto": {
         "type": "object",
         "properties": {
-          "text": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "title": {
             "type": [
               "null",
               "string"
             ]
-          },
-          "difficulty": {
-            "$ref": "#/components/schemas/DifficultyLevel"
-          },
-          "questionType": {
-            "$ref": "#/components/schemas/QuestionType"
           },
           "answerOptionsDtos": {
             "type": [
@@ -1156,9 +1491,6 @@
             }
           }
         }
-      },
-      "QuestionType": {
-        "type": "integer"
       },
       "RegisterUserRequest": {
         "type": "object",
@@ -1192,6 +1524,66 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "SaveResponseRequest": {
+        "type": "object",
+        "properties": {
+          "examAttemptId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "questionId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "selectedOptionId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "UpdateAnswerOptionDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateQuestionDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "answerOptionsDtos": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UpdateAnswerOptionDto"
+            }
           }
         }
       },
@@ -1296,27 +1688,6 @@
             ]
           }
         }
-      },
-      "UserResponseDto": {
-        "type": "object",
-        "properties": {
-          "questionId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "selectedOptionId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          }
-        }
       }
     }
   },
@@ -1326,6 +1697,9 @@
     },
     {
       "name": "Auth"
+    },
+    {
+      "name": "Category"
     },
     {
       "name": "ExamAttempt"

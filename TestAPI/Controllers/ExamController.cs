@@ -9,21 +9,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Build.Utilities;
 namespace TestAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ExamController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly IExamService _examService;
 
-        
+    
 
-
-        public ExamController(ApplicationDbContext context, IExamService examService)
+        public ExamController(IExamService examService)
         {
-            _context = context;
             _examService = examService;
         }
 
@@ -38,11 +36,16 @@ namespace TestAPI.Controllers
 
         
 
-        [HttpGet("/api/Details{id}")]
+        [HttpGet("Details/{id:int}")]
 
-        public async Task<ActionResult<IEnumerable<ExamDetailsDto>>> GetDetailsByIdAsync(int id)
+        public async Task<ActionResult<ExamDetailsDto>> GetDetailsByIdAsync(int id)
         {
             var examDetails = await _examService.GetDetailsByIdAsync(id);
+
+            if(examDetails == null)
+            {
+                return NotFound($"Exam with Id: {id} not found");
+            }
             return Ok(examDetails);
         }
 
@@ -79,71 +82,6 @@ namespace TestAPI.Controllers
             return Ok();
 
         }
-
-
-        public async Task<ActionResult<Exam>> CreateExam(CreateExamDto createExamDto)
-        {
-            var newExam = new Exam {
-                Title = createExamDto.Title,
-                NumberOfQuestions = createExamDto.NumberOfQuestions,
-                DurationInMinutes = createExamDto.DurationInMinutes
-            };
-
-            await _context.Exams.AddAsync(newExam);
-            await _context.SaveChangesAsync();
-
-            return Ok(newExam);
-        }
-
-
-        [Authorize]
-        [HttpPost("Start/{examId}")]
-        public async Task<ActionResult<ExamAttempt>> StartExam(int examId) {
-
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-
-            var newExamAttempt = new ExamAttempt {
-
-                ExamId = examId,
-                StartedAt = DateTime.UtcNow,
-                Status = ExamStatus.InProgress,
-                Score = 0,
-                UserId = int.Parse(userId)
-
-            };
-
-            await _context.ExamAttempts.AddAsync(newExamAttempt);
-            await _context.SaveChangesAsync();
-
-
-            return Ok(newExamAttempt);
-
-
-        }
-
-
-
-        [HttpGet("{id}/ExamAttempt")]
-
-        public IActionResult GetAttempt(int id) {
-            var examAttempt = _context.ExamAttempts.FindAsync(id);
-            return Ok(examAttempt);
-
-        }
-
-        [HttpPost("FinishExamAttempt{examAttemptId}")]
-        public async Task<IActionResult> FinishExamAttempt(int examAttemptId) {
-
-            var score = await _examService.CalculateScore(examAttemptId);
-
-            return Ok(score);
-        }
-
-
-
-
-
 
 
         

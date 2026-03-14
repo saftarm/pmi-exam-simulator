@@ -47,15 +47,37 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task<int> Update (ExamAttempt updatedExamAttempt) {
             
-            var examAttempt = await _context.ExamAttempts.FindAsync(updatedExamAttempt.Id);
-
-            _context.ExamAttempts.Update(examAttempt);
+            await _context.SaveChangesAsync();
 
             return updatedExamAttempt.Id;
         }
 
+    
+
         public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsAsync() {
             return await _context.AnswerOptions.ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsByExamId( int examId ){
+            return await _context.AnswerOptions.Where(o => o.ExamId == examId).ToListAsync();
+        }
+    
+        public async Task<AnswerOption> GetAnswerOptionAsync(int selectedOptionId) {
+            return await _context.AnswerOptions.FirstOrDefaultAsync(o => o.Id == selectedOptionId);
+        }
+
+        public async Task<IEnumerable<UserExamResponse>> GetResponsesAsync(int examAttemptId) {
+            var examAttempt = await _context.ExamAttempts
+            .Include(r => r.UserExamResponses)
+            .FirstOrDefaultAsync(a => a.Id == examAttemptId);
+
+            if(examAttempt.UserExamResponses == null) {
+                throw new Exception("Responses not found");
+            }
+
+
+            return examAttempt.UserExamResponses.ToList();
         }
 
     }

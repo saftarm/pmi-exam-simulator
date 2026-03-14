@@ -10,12 +10,8 @@ namespace TestAPI.Services.Interfaces
         public Task CompileExam(CompileExamDto compileExamDto);
         public Task<IEnumerable<ExamSummaryDto>> GetSummaryAsync();
         public  Task<ExamDetailsDto> GetDetailsByIdAsync(int examId);        
-        public Task<ExamDto> GetByIdAsync(int examId);
-        // public Task<CreateExamDto> CreateAsync(CreateExamDto createExamDto);
-        // public Task<UpdateExamDto> UpdateExamDto(int id, UpdateExamDto updateExamDto);
-
+        public Task<ExamSummaryDto> GetByIdAsync(int examId);
         public Task DeleteAsync(int examId);
-
         public Task<int> CalculateScore(int examAttemptId);
 
     }

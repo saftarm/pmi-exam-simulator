@@ -1,16 +1,9 @@
 
-using System.Security.Claims;
 using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.Services.Interfaces;
-using System.Security.Claims;
 using TestAPI.Enums;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using TestAPI.Data;
-using NuGet.Common;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 
 namespace TestAPI.Services.Implementation
@@ -18,16 +11,15 @@ namespace TestAPI.Services.Implementation
     public class ExamAttemptService : IExamAttemptService
     {
         private readonly IExamAttemptRepository _examAttemptRepository;
+        private readonly IExamRepository _examRepository;
 
         public ExamAttemptService (
-            IExamAttemptRepository examAttemptRepository) 
+            IExamAttemptRepository examAttemptRepository,
+            IExamRepository examRepository) 
             {
             _examAttemptRepository = examAttemptRepository;
+            _examRepository = examRepository;
            }
-
-
-
-
 
         public async Task<ExamAttemptDto> GetByIdAsync(int examAttemptId) {
 
@@ -56,68 +48,77 @@ namespace TestAPI.Services.Implementation
 
         public async Task<int> StartAttemptAsync(int userId, int examId) 
         {
+            var exam = await _examRepository.GetByIdAsync(examId);
+
+            if(exam == null) {
+                throw new KeyNotFoundException("Exam not found");
+            }
+
             var examAttempt = new ExamAttempt {
                 UserId = userId,
                 ExamId = examId,  
                 StartedAt = DateTime.UtcNow,
                 Score = 0,
+                UserExamResponses = new List<UserExamResponse>(),
                 Status = ExamStatus.InProgress
-
             };
             return await _examAttemptRepository.AddAsync(examAttempt);
 
         }
 
 
-        // public async Task<int> FinishAttemptAsync(int examAttemptId, IEnumerable<UserExamResponseDto> userExamResponseDtos)
-        // {
-            
-        //     var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
+         public async Task FinishAttemptAsync(int examAttemptId) {
+            var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
+            examAttempt.Status = ExamStatus.Completed;
+            await CalculateScore(examAttempt);
 
-        //     var incomingResponses = new List<UserExamResponse>();
+         }
 
-        //      var answerOptions = await _examAttemptRepository.GetAnswerOptionsAsync();
-            
-
-
-        //     examAttempt.UserExamResponses.Add()
-
-        //     foreach(var incoming in incomingResponses) {
-
-        //         var option = answerOptions.FirstOrDefault(o => o.Id == incoming.SelectedOptionId);
-        //         if(option.IsCorrect) {
-        //             var newUserExamResponse = new UserExamResponse {
-        //                 ExamAttemptId =,
-        //                 QuestionId,
-        //                 SelectedOptionId,
-        //                 IsCorrect,
-        //             }
-        //         }
-        //     }
-
-        //     examAttempt.Score  = await CalculateScore(examAttempt.UserExamResponses);
-        //     examAttempt.Status = ExamStatus.Completed;
-
-        //     return await _examAttemptRepository.Update(examAttempt);
+        public async Task<int> SaveResponse (int examAttemptId, int questionId, int selectedOptionId) {
+            var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
 
 
-        // }
+            var newResponse = new UserExamResponse {
+                SelectedOptionId = selectedOptionId,
+                QuestionId = questionId,
+                ExamAttemptId = examAttemptId
+            };
+            if(examAttempt.UserExamResponses == null) {
+                examAttempt.UserExamResponses = new List<UserExamResponse>();
+            }
+            examAttempt.UserExamResponses.Add(newResponse);
+            await _examAttemptRepository.Update(examAttempt);
+            return examAttempt.Id;
 
+        }
 
-        public async Task<int> CalculateScore (IEnumerable<UserExamResponse> userExamResponses) {
+        public async Task CalculateScore(ExamAttempt examAttempt) 
+        {
             var score = 0;
-            var answerOptions = await _examAttemptRepository.GetAnswerOptionsAsync();
-
-            foreach(var option in userExamResponses){
-                var currentOption = answerOptions.FirstOrDefault(o => o.Id == option.SelectedOptionId);
+            var answerOptions = await _examAttemptRepository.GetAnswerOptionsByExamId(examAttempt.ExamId);
+            foreach( var response in examAttempt.UserExamResponses!) {
+                var currentOption = answerOptions.FirstOrDefault(o => o.Id == response.SelectedOptionId);
                 if(currentOption.IsCorrect){
                     score += 10;
                 }
             }
-            return score;
-        }
-        
+            examAttempt.Score += score;
 
+            await _examAttemptRepository.Update(examAttempt);
+            
+        }
+
+        public async Task<IEnumerable<UserExamResponseDto>> GetResponsesAsync(int examAttemptId){
+            var userExamResponses =  await _examAttemptRepository.GetResponsesAsync(examAttemptId);
+            var userExamResponseDtos = userExamResponses.Select(
+                r => new UserExamResponseDto {
+                    QuestionId = r.QuestionId,
+                    SelectedOptionId = r.SelectedOptionId
+                }
+            );
+            return userExamResponseDtos;
+
+        }
 
         public async Task StartAttempt(int examId, int userId) {
             ExamAttempt newAttempt = new ExamAttempt {
@@ -131,52 +132,6 @@ namespace TestAPI.Services.Implementation
             await _examAttemptRepository.AddAsync(newAttempt);
 
         }
-
-        // public async Task<ExamAttempt> FinishAttempt(int examAttemptId) {
-
-        //     var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
-
-        //     if(examAttempt == null) {
-        //         throw new Exception("ExamRepository could not find examAttempt");
-        //     }
-        //     await CalculateScore(examAttempt);
-
-        //     examAttempt.Status = ExamStatus.Completed;
-        //     examAttempt.SubmittedAt = DateTime.UtcNow;
-
-        //     await _context.SaveChangesAsync();
-
-        //     return examAttempt;
-
-
-        // }
-
-        // private async Task<int> CalculateScore( ExamAttempt examAttempt){
-
-        //     if(examAttempt == null) {
-        //         throw new Exception("Attempt not found");
-        //     }
-        //     foreach(var selectedOption in examAttempt.UserExamResponses )
-        //     {
-        //         var answerOption = await _answerOptionRepository.GetByIdAsync(selectedOption.SelectedOptionId);
-        //         if(answerOption.IsCorrect) {
-        //             examAttempt.Score += 10;
-        //             selectedOption.IsCorrect = true;
-        //         }
-        //     }
-            
-        //     return examAttempt.Score;
-
-
-        // }
-        
-        
-
-
-       
-
-
-       
 
     }
 }

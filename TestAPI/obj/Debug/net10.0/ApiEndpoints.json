@@ -16,6 +16,32 @@
     ]
   },
   {
+    "ContainingType": "TestAPI.Controllers.ExamAttemptController",
+    "Method": "GetAttemptById",
+    "RelativePath": "{attemptId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "attemptId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TestAPI.DTO.ExamAttemptDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "TestAPI.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/Auth/login",
@@ -68,68 +94,90 @@
     ]
   },
   {
-    "ContainingType": "TestAPI.Controllers.ExamController",
-    "Method": "GetExams",
-    "RelativePath": "api/Exam",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[TestAPI.Entities.Exam, TestAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.ExamController",
-    "Method": "CreateExam",
-    "RelativePath": "api/Exam",
-    "HttpMethod": "",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "createExamDto",
-        "Type": "TestAPI.DTO.CreateExamDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "TestAPI.Entities.Exam",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.ExamController",
-    "Method": "Submit",
-    "RelativePath": "api/Exam/{examAttemptId}/Submit",
+    "ContainingType": "TestAPI.Controllers.CategoryController",
+    "Method": "Create",
+    "RelativePath": "api/Category",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "examAttemptId",
+        "Name": "createCategoryDto",
+        "Type": "TestAPI.DTO.CreateCategoryDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TestAPI.DTO.CategoryDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TestAPI.Controllers.CategoryController",
+    "Method": "GetCategory",
+    "RelativePath": "api/Category/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
+        "Type": "TestAPI.DTO.CategoryDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TestAPI.Controllers.CategoryController",
+    "Method": "AddExamToCategory",
+    "RelativePath": "api/Category/AddExam",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "addExamsToCategoryDto",
+        "Type": "TestAPI.DTO.Category.AddExamsToCategoryDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestAPI.Controllers.ExamController",
+    "Method": "GetDetailsByIdAsync",
+    "RelativePath": "api/Details{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[TestAPI.DTO.ExamDetailsDto, TestAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -183,22 +231,6 @@
   },
   {
     "ContainingType": "TestAPI.Controllers.ExamController",
-    "Method": "GetAttempt",
-    "RelativePath": "api/Exam/{id}/ExamAttempt",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.ExamController",
     "Method": "CompileExam",
     "RelativePath": "api/Exam/CompileExam",
     "HttpMethod": "POST",
@@ -224,25 +256,9 @@
     ]
   },
   {
-    "ContainingType": "TestAPI.Controllers.ExamController",
-    "Method": "FinishExamAttempt",
-    "RelativePath": "api/Exam/FinishExamAttempt{examAttemptId}",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "examAttemptId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.ExamController",
+    "ContainingType": "TestAPI.Controllers.ExamAttemptController",
     "Method": "StartExam",
-    "RelativePath": "api/Exam/Start/{examId}",
+    "RelativePath": "api/ExamAttempt/{examId}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -253,43 +269,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "TestAPI.Entities.ExamAttempt",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.ExamAttemptController",
-    "Method": "GetAttemptById",
-    "RelativePath": "api/ExamAttempt/ExamAttempt/{attemptId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "attemptId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "TestAPI.Entities.ExamAttempt",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "TestAPI.Controllers.ExamAttemptController",
@@ -309,15 +289,31 @@
   },
   {
     "ContainingType": "TestAPI.Controllers.ExamAttemptController",
-    "Method": "StartExam",
-    "RelativePath": "api/ExamAttempt/start/{examId}",
+    "Method": "GetResponsesByAttemptId",
+    "RelativePath": "api/ExamAttempt/responses/{examAttemptId}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "examId",
+        "Name": "examAttemptId",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TestAPI.Controllers.ExamAttemptController",
+    "Method": "SaveResponse",
+    "RelativePath": "api/ExamAttempt/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "response",
+        "Type": "TestAPI.DTO.SaveResponseRequest",
         "IsRequired": true
       }
     ],
@@ -351,15 +347,35 @@
   },
   {
     "ContainingType": "TestAPI.Controllers.QuestionController",
-    "Method": "AddQuestion",
-    "RelativePath": "api/Question/Add",
+    "Method": "GetAllQuestions",
+    "RelativePath": "api/Question",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[TestAPI.DTO.QuestionDto, TestAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TestAPI.Controllers.QuestionController",
+    "Method": "Create",
+    "RelativePath": "api/Question",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "questionDto",
-        "Type": "TestAPI.DTO.QuestionDto",
+        "Name": "createQuestionDto",
+        "Type": "TestAPI.DTO.CreateQuestionDto",
         "IsRequired": true
       }
     ],
@@ -367,15 +383,46 @@
   },
   {
     "ContainingType": "TestAPI.Controllers.QuestionController",
-    "Method": "CheckAnswer",
-    "RelativePath": "api/Question/CheckAnswer",
-    "HttpMethod": "POST",
+    "Method": "GetQuestionById",
+    "RelativePath": "api/Question/{id}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "userResponseDto",
-        "Type": "TestAPI.DTO.UserResponseDto",
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TestAPI.DTO.QuestionDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TestAPI.Controllers.QuestionController",
+    "Method": "Update",
+    "RelativePath": "api/Question/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateQuestionDto",
+        "Type": "TestAPI.DTO.UpdateQuestionDto",
         "IsRequired": true
       }
     ],
@@ -384,7 +431,7 @@
   {
     "ContainingType": "TestAPI.Controllers.QuestionController",
     "Method": "Delete",
-    "RelativePath": "api/Question/Delete/{id}",
+    "RelativePath": "api/Question/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -398,48 +445,16 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TestAPI.Controllers.QuestionController",
-    "Method": "GetQuestions",
-    "RelativePath": "api/Question/GetAllQuestions",
+    "ContainingType": "TestAPI.Controllers.ExamController",
+    "Method": "GetSummaryAsync",
+    "RelativePath": "api/Summary",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.QuestionController",
-    "Method": "GetExamsByQuestionId",
-    "RelativePath": "api/Question/GetExamsByQuestion/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.QuestionController",
-    "Method": "GetQuestion",
-    "RelativePath": "api/Question/GetQuestion/{questionId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "questionId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
     "ReturnTypes": [
       {
-        "Type": "TestAPI.Entities.Question",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[TestAPI.DTO.ExamSummaryDto, TestAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -448,26 +463,5 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "TestAPI.Controllers.QuestionController",
-    "Method": "UpdateQuestion",
-    "RelativePath": "api/Question/Update/{questionId}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "questionId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "questionDto",
-        "Type": "TestAPI.DTO.QuestionDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   }
 ]

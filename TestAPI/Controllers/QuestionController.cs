@@ -32,12 +32,13 @@ namespace TestAPI.Controllers
             return await _questionService.GetByIdAsync(id);
         }
 
+      
+
 
         // /api/Question	Get all questions (hides isCorrect)
-        [HttpGet("/api/Question")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<QuestionDto>>> GetAllQuestions()
         {
-
             var questions = await _questionService.GetAllAsync();
 
             if(questions == null ) {
@@ -56,9 +57,9 @@ namespace TestAPI.Controllers
         }
 
 
-        // /api/Question/{id}	Update an existing question
+        // /api/Question/{id}  Update an existing question
 
-        [HttpPut("/Update/{id}")]
+        [HttpPut("{id:int}")]
 
         public async Task<ActionResult> Update(int id, UpdateQuestionDto updateQuestionDto){
             var updatedQuestion = await _questionService.UpdateAsync(id,updateQuestionDto);
@@ -67,7 +68,7 @@ namespace TestAPI.Controllers
 
 
         // /api/Question/{id}	Delete a question
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
             var question = _context.Questions.Find(id);

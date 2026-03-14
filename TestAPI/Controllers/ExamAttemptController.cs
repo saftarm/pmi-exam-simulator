@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Build.Experimental.BuildCheck;
 namespace TestAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -25,47 +26,41 @@ namespace TestAPI.Controllers
 
         // ----  Actions -----
 
-        [HttpPost("start/{examId}")]
+        [HttpPost("{examId:int}")]
         public async Task<IActionResult> StartExam(int examId) {
 
-
+    
             var userId = 3;
             var examAttemptId = await _examAttemptService.StartAttemptAsync(userId, examId);
 
             return Ok($"Exam Started, ID:{examAttemptId}");
         }
 
+        [HttpPost("save/")]
+
+        public async Task<IActionResult> SaveResponse(SaveResponseRequest response) {
+            await _examAttemptService.SaveResponse(response.ExamAttemptId, response.QuestionId, response.SelectedOptionId);
+            return Ok();
+        }
+
+        
+        [HttpPost("finish/{examAttemptId}")]
+
+        public async Task<IActionResult> FinishExam (int examAttemptId) {
+            await _examAttemptService.FinishAttemptAsync(examAttemptId);
+            return Ok();
+        }
 
 
-        // [HttpPost("finish/")]
 
-        // public async Task<IActionResult> FinishAttempt([FromBody] FinishExamAttemptRequest finishExamAttemptRequest)
-        // {
-        //     var examAttemptId = await _examAttemptService.FinishAttemptAsync(finishExamAttemptRequest.ExamAttemptId, finishExamAttemptRequest.userExamResponses);
-        //     return Ok(examAttemptId);
-        // }
+        [HttpPost("responses/{examAttemptId}")]
+        public async Task<IActionResult> GetResponsesByAttemptId(int examAttemptId){
 
+            var userExamResponses = await _examAttemptService.GetResponsesAsync(examAttemptId);
+            return Ok(userExamResponses);
+        }
 
-
-
-
-
-
-
-        // [HttpPost("finish/")]
-        // public async Task FinishExam(FinishExamRequest request) {
-        //     return await _examAttemptService.FinishExam(request);   
-        // }
-
-    // // [Authorize]
-    // [HttpPost("finish/{examAttemptId}")]
-
-        // public async Task<IActionResult> FinishExam(int examAttemptId) {
-        //     var examAttempt = await _examAttemptService.FinishAttempt(examAttemptId);
-        //     return Ok(examAttempt);
-        // }
-
-        [HttpGet("ExamAttempt/{attemptId}")]
+        [HttpGet("/{attemptId}")]
 
         public async Task<ActionResult<ExamAttemptDto>> GetAttemptById(int attemptId){
 

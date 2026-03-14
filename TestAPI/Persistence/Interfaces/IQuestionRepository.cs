@@ -5,7 +5,7 @@ namespace TestAPI.Persistence.Interfaces
     public interface IQuestionRepository
     {
         
-        public Task<int> AddAsync(CreateQuestionDto questionDto);
+        public Task<int> AddAsync(Question newQuestion);
 
         public Task<UpdateQuestionDto> UpdateAsync(int questionId, UpdateQuestionDto questionDto);
 

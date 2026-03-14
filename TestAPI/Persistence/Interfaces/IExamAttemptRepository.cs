@@ -14,6 +14,11 @@ namespace TestAPI.Persistence.Interfaces
 
         public Task<int> Update (ExamAttempt updatedExamAttempt);
 
+        public Task<AnswerOption> GetAnswerOptionAsync(int selectedOptionId);
+
+        public  Task<IEnumerable<UserExamResponse>> GetResponsesAsync(int examAttemptId);
+        public Task<IEnumerable<AnswerOption>> GetAnswerOptionsByExamId( int examId );
+
 
     }
 }

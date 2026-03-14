@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\TestAPI.csproj": {}
+    "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestApi\\TestAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\TestAPI.csproj": {
+    "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestApi\\TestAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\TestAPI.csproj",
+        "projectUniqueName": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestApi\\TestAPI.csproj",
         "projectName": "TestAPI",
-        "projectPath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\TestAPI.csproj",
+        "projectPath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestApi\\TestAPI.csproj",
         "packagesPath": "C:\\Users\\MSN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\obj\\",
+        "outputPath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -108,7 +108,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

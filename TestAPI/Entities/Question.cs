@@ -7,7 +7,7 @@ namespace TestAPI.Entities
         public int Id { get; set; }
         public string? Text { get; set; }
 
-        public ICollection<AnswerOption>? AnswerOptions { get; set; }
+        public List<AnswerOption>? AnswerOptions { get; set; }
 
         public ICollection<Exam>? Exams {get;set;}
 

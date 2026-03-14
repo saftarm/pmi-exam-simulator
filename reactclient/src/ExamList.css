@@ -1,0 +1,435 @@
+/* ── Exam List Page ────────────────────────────── */
+.el-page {
+    min-height: 100vh;
+    width: 100%;
+    background-color: #0f0f0f;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 40px 5vw 80px;
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden;
+}
+
+    /* ── Grid background ───────────────────────────── */
+    .el-page::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: linear-gradient(#2e2e2e 1px, transparent 1px), linear-gradient(90deg, #2e2e2e 1px, transparent 1px);
+        background-size: 60px 60px;
+        opacity: 0.25;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+/* ── Glow orb ──────────────────────────────────── */
+.el-orb {
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(800px, 100vw);
+    height: min(800px, 100vw);
+    background: radial-gradient(circle, rgba(108,99,255,0.16) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Header ────────────────────────────────────── */
+.el-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+}
+
+.el-page .header-title {
+    color: #ffffff;
+}
+
+.el-page .header-badge {
+    background-color: #1a1a1a;
+    color: #6c63ff;
+    border: 1px solid #2e2e2e;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ── Hero row ──────────────────────────────────── */
+.el-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+}
+
+.el-hero-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.el-eyebrow {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #6c63ff;
+    margin-bottom: 12px;
+}
+
+.el-title {
+    font-size: clamp(24px, 4vw, 42px);
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+}
+
+.el-subtitle {
+    font-size: 15px;
+    color: #888888;
+    line-height: 1.6;
+    max-width: 480px;
+}
+
+.el-hero-right {
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+/* ── Summary stats ─────────────────────────────── */
+.el-summary {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 16px;
+    padding: 20px 28px;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.el-summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.el-summary-num {
+    font-size: 26px;
+    font-weight: 800;
+    color: #6c63ff;
+}
+
+.el-summary-lbl {
+    font-size: 11px;
+    color: #555555;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.el-summary-divider {
+    width: 1px;
+    height: 40px;
+    background: #2e2e2e;
+    flex-shrink: 0;
+}
+
+/* ── Exam Grid ─────────────────────────────────── */
+.el-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Exam Card ─────────────────────────────────── */
+.el-card {
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 20px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-width: 0;
+    animation: el-fadeUp 0.5s ease both;
+}
+
+    /* Purple top accent line — matches landing cards */
+    .el-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #6c63ff;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+
+    .el-card:hover {
+        border-color: rgba(108, 99, 255, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+        .el-card:hover::before {
+            transform: scaleX(1);
+        }
+
+/* Card top row */
+.el-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.el-card-badge {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: rgba(108, 99, 255, 0.12);
+    border: 1px solid rgba(108, 99, 255, 0.25);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+/* Difficulty badges */
+.el-difficulty {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.el-badge-easy {
+    background: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.el-badge-medium {
+    background: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.el-badge-hard {
+    background: rgba(248, 113, 113, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+/* Card body */
+.el-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.el-card-domain {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6c63ff;
+}
+
+.el-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.el-card-desc {
+    font-size: 13px;
+    color: #888888;
+    line-height: 1.65;
+    word-break: break-word;
+}
+
+/* Card footer */
+.el-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #2e2e2e;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.el-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.el-meta-item {
+    font-size: 20px;
+    color: rgb(202, 202, 202);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.el-card-btn {
+    background: #6c63ff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.3);
+}
+
+    .el-card-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 0 32px rgba(108, 99, 255, 0.5);
+    }
+
+/* ── State messages ────────────────────────────── */
+.el-state-msg {
+    color: #888888;
+    font-size: 15px;
+    text-align: center;
+    margin-top: 80px;
+    position: relative;
+    z-index: 1;
+}
+
+.el-state-error {
+    color: #f87171;
+}
+
+/* ── Animation ─────────────────────────────────── */
+@keyframes el-fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   1280px+  →  3 columns
+   1279px   →  2 columns
+   768px    →  hero stacks, summary full width
+   600px    →  1 column
+══════════════════════════════════════════════ */
+
+@media (max-width: 1279px) {
+    .el-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1023px) {
+    .el-page {
+        padding: 32px 4vw 60px;
+    }
+
+    .el-header {
+        margin-bottom: 36px;
+    }
+
+    .el-hero {
+        gap: 24px;
+        margin-bottom: 36px;
+    }
+
+    .el-summary {
+        padding: 16px 20px;
+        gap: 16px;
+    }
+
+    .el-summary-num {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 768px) {
+    .el-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .el-hero-right {
+        width: 100%;
+    }
+
+    .el-summary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .el-summary-divider {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .el-page {
+        padding: 24px 4vw 60px;
+    }
+
+    .el-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .el-title {
+        font-size: clamp(22px, 7vw, 32px);
+    }
+
+    .el-summary {
+        gap: 20px;
+        padding: 16px;
+    }
+}
