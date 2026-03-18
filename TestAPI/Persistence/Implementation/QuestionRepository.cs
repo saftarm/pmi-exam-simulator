@@ -6,6 +6,7 @@ using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.DTO;
 using NuGet.Protocol.Core.Types;
+using NuGet.Versioning;
 
 namespace TestAPI.Persistence.Implementation
 {
@@ -25,6 +26,11 @@ namespace TestAPI.Persistence.Implementation
             await _context.Questions.AddAsync(newQuestion);
             await _context.SaveChangesAsync();
             return newQuestion.Id;
+        }
+
+        public async Task AddRangeAsync(ICollection<Question> questions) {
+            _context.Questions.AddRange(questions);
+            await _context.SaveChangesAsync();
         }
 
 
@@ -82,6 +88,14 @@ namespace TestAPI.Persistence.Implementation
             return question;
         }
 
+        public async Task<ICollection<Question>> GetByIdsAsync(ICollection<int> questionIds)
+        {
+            return await _context.Questions.Where(q => questionIds.Contains(q.Id))
+                .Include(q => q.AnswerOptions)
+                .ToListAsync();
+
+        }
+
         // Get all
         public async Task <IEnumerable<Question>> GetAllAsync()
         {
@@ -95,22 +109,17 @@ namespace TestAPI.Persistence.Implementation
             
         }
 
-        // public async Task<List<Exam>?> GetExamsByQuestionIdAsync(int questionId){
-        //     var question = await _context.Questions.FindAsync(questionId);
 
-        //     if(question == null) {
-        //         throw new ArgumentException($"Question with id {questionId} does not exist");
-        //     }
-        //     if(question.Exams == null) {
-        //         throw new ArgumentException($"Question with id {questionId} does not belong to any exam");
-        //     }
-        //     List<Exam> exams = question.Exams.ToList();
-
-        //     return exams;
-
-        // }
+        public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsByQuestionID (int questionId) {
+            return await _context.AnswerOptions.Where(o => o.QuestionId == questionId).ToListAsync();
+        }
 
 
+
+        public async Task DeleteRangeAsync(IEnumerable<int> questionIds) {
+            await _context.Questions.Where(q => questionIds.Contains(q.Id)).ExecuteDeleteAsync();
+            
+        }
 
     }
 

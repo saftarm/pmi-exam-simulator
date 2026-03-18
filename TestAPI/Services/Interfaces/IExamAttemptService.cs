@@ -14,6 +14,8 @@ namespace TestAPI.Services.Interfaces
 
         public  Task FinishAttemptAsync(int examAttemptId);
 
+        public Task DeleteAsync(int id);
+
         public  Task CalculateScore (ExamAttempt examAttempt);
 
         public Task<int> SaveResponse (int examAttemptId, int questionId, int selectedOptionId );

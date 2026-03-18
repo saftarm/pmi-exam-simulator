@@ -9,11 +9,15 @@ namespace TestAPI.Services.Interfaces
     public interface IQuestionService
     {
 
-        public  Task<int> CreateAsync(CreateQuestionDto questionDto);
+        public  Task<int> CreateAsync(CreateQuestionDto createQuestionDto);
+        
+        public Task CreateRangeAsync(CreateQuestionsDto createQuestionsDto); 
 
         public Task<IEnumerable<QuestionDto>> GetAllAsync();
 
         public Task<QuestionDto> GetByIdAsync(int questionId);
+
+        public Task DeleteRangeAsync(IEnumerable<int> questionIds);
 
 
         public Task DeleteQuestion(int questionId);

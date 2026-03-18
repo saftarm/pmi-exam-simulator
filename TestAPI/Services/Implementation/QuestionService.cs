@@ -35,6 +35,30 @@ namespace TestAPI.Services.Implementation
             }; 
         }
 
+        private static ICollection<Question> MapQuestionDtosToQuestions(IEnumerable<CreateQuestionDto> createQuestionDtos) {
+            var questions = createQuestionDtos.Select(
+                q => new Question {
+                    Text = q.Title,
+                    Explanation = q.Explanation,
+                    DomainId = q.DomainId,
+                    AnswerOptions = q.AnswerOptionsDtos.Select(
+                        o => new AnswerOption {
+                            Text = o.Text,
+                            IsCorrect = o.IsCorrect
+                        }
+                    ).ToList()
+            
+                }
+            ).ToList();
+
+            return questions;
+        }
+
+        public async Task DeleteRangeAsync(IEnumerable<int> questionIds) {
+            await _questionRepository.DeleteRangeAsync(questionIds);
+
+        }
+
         public async Task<IEnumerable<QuestionDto>> GetAllAsync() {
             var questions = await _questionRepository.GetAllAsync();
 
@@ -52,23 +76,16 @@ namespace TestAPI.Services.Implementation
             if(question == null) {
                 throw new KeyNotFoundException("Question not found");
             }
-            // var questionDto = new QuestionDto {
-            //     Id = question.Id,
-            //     Text = question.Text,
-            //     AnswerOptionsDtos = question.AnswerOptions!.Select(
-            //         o => new AnswerOptionDto {
-            //             Id = o.Id,
-            //             Text = o.Text!,
-            //         }  
-            //     ).ToList()
-            // };
+          
            return questionDto;
         }   
 
         public async Task<int> CreateAsync(CreateQuestionDto createQuestionDto)
         {
             var newQuestion = new Question {
-                Text = createQuestionDto.Text,
+                Text = createQuestionDto.Title,
+                Explanation = createQuestionDto.Explanation,
+                DomainId = createQuestionDto.DomainId,
                 AnswerOptions = createQuestionDto.AnswerOptionsDtos.Select(
                     o => new AnswerOption{
                         Text = o.Text,
@@ -79,6 +96,11 @@ namespace TestAPI.Services.Implementation
 
             
            return await _questionRepository.AddAsync(newQuestion);
+        }
+
+        public async Task CreateRangeAsync(CreateQuestionsDto createQuestionsDto) {
+            
+            await _questionRepository.AddRangeAsync(MapQuestionDtosToQuestions(createQuestionsDto.CreateQuestionDtos));
         }
 
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;
 using TestAPI.Data;
 using TestAPI.DTO;
@@ -7,7 +9,7 @@ using TestAPI.Persistence.Interfaces;
 
 
 namespace TestAPI.Persistence.Implementation
-{ 
+{
     public class ExamRepository : IExamRepository
     {
 
@@ -19,36 +21,59 @@ namespace TestAPI.Persistence.Implementation
         }
 
 
-        public async Task<IEnumerable<Exam>> GetAllAsync() {
+        public async Task<IEnumerable<Exam>> GetAllAsync()
+        {
             return await _context.Exams.ToListAsync();
         }
-        
-        public void Add(Exam exam)
+
+        public async Task AddAsync(Exam exam)
         {
-            _context.Exams.Add(exam);
-            _context.SaveChanges();
+            await _context.Exams.AddAsync(exam);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId) 
+        public async Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId)
         {
-            var question = await _context.Questions
-            .Include(o => o.AnswerOptions)
-            .Where(q => q.ExamsQuestions.Any(eq => eq.ExamId == examId))
+
+
+            var questions = await _context.Questions
+            .Where(q => q.Exams.Any(e => e.Id == examId))
+            .Include(q => q.AnswerOptions)
             .ToListAsync();
 
-            return question;
+            if (questions == null)
+            {
+                throw new Exception("Questions not found");
+            }
+
+            return questions;
         }
 
+     
 
-        public async Task DeleteAsync(int examId) {
+
+
+        public async Task UpdateAsync(Exam exam) {
+            _context.Exams.Update(exam);
+            await _context.SaveChangesAsync();
+
+        }
+        public async Task DeleteAsync(int examId)
+        {
             await _context.Exams.Where(e => e.Id == examId).ExecuteDeleteAsync();
 
-            
+
             await _context.SaveChangesAsync();
 
         }
 
-        public async Task<Exam?> GetByIdAsync(int id)
+
+        public async Task DeleteRangeAsync(IEnumerable<int> examIds) {
+            await _context.Exams.Where(q => examIds.Contains(q.Id)).ExecuteDeleteAsync();
+            
+        }
+
+        public async Task<Exam> GetByIdAsync(int id)
         {
             var examFromDb = await _context.Exams.Include(e => e.Questions!)
             .ThenInclude(q => q.AnswerOptions!)
@@ -57,29 +82,39 @@ namespace TestAPI.Persistence.Implementation
             return examFromDb;
         }
 
-        public  async Task AddQuestionToExamAsync(int questionId, Exam exam)
+
+        public async Task<IEnumerable<Exam>> GetAllById(ICollection<int> examIds)
         {
-            
-            if(exam.Questions == null) {
+            return await _context.Exams.Where(e => examIds.Contains(e.Id)).ToListAsync() ;
+
+        }
+
+        public async Task AddQuestionToExamAsync(int questionId, Exam exam)
+        {
+
+            if (exam.Questions == null)
+            {
                 exam.Questions = new List<Question>();
             }
 
 
             var question = await _context.Questions.FindAsync(questionId);
 
-            if(question == null ) 
+            if (question == null)
             {
                 throw new ArgumentException($"Question with id{questionId} not found");
             }
-        
+
             exam.Questions.Add(question);
 
-            if(question.Exams == null) {
+            if (question.Exams == null)
+            {
                 question.Exams = new List<Exam>();
             }
 
-            
-            if(exam.Questions.Contains(question)){
+
+            if (exam.Questions.Contains(question))
+            {
                 exam.Questions.Add(question);
                 question.Exams.Add(exam);
                 await _context.SaveChangesAsync();
@@ -89,5 +124,15 @@ namespace TestAPI.Persistence.Implementation
         }
 
 
+        public async Task AddQuestionsToExamAsync(int examId, ICollection<Question> questions)
+        {
+            var exam = await _context.Exams.FindAsync(examId);
+
+            foreach (var question in questions)
+            {
+                exam.Questions.Add(question);
+            }
+
+        }
     }
 }

@@ -7,6 +7,7 @@ using TestAPI.Data;
 using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace TestAPI.Persistence.Implementation
@@ -23,10 +24,14 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task<ExamAttempt> GetByIdAsync(int examAttemptId) {
             var examAttempt = await _context.ExamAttempts
-            .Include(r => r.UserExamResponses)
-            .FirstOrDefaultAsync(a => a.Id == examAttemptId); 
+            .Include(ea => ea.UserExamResponses)
+            .FirstOrDefaultAsync(ea => ea.Id == examAttemptId); 
             
             return examAttempt;
+        }
+
+        public async Task<IEnumerable<ExamAttempt>> GetAllAsync() {
+            return await _context.ExamAttempts.ToListAsync();
         }
 
         public async Task<ExamAttempt> GetByUserId(int userId) {
@@ -45,12 +50,17 @@ namespace TestAPI.Persistence.Implementation
             return examAttempt.Id;
           }
 
-        public async Task<int> Update (ExamAttempt updatedExamAttempt) {
-            
+        public async Task<int> UpdateAsync (ExamAttempt updatedExamAttempt) {
+            _context.ExamAttempts.Update(updatedExamAttempt);
             await _context.SaveChangesAsync();
-
             return updatedExamAttempt.Id;
         }
+         public async Task DeleteAsync(int examAttemptId) {
+            var examAttempt = await _context.ExamAttempts.FindAsync(examAttemptId);
+            _context.ExamAttempts.Remove(examAttempt);
+            await _context.SaveChangesAsync();
+
+         }
 
     
 
@@ -59,10 +69,6 @@ namespace TestAPI.Persistence.Implementation
         }
 
 
-        public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsByExamId( int examId ){
-            return await _context.AnswerOptions.Where(o => o.ExamId == examId).ToListAsync();
-        }
-    
         public async Task<AnswerOption> GetAnswerOptionAsync(int selectedOptionId) {
             return await _context.AnswerOptions.FirstOrDefaultAsync(o => o.Id == selectedOptionId);
         }

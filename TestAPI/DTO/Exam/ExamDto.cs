@@ -11,6 +11,8 @@ namespace TestAPI.DTO
 
         public List<QuestionDto>? QuestionDtos { get; set; }
 
+        public ICollection<CreateDomainDto> DomainDtos { get; set; }
+
 
 
     }

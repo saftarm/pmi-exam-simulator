@@ -11,7 +11,10 @@ namespace TestAPI.Entities
 
         public Exam? Exam {get;set;}
 
+        public int CorrectCount {get; set;}
+
         public int Score { get;set;}
+
 
         public DateTime StartedAt {get;set;}
         

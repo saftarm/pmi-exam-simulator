@@ -26,6 +26,20 @@ namespace TestAPI.Controllers
             return Ok(category);
         }
 
+        [HttpGet]
+
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories()
+        {
+            return Ok(await _categoryService.GetAllAsync());
+        }
+
+        [HttpPost("/AddExam")]
+
+        public async Task<IActionResult> AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto) {
+            await  _categoryService.AddExamsToCategory(addExamsToCategoryDto);
+            return Ok();
+        }
+
         [HttpPost]
 
         public async Task<ActionResult<CategoryDto>> Create(CreateCategoryDto createCategoryDto)
@@ -34,13 +48,16 @@ namespace TestAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("AddExam/")]
-
-        public async Task<IActionResult> AddExamToCategory(AddExamsToCategoryDto addExamsToCategoryDto)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            await _categoryService.AddExamToCategory(addExamsToCategoryDto);
-            return Ok();
+            await _categoryService.DeleteAsync(id);
+            return NoContent();
         }
+
+
+
+       
 
 
 

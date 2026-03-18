@@ -30,10 +30,10 @@ namespace TestAPI.Controllers
         public async Task<IActionResult> StartExam(int examId) {
 
     
-            var userId = 3;
+            var userId = 1;
             var examAttemptId = await _examAttemptService.StartAttemptAsync(userId, examId);
 
-            return Ok($"Exam Started, ID:{examAttemptId}");
+            return Ok(examAttemptId);
         }
 
         [HttpPost("save/")]
@@ -78,6 +78,13 @@ namespace TestAPI.Controllers
             
             var examAttempt = await _examAttemptService.GetByUserId(userId);
             return Ok(examAttempt);
+        }
+
+        [HttpDelete("{id:int}")]
+
+        public async Task<IActionResult> Delete(int id) {
+            await _examAttemptService.DeleteAsync(id);
+            return Ok();
         }
 
 

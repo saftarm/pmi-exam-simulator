@@ -13,12 +13,17 @@ namespace TestAPI.Services.Implementation
         private readonly IExamAttemptRepository _examAttemptRepository;
         private readonly IExamRepository _examRepository;
 
+        private readonly IQuestionRepository _questionRepository;
+
         public ExamAttemptService (
             IExamAttemptRepository examAttemptRepository,
-            IExamRepository examRepository) 
+            IExamRepository examRepository,
+            IQuestionRepository questionRepository
+            ) 
             {
             _examAttemptRepository = examAttemptRepository;
             _examRepository = examRepository;
+            _questionRepository = questionRepository;
            }
 
         public async Task<ExamAttemptDto> GetByIdAsync(int examAttemptId) {
@@ -58,6 +63,7 @@ namespace TestAPI.Services.Implementation
                 UserId = userId,
                 ExamId = examId,  
                 StartedAt = DateTime.UtcNow,
+                ExamTitle = exam.Title,
                 Score = 0,
                 UserExamResponses = new List<UserExamResponse>(),
                 Status = ExamStatus.InProgress
@@ -70,12 +76,20 @@ namespace TestAPI.Services.Implementation
          public async Task FinishAttemptAsync(int examAttemptId) {
             var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
             examAttempt.Status = ExamStatus.Completed;
+            examAttempt.SubmittedAt = DateTime.UtcNow;
             await CalculateScore(examAttempt);
+            
+            
 
          }
 
         public async Task<int> SaveResponse (int examAttemptId, int questionId, int selectedOptionId) {
             var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
+
+            if(examAttempt == null)
+            {
+                throw new Exception($"ExamAttempt {examAttemptId} not found");
+            }
 
 
             var newResponse = new UserExamResponse {
@@ -87,26 +101,53 @@ namespace TestAPI.Services.Implementation
                 examAttempt.UserExamResponses = new List<UserExamResponse>();
             }
             examAttempt.UserExamResponses.Add(newResponse);
-            await _examAttemptRepository.Update(examAttempt);
+            await _examAttemptRepository.UpdateAsync(examAttempt);
             return examAttempt.Id;
 
         }
 
         public async Task CalculateScore(ExamAttempt examAttempt) 
         {
-            var score = 0;
-            var answerOptions = await _examAttemptRepository.GetAnswerOptionsByExamId(examAttempt.ExamId);
-            foreach( var response in examAttempt.UserExamResponses!) {
-                var currentOption = answerOptions.FirstOrDefault(o => o.Id == response.SelectedOptionId);
-                if(currentOption.IsCorrect){
-                    score += 10;
-                }
-            }
-            examAttempt.Score += score;
 
-            await _examAttemptRepository.Update(examAttempt);
+            int correctCount = 0;
+            var userExamResponses = examAttempt.UserExamResponses;
+
+            var questions = await _examRepository.GetQuestionsByExamIdAsync(examAttempt.ExamId);
+
+            foreach (var question in questions) {
+                var userAnswer = userExamResponses.FirstOrDefault(u => u.QuestionId == question.Id);
+
+                if(userAnswer == null) {
+                    continue;
+                }
+
+                var isCorrect = question.AnswerOptions.Any(o => o.Id == userAnswer.SelectedOptionId && o.IsCorrect);
+
+                if(isCorrect) {
+                    correctCount ++;
+                }
+
+            }
+
+            examAttempt.CorrectCount = correctCount;
+            examAttempt.Score = (int)Math.Round((double)correctCount /questions.Count() * 100);
+
+            await _examAttemptRepository.UpdateAsync(examAttempt);
+                
+            }
+
+
             
+
+        public async Task DeleteAsync(int id) {
+            await _examAttemptRepository.DeleteAsync(id);
         }
+             
+            
+        
+
+            
+        
 
         public async Task<IEnumerable<UserExamResponseDto>> GetResponsesAsync(int examAttemptId){
             var userExamResponses =  await _examAttemptRepository.GetResponsesAsync(examAttemptId);

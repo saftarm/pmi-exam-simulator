@@ -21,48 +21,58 @@ namespace TestAPI.Services.Implementation
 
         }
 
+
+
+        private static IEnumerable<ExamSummaryDto> MapToExamSummaryDtos(IEnumerable<Exam> exams)
+        {
+            return exams.Select(e =>
+            new ExamSummaryDto
+            {
+                Id = e.Id,
+                Title = e.Title,
+                DurationInMinutes = e.DurationInMinutes,
+                NumberOfQuestions = e.NumberOfQuestions
+            });
+            
+
+        }
+
+        private static IEnumerable<CategoryDto> MapToCategoryDtos(IEnumerable<Category> categories)
+        {
+            return categories.Select(c =>
+                new CategoryDto
+                {
+                    Id = c.Id,
+                    Title = c.Title,
+                    Description = c.Description,
+                    NumberOfExams = c.NumberOfExams
+                });
+        }
+
         private static CategoryDto MapToCategoryDto(Category category)
         {
+
+
             return new CategoryDto
             {
                 Id = category.Id,
-                Title = category.Title,
-                ExamSummaryDtos = category.Exams.Select(
-                    e => new ExamSummaryDto
-                    {
-                        Id = e.Id,
-                        Title = e.Title,
-                        DurationInMinutes = e.DurationInMinutes,
-                        NumberOfQuestions = e.NumberOfQuestions
-                    }
-                )
+                Title = category.Title
+                
+                
             };
         }
 
-        //private static CreateCategoryDto MapToCategoryDto(Category category)
-        //{
-        //    if (category.Exams == null)
-        //    {
-        //        throw new Exception("Exams not found");
-        //    }
-
-        //    return new CreateCategoryDto
-        //    {
-        //        Id = category.Id,
-        //        Title = category.Title,
-        //        ExamSummaryDtos = category.Exams.Select(
-        //            e => new ExamSummaryDto
-        //            {
-        //                Id = e.Id,
-        //                Title = e.Title,
-        //                DurationInMinutes = e.DurationInMinutes,
-        //                NumberOfQuestions = e.NumberOfQuestions
-        //            }
-        //        )
-        //    };
-        //}
 
 
+
+
+        public async Task<IEnumerable<ExamSummaryDto>> GetExamSummariesByCategoryId(int categoryId)
+        {
+            var exams = await  _categoryRepository.GetExamsByCategoryId(categoryId);
+
+            return MapToExamSummaryDtos(exams);
+
+        }
 
         public async Task<CategoryDto> GetByIdAsync(int categoryId)
         {
@@ -78,36 +88,54 @@ namespace TestAPI.Services.Implementation
 
         }
 
-        public async Task<string> GetTitleByExamId(int examId)
+        public async Task<IEnumerable<CategoryDto>> GetAllAsync()
         {
-            var categoryTitle = await _categoryRepository.GetTitleByExamId(examId);
-            return categoryTitle;
+            var categories = await _categoryRepository.GetAllAsync();
+       
+            return MapToCategoryDtos(categories);
         }
 
+   
         public async Task CreateCategory(CreateCategoryDto createCategoryDto)
         {
             var newCategory = new Category
             {
-                Title = createCategoryDto.Title
-
+                Title = createCategoryDto.Title,
+                Description = createCategoryDto.Description
 
             };
             await _categoryRepository.AddAsync(newCategory);
 
         }
 
-        public async Task AddExamToCategory([FromBody] AddExamsToCategoryDto addExamsToCategoryDto)
+        public async Task DeleteAsync(int id)
         {
+            await _categoryRepository.DeleteAsync(id);
+        }
+
+        public async Task AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto)
+        {
+
 
             var category = await _categoryRepository.GetByIdAsync(addExamsToCategoryDto.CategoryId);
 
-            var exams = await _examRepository.GetAllAsync();
+            var exams = await _examRepository.GetAllById(addExamsToCategoryDto.ExamIds);
 
+            if(category.Exams == null) {
+                throw new Exception("Category has no Exams Collection");
+                
+            }
 
-            category.Exams.AddRange(exams.Where(e => addExamsToCategoryDto.ExamIds.Contains(e.Id)));
+            if(exams == null) {
+                throw new Exception("Exams not found");
+            }
+
+            category.Exams.AddRange(exams);
             await _categoryRepository.Update(category.Id, category);
 
         }
+
+
 
 
 

@@ -13,24 +13,17 @@ namespace TestAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Exams",
+                name: "Categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: true),
-                    NumberOfQuestions = table.Column<int>(type: "integer", nullable: false),
-                    DurationInMinutes = table.Column<int>(type: "integer", nullable: false),
-                    ExamId = table.Column<int>(type: "integer", nullable: true)
+                    NumberOfExams = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Exams", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Exams_Exams_ExamId",
-                        column: x => x.ExamId,
-                        principalTable: "Exams",
-                        principalColumn: "Id");
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,8 +46,7 @@ namespace TestAPI.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Text = table.Column<string>(type: "text", nullable: true),
-                    QuestionType = table.Column<int>(type: "integer", nullable: false)
+                    Text = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -79,12 +71,35 @@ namespace TestAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Exams",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    NumberOfQuestions = table.Column<int>(type: "integer", nullable: false),
+                    DurationInMinutes = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Exams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exams_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AnswerOptions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     QuestionId = table.Column<int>(type: "integer", nullable: false),
+                    ExamId = table.Column<int>(type: "integer", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: true),
                     IsCorrect = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -92,55 +107,44 @@ namespace TestAPI.Migrations
                 {
                     table.PrimaryKey("PK_AnswerOptions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AnswerOptions_Questions_QuestionId",
+                        name: "FK_AnswerOptions_Exams_ExamId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExamsQuestions",
-                columns: table => new
-                {
-                    ExamsId = table.Column<int>(type: "integer", nullable: false),
-                    QuestionsId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExamsQuestions", x => new { x.ExamsId, x.QuestionsId });
                     table.ForeignKey(
-                        name: "FK_ExamsQuestions_Exams_ExamsId",
-                        column: x => x.ExamsId,
+                        name: "FK_AnswerOptions_Exams_ExamId1",
+                        column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ExamsQuestions_Questions_QuestionsId",
-                        column: x => x.QuestionsId,
-                        principalTable: "Questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExamAttempt",
+                name: "ExamAttempts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     ExamId = table.Column<int>(type: "integer", nullable: false),
+                    ExamTitle = table.Column<string>(type: "text", nullable: true),
+                    Score = table.Column<int>(type: "integer", nullable: false),
                     StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: true),
                     SubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Score = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExamAttempt", x => x.Id);
+                    table.PrimaryKey("PK_ExamAttempts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExamAttempt_Users_UserId",
+                        name: "FK_ExamAttempts_Exams_ExamId",
+                        column: x => x.ExamId,
+                        principalTable: "Exams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExamAttempts_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -148,25 +152,55 @@ namespace TestAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserExamResponse",
+                name: "ExamQuestion",
+                columns: table => new
+                {
+                    ExamsId = table.Column<int>(type: "integer", nullable: false),
+                    QuestionsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExamQuestion", x => new { x.ExamsId, x.QuestionsId });
+                    table.ForeignKey(
+                        name: "FK_ExamQuestion_Exams_ExamsId",
+                        column: x => x.ExamsId,
+                        principalTable: "Exams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExamQuestion_Questions_QuestionsId",
+                        column: x => x.QuestionsId,
+                        principalTable: "Questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserExamResponses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ExamId = table.Column<int>(type: "integer", nullable: false),
+                    IsCorrect = table.Column<bool>(type: "boolean", nullable: false),
                     QuestionId = table.Column<int>(type: "integer", nullable: false),
                     SelectedOptionId = table.Column<int>(type: "integer", nullable: false),
-                    ExamAttemptId = table.Column<int>(type: "integer", nullable: true)
+                    ExamAttemptId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserExamResponse", x => x.Id);
+                    table.PrimaryKey("PK_UserExamResponses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserExamResponse_ExamAttempt_ExamAttemptId",
+                        name: "FK_UserExamResponses_ExamAttempts_ExamAttemptId",
                         column: x => x.ExamAttemptId,
-                        principalTable: "ExamAttempt",
-                        principalColumn: "Id");
+                        principalTable: "ExamAttempts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AnswerOptions_ExamId",
+                table: "AnswerOptions",
+                column: "ExamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnswerOptions_QuestionId",
@@ -174,23 +208,28 @@ namespace TestAPI.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExamAttempt_UserId",
-                table: "ExamAttempt",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Exams_ExamId",
-                table: "Exams",
+                name: "IX_ExamAttempts_ExamId",
+                table: "ExamAttempts",
                 column: "ExamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExamsQuestions_QuestionsId",
-                table: "ExamsQuestions",
+                name: "IX_ExamAttempts_UserId",
+                table: "ExamAttempts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExamQuestion_QuestionsId",
+                table: "ExamQuestion",
                 column: "QuestionsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserExamResponse_ExamAttemptId",
-                table: "UserExamResponse",
+                name: "IX_Exams_CategoryId",
+                table: "Exams",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserExamResponses_ExamAttemptId",
+                table: "UserExamResponses",
                 column: "ExamAttemptId");
         }
 
@@ -201,25 +240,28 @@ namespace TestAPI.Migrations
                 name: "AnswerOptions");
 
             migrationBuilder.DropTable(
-                name: "ExamsQuestions");
+                name: "ExamQuestion");
 
             migrationBuilder.DropTable(
                 name: "QuestionCategories");
 
             migrationBuilder.DropTable(
-                name: "UserExamResponse");
-
-            migrationBuilder.DropTable(
-                name: "Exams");
+                name: "UserExamResponses");
 
             migrationBuilder.DropTable(
                 name: "Questions");
 
             migrationBuilder.DropTable(
-                name: "ExamAttempt");
+                name: "ExamAttempts");
+
+            migrationBuilder.DropTable(
+                name: "Exams");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

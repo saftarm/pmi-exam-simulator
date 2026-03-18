@@ -1,9 +1,3 @@
-
-
-
-
-
-
 using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
 using TestAPI.DTO;
@@ -26,17 +20,18 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task<Category>? GetByIdAsync(int categoryId)
         {
-
             var category = await _context.Categories.FindAsync(categoryId);
-
-
             if (category == null)
             {
                 throw new Exception("Category Not Found");
             }
-
-
             return category;
+
+        }
+
+        public async Task<IEnumerable<Category>> GetAllAsync()
+        {
+            return await _context.Categories.ToListAsync();
 
         }
 
@@ -68,7 +63,8 @@ namespace TestAPI.Persistence.Implementation
         public async Task DeleteAsync(int categoryId)
         {
 
-            await _context.Categories.Where(c => c.Id == categoryId).ExecuteDeleteAsync();
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+            _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
         }
 
@@ -78,39 +74,25 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ExamSummaryDto>> GetExamSummariesByCategoryId(int categoryId)
+        public async Task<IEnumerable<Exam>> GetExamsByCategoryId(int categoryId)
         {
-            var category = await _context.Categories
-            .Include(c => c.Exams)
-            .FirstOrDefaultAsync(c => c.Id == categoryId);
 
-            if (category == null)
+            var exams = await _context.Exams.Where(e => e.CategoryId == categoryId).ToListAsync();
+
+            if (exams == null)
             {
-                throw new Exception("Category Not Found");
+                throw new Exception("Category has no exams");
             }
 
-            if (category.Exams == null)
-            {
-                throw new Exception("Exams Not Found");
-            }
-
-            var examSummaryDtos = category.Exams.Select(
-                e => new ExamSummaryDto
-                {
-                    Id = e.Id,
-                    CategoryId = e.CategoryId,
-                    Title = e.Title,
-                    DurationInMinutes = e.DurationInMinutes,
-                    NumberOfQuestions = e.NumberOfQuestions
-                }
-            );
-
-            return examSummaryDtos;
+            return exams;
 
 
         }
 
+
+
         //public async Task<IEnumerable<ExamDto>> GetExams { get; set; }
+
 
 
 

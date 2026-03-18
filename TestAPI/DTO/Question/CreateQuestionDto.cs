@@ -5,7 +5,14 @@ namespace TestAPI.DTO
 {
     public class CreateQuestionDto
     {
-        public string? Text { get; set; }
+
+
+        public string? Title { get; set; }
+
+        public string? Explanation {get;set;}
+
+        public int DomainId {get;set;}
+        
         public ICollection<CreateAnswerOptionDto>? AnswerOptionsDtos { get; set; }
 
     }

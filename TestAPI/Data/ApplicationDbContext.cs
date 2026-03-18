@@ -14,8 +14,6 @@ namespace TestAPI.Data
 
         public DbSet<Question> Questions { get; set; }
 
-        public DbSet<QuestionCategory> QuestionCategories { get; set; }
-
         public DbSet<AnswerOption> AnswerOptions { get; set; }
 
         public DbSet<User> Users { get; set; }
@@ -26,16 +24,11 @@ namespace TestAPI.Data
 
         public DbSet<UserExamResponse> UserExamResponses { get; set; }
 
-        public DbSet<ExamQuestion> ExamsQuestions { get; set; }
-
         public DbSet<Category> Categories { get; set; }
 
-        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // {
-        //     base.OnConfiguring(optionsBuilder);
+        public DbSet<Domain> Domains { get; set; }
 
-        //     Database.EnsureCreated();
-        // }
+    
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,6 +73,32 @@ namespace TestAPI.Data
             .WithMany(c => c.Exams)
             .HasForeignKey(e => e.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
+
+            
+
+
+            modelBuilder.Entity<Exam>()
+                .HasMany(e => e.Questions)
+                .WithMany(q => q.Exams)
+                .UsingEntity(j => j.ToTable("ExamQuestion"));
+
+            modelBuilder.Entity<Domain>()
+                .HasOne(d => d.Exam)
+                .WithMany(e => e.Domains)
+                .HasForeignKey(d => d.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<Question>()
+            .HasOne(q => q.Domain)
+            .WithMany(d => d.Questions)
+            .HasForeignKey(q => q.DomainId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+
+
+
 
 
 

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6WQqpXPjEzY=",
+  "dgSpecHash": "KeTgAqZUK1I=",
   "success": true,
-  "projectFilePath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestApi\\TestAPI.csproj",
+  "projectFilePath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\TestAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\MSN\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\MSN\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

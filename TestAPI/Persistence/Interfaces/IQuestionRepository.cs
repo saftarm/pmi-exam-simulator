@@ -7,6 +7,8 @@ namespace TestAPI.Persistence.Interfaces
         
         public Task<int> AddAsync(Question newQuestion);
 
+        public Task AddRangeAsync(ICollection<Question> questions);
+
         public Task<UpdateQuestionDto> UpdateAsync(int questionId, UpdateQuestionDto questionDto);
 
         public Task DeleteAsync(int questionId);
@@ -14,8 +16,13 @@ namespace TestAPI.Persistence.Interfaces
         public Task<IEnumerable<Question>> GetAllAsync();
 
         public Task<Question> GetByIdAsync(int questionId);
+
+        public Task<ICollection<Question>> GetByIdsAsync(ICollection<int> questionIds);
         
-        // public Task<List<Exam>?> GetExamsByQuestionIdAsync (int questionId);
+        public Task<IEnumerable<AnswerOption>> GetAnswerOptionsByQuestionID (int questionId);
+
+        public Task DeleteRangeAsync(IEnumerable<int> questionIds);
+
 
 
 

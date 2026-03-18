@@ -6,8 +6,6 @@ namespace TestAPI.DTO
     public class ExamAttemptDto
     {
 
-
-
         public int Score {get;set;}
 
         public int CorrectAnswersCount {get;set;}

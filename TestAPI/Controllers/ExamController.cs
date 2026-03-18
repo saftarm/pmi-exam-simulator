@@ -18,11 +18,22 @@ namespace TestAPI.Controllers
     {
         private readonly IExamService _examService;
 
-    
-
-        public ExamController(IExamService examService)
+        private readonly ApplicationDbContext _context;
+        public ExamController(IExamService examService, ApplicationDbContext context)
         {
             _examService = examService;
+            _context = context;
+        }
+
+
+
+
+        
+        
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateExamDto createExamDto) {
+            await _examService.CreateExam(createExamDto);
+            return Ok();
         }
 
         // GET: api/Exam/Summary
@@ -40,6 +51,7 @@ namespace TestAPI.Controllers
 
         public async Task<ActionResult<ExamDetailsDto>> GetDetailsByIdAsync(int id)
         {
+
             var examDetails = await _examService.GetDetailsByIdAsync(id);
 
             if(examDetails == null)
@@ -68,9 +80,14 @@ namespace TestAPI.Controllers
 
         [HttpDelete("{examId}")]
 
-        public async Task<ActionResult> Delete(int examId){
+        public async Task<IActionResult> Delete(int examId){
             await _examService.DeleteAsync(examId);
 
+            return NoContent();
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRange(DeleteExamsRequest request) {
+            await _examService.DeleteRangeAsync(request.ExamIds);
             return NoContent();
         }
 
@@ -78,13 +95,13 @@ namespace TestAPI.Controllers
         [HttpPost("CompileExam")]
         public async Task<ActionResult<Exam>> CompileExam(CompileExamDto compileExamDto)
         {
-            await _examService.CompileExam(compileExamDto);
-            return Ok();
+           await _examService.CompileExam(compileExamDto);
+           return Ok();
 
-        }
+    }
 
 
-        
+
     }
 }
 

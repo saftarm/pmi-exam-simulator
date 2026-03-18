@@ -1,4 +1,5 @@
 ﻿
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -56,6 +57,12 @@ namespace TestAPI.Controllers
             return CreatedAtAction(nameof(GetQuestionById), new { id = newQuestionid}, createQuestionDto);
         }
 
+        [HttpPost("/CreateRange")]
+        public async Task<IActionResult> CreateRange(CreateQuestionsDto createQuestionsDto) {
+            await _questionService.CreateRangeAsync(createQuestionsDto);
+            return Ok();
+        }
+
 
         // /api/Question/{id}  Update an existing question
 
@@ -79,6 +86,13 @@ namespace TestAPI.Controllers
             _context.Questions.Remove(question);
             _context.SaveChanges();
             return NoContent();
+        }
+
+        [HttpDelete]
+
+        public async Task<IActionResult> DeleteRange(DeleteQuestionsRequest request) {
+            await _questionService.DeleteRangeAsync(request.QuestionIds);
+            return Ok();
         }
 
 
