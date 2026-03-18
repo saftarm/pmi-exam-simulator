@@ -14,7 +14,7 @@ function Landing({ onStart, onLogin }) {
       <nav className="landing-nav">
         <div className="nav-logo">
           <div className="nav-logo-dot" />
-          📋 Capm Simulator
+          📋 Exam Simulator 
         </div>
         <span className="header-badge">Free Practice</span>
       </nav>
@@ -37,7 +37,11 @@ function Landing({ onStart, onLogin }) {
 
           <button className="btn-primary" onClick={() => navigate('/exams')}>
             View Certifications →
-          </button>
+                  </button>
+
+                  <button className="btn-primary" onClick={() => navigate('/exam')}>
+                       Exam Sample
+                  </button>
 
           <button className="btn-secondary" onClick={() => navigate('/login')}>
           Log In
@@ -73,10 +77,10 @@ function Landing({ onStart, onLogin }) {
           {[
             { icon: '🎯', title: 'Realistic Questions',  desc: 'Questions written to mirror the actual CAPM exam format, difficulty, and domain coverage.' },
             { icon: '📊', title: 'Instant Score Report', desc: 'See your score, correct vs incorrect answers, and every choice you made — right after finishing.' },
-            { icon: '⚡', title: 'No Account Needed',    desc: 'Jump straight into practice. No sign-up, no paywalls, no distractions.' },
+            // { icon: '⚡', title: 'No Account Needed',    desc: 'Jump straight into practice. No sign-up, no paywalls, no distractions.' },
             { icon: '🔁', title: 'Unlimited Retakes',    desc: 'Restart the exam as many times as you want to build confidence and reinforce weak areas.' },
             { icon: '🌙', title: 'Dark Mode First',      desc: 'Designed for long study sessions — easy on the eyes whether it\'s 9am or 2am.' },
-            { icon: '📱', title: 'Works Everywhere',     desc: 'Fully responsive — study on your laptop, tablet, or phone without losing functionality.' },
+            // { icon: '📱', title: 'Works Everywhere',     desc: 'Fully responsive — study on your laptop, tablet, or phone without losing functionality.' },
           ].map((f) => (
             <div className="feature-card" key={f.title}>
               <div className="feature-icon">{f.icon}</div>
@@ -88,7 +92,7 @@ function Landing({ onStart, onLogin }) {
       </section>
 
       {/* EXAM PREVIEW */}
-      <section className="landing-section">
+      {/* <section className="landing-section">
         <span className="section-label">Preview</span>
         <h2 className="section-title" style={{ marginBottom: '32px' }}>
           What the exam looks like
@@ -140,7 +144,7 @@ function Landing({ onStart, onLogin }) {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA */}
       <section className="landing-cta">
@@ -158,7 +162,7 @@ function Landing({ onStart, onLogin }) {
 
       {/* FOOTER */}
       <footer className="landing-footer">
-        <span className="footer-logo">📋 CAPM Simulator</span>
+        <span className="footer-logo">📋 Exam Simulator</span>
         <span className="footer-note">Practice tool — not affiliated with PMI®</span>
       </footer>
 

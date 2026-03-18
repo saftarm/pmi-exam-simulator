@@ -3,92 +3,92 @@
   "WorkspaceRootPath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\ExamList.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\IExamAttemptRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Persistence\\Interfaces\\IExamAttemptRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\App.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\App.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\ICategoryRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Persistence\\Interfaces\\ICategoryRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\ExamDetails.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\IExamRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Persistence\\Interfaces\\IExamRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\AnswerOption\\AnswerOptionDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\DTO\\AnswerOption\\AnswerOptionDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\GenericRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Persistence\\Implementation\\GenericRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Controllers\\ExamController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\JWTService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Implementation\\JWTService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\ExamRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Persistence\\Implementation\\ExamRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\ExamService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Implementation\\ExamService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\ExamDetails.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Exam.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\Exam.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\QuestionController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Controllers\\QuestionController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\QuestionService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Implementation\\QuestionService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Question.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Entities\\Question.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\ExamList.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Landing.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\Landing.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\IExamService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Interfaces\\IExamService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\Exam\\ExamSummaryDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\DTO\\Exam\\ExamSummaryDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Landing.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\Landing.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\ICategoryService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Interfaces\\ICategoryService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Exam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Entities\\Exam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Domain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Entities\\Domain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\ExamAttempt\\IncomingResponsesRequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\DTO\\ExamAttempt\\IncomingResponsesRequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Data\\ApplicationDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Data\\ApplicationDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\CategoryService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Implementation\\CategoryService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\IAuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Interfaces\\IAuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Exam.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\Exam.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Controllers\\ExamController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\CategoryController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Controllers\\CategoryController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\CategoryRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Persistence\\Implementation\\CategoryRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\AnswerOption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Entities\\AnswerOption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\ExamAttemptRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Persistence\\Implementation\\ExamAttemptRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\ExamAttemptService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Services\\Implementation\\ExamAttemptService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\ExamDetails.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamAttemptController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:TestAPI\\Controllers\\ExamAttemptController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\App.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\App.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:reactclient\\src\\ExamList.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     }
   ],
   "DocumentGroupContainers": [
@@ -98,283 +98,222 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ExamRepository.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\ExamRepository.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Persistence\\Implementation\\ExamRepository.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\ExamRepository.cs",
-              "RelativeToolTip": "TestAPI\\Persistence\\Implementation\\ExamRepository.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "DocumentIndex": 13,
+              "Title": "CategoryController.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\CategoryController.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Controllers\\CategoryController.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\CategoryController.cs",
+              "RelativeToolTip": "TestAPI\\Controllers\\CategoryController.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAC8AAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T19:45:50.603Z",
+              "WhenOpened": "2026-03-16T19:33:30.331Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ExamController.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamController.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Controllers\\ExamController.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamController.cs",
+              "RelativeToolTip": "TestAPI\\Controllers\\ExamController.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAAAFgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:32:35.899Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CategoryService.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\CategoryService.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Services\\Implementation\\CategoryService.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\CategoryService.cs",
+              "RelativeToolTip": "TestAPI\\Services\\Implementation\\CategoryService.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAIwGsAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:36:35.006Z",
               "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ExamDetails.jsx",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.jsx",
-              "RelativeDocumentMoniker": "reactclient\\src\\ExamDetails.jsx",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.jsx",
-              "RelativeToolTip": "reactclient\\src\\ExamDetails.jsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2026-03-13T21:11:21.805Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ExamList.jsx",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.jsx",
-              "RelativeDocumentMoniker": "reactclient\\src\\ExamList.jsx",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.jsx",
-              "RelativeToolTip": "reactclient\\src\\ExamList.jsx",
-              "ViewState": "AgIAAJUAAAAAAAAAAAAowJ0AAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2026-03-13T20:21:55.238Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ExamController.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamController.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Controllers\\ExamController.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamController.cs",
-              "RelativeToolTip": "TestAPI\\Controllers\\ExamController.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAmwCgAAAA1AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T20:23:33.826Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AnswerOptionDto.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\AnswerOption\\AnswerOptionDto.cs",
-              "RelativeDocumentMoniker": "TestAPI\\DTO\\AnswerOption\\AnswerOptionDto.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\AnswerOption\\AnswerOptionDto.cs",
-              "RelativeToolTip": "TestAPI\\DTO\\AnswerOption\\AnswerOptionDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T21:49:10.607Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "CategoryService.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\CategoryService.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Services\\Implementation\\CategoryService.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\CategoryService.cs",
-              "RelativeToolTip": "TestAPI\\Services\\Implementation\\CategoryService.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAEwGUAAABgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T15:37:56.539Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "QuestionService.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\QuestionService.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Services\\Implementation\\QuestionService.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\QuestionService.cs",
-              "RelativeToolTip": "TestAPI\\Services\\Implementation\\QuestionService.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T21:24:24.412Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "QuestionController.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\QuestionController.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Controllers\\QuestionController.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\QuestionController.cs",
-              "RelativeToolTip": "TestAPI\\Controllers\\QuestionController.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAACIAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T21:22:30.785Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "ExamDetails.css",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.css",
-              "RelativeDocumentMoniker": "reactclient\\src\\ExamDetails.css",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.css",
-              "RelativeToolTip": "reactclient\\src\\ExamDetails.css",
-              "ViewState": "AgIAACMBAAAAAAAAAAAAAEoBAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-03-13T21:12:34.32Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Question.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Question.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Entities\\Question.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Question.cs",
-              "RelativeToolTip": "TestAPI\\Entities\\Question.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T21:20:43.411Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "IExamService.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\IExamService.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Services\\Interfaces\\IExamService.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\IExamService.cs",
-              "RelativeToolTip": "TestAPI\\Services\\Interfaces\\IExamService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAWwAoAAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T21:03:07.61Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ExamService.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\ExamService.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Services\\Implementation\\ExamService.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\ExamService.cs",
-              "RelativeToolTip": "TestAPI\\Services\\Implementation\\ExamService.cs",
-              "ViewState": "AgIAACcAAAAAAAAAAAAAADQAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T20:33:15.808Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "ExamSummaryDto.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\Exam\\ExamSummaryDto.cs",
-              "RelativeDocumentMoniker": "TestAPI\\DTO\\Exam\\ExamSummaryDto.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\Exam\\ExamSummaryDto.cs",
-              "RelativeToolTip": "TestAPI\\DTO\\Exam\\ExamSummaryDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T21:01:54.096Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "Exam.cs",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Exam.cs",
-              "RelativeDocumentMoniker": "TestAPI\\Entities\\Exam.cs",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Exam.cs",
-              "RelativeToolTip": "TestAPI\\Entities\\Exam.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAYwB4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T21:00:13.249Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Landing.css",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Landing.css",
-              "RelativeDocumentMoniker": "reactclient\\src\\Landing.css",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Landing.css",
-              "RelativeToolTip": "reactclient\\src\\Landing.css",
-              "ViewState": "AgIAAMkBAAAAAAAAAAAcwN4BAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-03-13T20:48:35.33Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Landing.jsx",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Landing.jsx",
-              "RelativeDocumentMoniker": "reactclient\\src\\Landing.jsx",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Landing.jsx",
-              "RelativeToolTip": "reactclient\\src\\Landing.jsx",
-              "ViewState": "AgIAACAAAAAAAAAAAAAQwCoAAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2026-03-13T20:48:24.95Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Exam.jsx",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Exam.jsx",
-              "RelativeDocumentMoniker": "reactclient\\src\\Exam.jsx",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Exam.jsx",
-              "RelativeToolTip": "reactclient\\src\\Exam.jsx",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAATAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2026-03-13T20:48:23.432Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "index.css",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\index.css",
-              "RelativeDocumentMoniker": "reactclient\\src\\index.css",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\index.css",
-              "RelativeToolTip": "reactclient\\src\\index.css",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAcwD4AAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-03-13T20:46:59.018Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "ExamList.css",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.css",
-              "RelativeDocumentMoniker": "reactclient\\src\\ExamList.css",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.css",
-              "RelativeToolTip": "reactclient\\src\\ExamList.css",
-              "ViewState": "AgIAANQAAAAAAAAAAAAAAN0AAAAUAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-03-13T20:44:12.289Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "Exam.css",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Exam.css",
-              "RelativeDocumentMoniker": "reactclient\\src\\Exam.css",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\Exam.css",
-              "RelativeToolTip": "reactclient\\src\\Exam.css",
+              "Title": "IExamRepository.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\IExamRepository.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Persistence\\Interfaces\\IExamRepository.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\IExamRepository.cs",
+              "RelativeToolTip": "TestAPI\\Persistence\\Interfaces\\IExamRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-03-13T20:44:08.098Z",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T21:02:01.135Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "App.jsx",
-              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\App.jsx",
-              "RelativeDocumentMoniker": "reactclient\\src\\App.jsx",
-              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\App.jsx",
-              "RelativeToolTip": "reactclient\\src\\App.jsx",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAqwA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2026-03-13T20:44:06.832Z",
+              "Title": "ICategoryRepository.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\ICategoryRepository.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Persistence\\Interfaces\\ICategoryRepository.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\ICategoryRepository.cs",
+              "RelativeToolTip": "TestAPI\\Persistence\\Interfaces\\ICategoryRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T21:00:22.067Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GenericRepository.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\GenericRepository.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Persistence\\Implementation\\GenericRepository.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\GenericRepository.cs",
+              "RelativeToolTip": "TestAPI\\Persistence\\Implementation\\GenericRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T20:59:37.434Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "IExamAttemptRepository.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\IExamAttemptRepository.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Persistence\\Interfaces\\IExamAttemptRepository.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Interfaces\\IExamAttemptRepository.cs",
+              "RelativeToolTip": "TestAPI\\Persistence\\Interfaces\\IExamAttemptRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:19:33.706Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "JWTService.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\JWTService.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Services\\Implementation\\JWTService.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\JWTService.cs",
+              "RelativeToolTip": "TestAPI\\Services\\Implementation\\JWTService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T20:59:35.988Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Exam.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Exam.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Entities\\Exam.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Exam.cs",
+              "RelativeToolTip": "TestAPI\\Entities\\Exam.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T20:50:13.055Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\IAuthService.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Services\\Interfaces\\IAuthService.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\IAuthService.cs",
+              "RelativeToolTip": "TestAPI\\Services\\Interfaces\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:44:13.47Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IncomingResponsesRequest.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\ExamAttempt\\IncomingResponsesRequest.cs",
+              "RelativeDocumentMoniker": "TestAPI\\DTO\\ExamAttempt\\IncomingResponsesRequest.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\DTO\\ExamAttempt\\IncomingResponsesRequest.cs",
+              "RelativeToolTip": "TestAPI\\DTO\\ExamAttempt\\IncomingResponsesRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T20:56:47.919Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Domain.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Domain.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Entities\\Domain.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\Domain.cs",
+              "RelativeToolTip": "TestAPI\\Entities\\Domain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:43:38.925Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "CategoryRepository.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\CategoryRepository.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Persistence\\Implementation\\CategoryRepository.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\CategoryRepository.cs",
+              "RelativeToolTip": "TestAPI\\Persistence\\Implementation\\CategoryRepository.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAAD4AAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:37:28.032Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ICategoryService.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\ICategoryService.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Services\\Interfaces\\ICategoryService.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Interfaces\\ICategoryService.cs",
+              "RelativeToolTip": "TestAPI\\Services\\Interfaces\\ICategoryService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:36:13.61Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "TestAPI\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T20:53:52.353Z",
               "EditorCaption": ""
             },
             {
@@ -383,15 +322,93 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 15,
+              "Title": "AnswerOption.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\AnswerOption.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Entities\\AnswerOption.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Entities\\AnswerOption.cs",
+              "RelativeToolTip": "TestAPI\\Entities\\AnswerOption.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:31:32.591Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ExamAttemptRepository.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\ExamAttemptRepository.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Persistence\\Implementation\\ExamAttemptRepository.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Persistence\\Implementation\\ExamAttemptRepository.cs",
+              "RelativeToolTip": "TestAPI\\Persistence\\Implementation\\ExamAttemptRepository.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAD4AAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:16:53.073Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "ExamAttemptService.cs",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\ExamAttemptService.cs",
+              "RelativeDocumentMoniker": "TestAPI\\Services\\Implementation\\ExamAttemptService.cs",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Services\\Implementation\\ExamAttemptService.cs",
+              "RelativeToolTip": "TestAPI\\Services\\Implementation\\ExamAttemptService.cs",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAAAF8AAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T19:14:14.179Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
               "Title": "ExamAttemptController.cs",
               "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamAttemptController.cs",
               "RelativeDocumentMoniker": "TestAPI\\Controllers\\ExamAttemptController.cs",
               "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\Controllers\\ExamAttemptController.cs",
               "RelativeToolTip": "TestAPI\\Controllers\\ExamAttemptController.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAC4AAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T20:24:25.613Z",
+              "WhenOpened": "2026-03-16T19:00:27.683Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "App.jsx",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\App.jsx",
+              "RelativeDocumentMoniker": "reactclient\\src\\App.jsx",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\App.jsx",
+              "RelativeToolTip": "reactclient\\src\\App.jsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-03-16T18:56:22.297Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ExamDetails.jsx",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.jsx",
+              "RelativeDocumentMoniker": "reactclient\\src\\ExamDetails.jsx",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamDetails.jsx",
+              "RelativeToolTip": "reactclient\\src\\ExamDetails.jsx",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAQwAgAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-03-13T21:11:21.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "ExamList.jsx",
+              "DocumentMoniker": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.jsx",
+              "RelativeDocumentMoniker": "reactclient\\src\\ExamList.jsx",
+              "ToolTip": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\reactclient\\src\\ExamList.jsx",
+              "RelativeToolTip": "reactclient\\src\\ExamList.jsx",
+              "ViewState": "AgIAACkAAAAAAAAAAAAQwDIAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2026-03-16T18:51:51.467Z",
               "EditorCaption": ""
             }
           ]
