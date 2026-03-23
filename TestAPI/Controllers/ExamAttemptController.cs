@@ -12,11 +12,9 @@ using System.Threading.Tasks;
 using Microsoft.Build.Experimental.BuildCheck;
 namespace TestAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class ExamAttemptController : ControllerBase
     {
-  
         private readonly IExamAttemptService _examAttemptService;
 
         public ExamAttemptController(IExamAttemptService examAttemptService)
@@ -24,19 +22,17 @@ namespace TestAPI.Controllers
             _examAttemptService = examAttemptService;
         }
 
-        // ----  Actions -----
-
-        [HttpPost("{examId:int}")]
-        public async Task<IActionResult> StartExam(int examId) {
+        [HttpPost("/api/attempts/{id}/start")]
+        public async Task<IActionResult> StartExam(int id) {
 
     
             var userId = 1;
-            var examAttemptId = await _examAttemptService.StartAttemptAsync(userId, examId);
+            var examAttemptId = await _examAttemptService.StartAttemptAsync(userId, id);
 
             return Ok(examAttemptId);
         }
 
-        [HttpPost("save/")]
+        [HttpPost("/api/attempts/save")]
 
         public async Task<IActionResult> SaveResponse(SaveResponseRequest response) {
             await _examAttemptService.SaveResponse(response.ExamAttemptId, response.QuestionId, response.SelectedOptionId);
@@ -44,16 +40,16 @@ namespace TestAPI.Controllers
         }
 
         
-        [HttpPost("finish/{examAttemptId}")]
+        [HttpPost("/api/attempts/{id}/finish")]
 
-        public async Task<IActionResult> FinishExam (int examAttemptId) {
-            await _examAttemptService.FinishAttemptAsync(examAttemptId);
+        public async Task<IActionResult> FinishExam (int id) {
+            await _examAttemptService.FinishAttemptAsync(id);
             return Ok();
         }
 
 
 
-        [HttpPost("responses/{examAttemptId}")]
+        [HttpPost("/api/attempts/{id}/responses")]
         public async Task<IActionResult> GetResponsesByAttemptId(int examAttemptId){
 
             var userExamResponses = await _examAttemptService.GetResponsesAsync(examAttemptId);
@@ -70,17 +66,16 @@ namespace TestAPI.Controllers
 
 
 
-        [HttpGet("user/{userId}")]
+        // [HttpGet("/api/attempts/{id}/user")]
 
-        public async Task<ActionResult<ExamAttemptDto>> GetAttemptByUserId(int userId){
+        // public async Task<ActionResult<ExamAttemptDto>> GetAttemptByUserId(int userId){
 
-            // var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        //     // var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             
-            var examAttempt = await _examAttemptService.GetByUserId(userId);
-            return Ok(examAttempt);
-        }
-
-        [HttpDelete("{id:int}")]
+        //     var examAttempt = await _examAttemptService.GetByUserId(userId);
+        //     return Ok(examAttempt);
+        // }
+        [HttpDelete("/api/attempts/{id}")]
 
         public async Task<IActionResult> Delete(int id) {
             await _examAttemptService.DeleteAsync(id);

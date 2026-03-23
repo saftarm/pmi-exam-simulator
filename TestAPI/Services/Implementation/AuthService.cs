@@ -34,13 +34,17 @@ namespace TestAPI.Services.Implementation
         }
 
 
-        public async Task<User> RegisterUser(RegisterUserRequest? registerUserRequest) {
+        public async Task<User> RegisterUser(RegisterUserRequest registerUserRequest) {
 
-            if( registerUserRequest.UserName == null || registerUserRequest.Password == null) {
+            if(registerUserRequest == null) {
+                throw new ArgumentNullException(nameof(registerUserRequest), "Invalid data input");
+            }
+
+            if( registerUserRequest.UserName == null || registerUserRequest.Password == null 
+            || registerUserRequest.FirstName == null || registerUserRequest.Email == null) {
 
                 throw new ArgumentException("Sign Up credentials");
             }
-            
 
             var newUser = new User {
 

@@ -7,7 +7,7 @@ namespace TestAPI.DTO
     {
         public string? Text { get; set; }
 
-        public ICollection<UpdateAnswerOptionDto>? AnswerOptionsDtos { get; set; }
+        public ICollection<UpdateAnswerOptionDto> AnswerOptionsDtos { get; set; } = new List<UpdateAnswerOptionDto>();
 
     }
 }

@@ -1,14 +1,14 @@
-//using FluentValidation;
-//using TestAPI.DTO;
+// using FluentValidation;
+// using TestAPI.DTO;
 
-//namespace TestAPI.Validation
-//{
+// namespace TestAPI.Validation
+// {
 
 //    public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
 //    {
 //        public RegisterUserRequestValidator()
 //        {
-//            RuleFor(userRequest => userRequest.DisplayName).
+//            RuleFor(userRequest => userRequest.DisplayName);
 //        }
 //    }
-//}
+// }

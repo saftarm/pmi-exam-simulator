@@ -16,9 +16,5 @@ namespace TestAPI.Services.Interfaces
 
         public Task DeleteAsync(int id);
 
-
-
-
-
     }
 }

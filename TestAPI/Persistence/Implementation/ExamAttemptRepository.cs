@@ -9,6 +9,7 @@ using TestAPI.Persistence.Interfaces;
 using TestAPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using TestAPI.Exceptions;
 
 
 namespace TestAPI.Persistence.Implementation
@@ -22,7 +23,7 @@ namespace TestAPI.Persistence.Implementation
         {
             _context = context;
         }
-
+ 
         public async Task<ExamAttempt> GetByIdAsync(int examAttemptId) {
             var examAttempt = await _context.ExamAttempts
             .Include(ea => ea.UserExamResponses)
@@ -63,26 +64,32 @@ namespace TestAPI.Persistence.Implementation
         }
          public async Task DeleteAsync(int examAttemptId) {
             var examAttempt = await _context.ExamAttempts.FindAsync(examAttemptId);
+            if(examAttempt == null) {
+                throw new RecordNotFoundException("Attempt not found");
+            }
             _context.ExamAttempts.Remove(examAttempt);
             await _context.SaveChangesAsync();
 
          }
 
-    
 
-        public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsAsync() {
-            return await _context.AnswerOptions.ToListAsync();
-        }
+        // public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsAsync() {
+        //     return await _context.AnswerOptions.ToListAsync();
+        // }
 
 
-        public async Task<AnswerOption> GetAnswerOptionAsync(int selectedOptionId) {
-            return await _context.AnswerOptions.FirstOrDefaultAsync(o => o.Id == selectedOptionId);
-        }
-
+        // public async Task<AnswerOption> GetAnswerOptionAsync(int selectedOptionId) {
+        //     return await _context.AnswerOptions.FirstOrDefaultAsync(o => o.Id == selectedOptionId);
+        // }
+ 
         public async Task<IEnumerable<UserExamResponse>> GetResponsesAsync(int examAttemptId) {
             var examAttempt = await _context.ExamAttempts
             .Include(r => r.UserExamResponses)
             .FirstOrDefaultAsync(a => a.Id == examAttemptId);
+
+            if(examAttempt == null) {
+                throw new RecordNotFoundException("Attemp Not Found");
+            }
 
             if(examAttempt.UserExamResponses == null) {
                 throw new Exception("Responses not found");

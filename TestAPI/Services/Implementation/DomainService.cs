@@ -37,30 +37,29 @@ namespace TestAPI.Services.Implementation
 
         private static IEnumerable<DomainDto> MapToDomainDtos(IEnumerable<Domain> domains)
         {
-            return domains.Select(d =>
+            return domains.Select(dto =>
                 new DomainDto
                 {
-                    Id = d.Id,
-                    Title = d.Title,
-                    Description = d.Description,
-                    Weight = d.Weight,
-                    ExamId = d.ExamId
+                    Id = dto.Id,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    Weight = dto.Weight,
+                    ExamId = dto.ExamId
                 
                 });
         }
 
         private static DomainDto MapToDomainDto(Domain domain)
         {
-
             return new DomainDto
             {
                 Id = domain.Id,
                 Title = domain.Title,
+                Description = domain.Description,
                 Weight = domain.Weight,
                 ExamId = domain.ExamId 
             };
         }
-
 
         public async Task<DomainDto> GetByIdAsync(int id)
         {
@@ -68,11 +67,10 @@ namespace TestAPI.Services.Implementation
             var domain = await _domainRepository.GetByIdAsync(id);
             if (domain == null) 
             {
-                throw new Exception("Category not Found");
+                throw new Exception("Domain by Id not Found");
             }
 
             return MapToDomainDto(domain);
-
 
         }
 
@@ -86,6 +84,8 @@ namespace TestAPI.Services.Implementation
    
         public async Task CreateDomain(CreateDomainDto createDomainDto)
         {
+
+
             var newDomain = new Domain
             {
                 Title = createDomainDto.Title,
@@ -115,37 +115,6 @@ namespace TestAPI.Services.Implementation
             
 
         }
-
-        // public async Task AddExamToCategory([FromBody] AddExamsToCategoryDto addExamsToCategoryDto)
-        // {
-
-        //     var category = await _categoryRepository.GetByIdAsync(addExamsToCategoryDto.CategoryId);
-
-        //     var exams = await _examRepository.GetAllAsync();
-
-
-        //     category.Exams.AddRange(exams.Where(e => addExamsToCategoryDto.ExamIds.Contains(e.Id)));
-        //     await _categoryRepository.Update(category.Id, category);
-
-        // }
-
-        //public async Task AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto)
-        //{
-        //    var category = await _categoryRepository.GetByIdAsync(addExamsToCategoryDto.CategoryId);
-
-        //    var exams = _examRepository.GetByIdAsync(addExamsToCategoryDto.ExamIds);
-
-        //    category.Exams.AddRange(exams);
-        //}
-
-
-
-
-
-
-
-
-
 
     }
 }

@@ -5,6 +5,7 @@ using NuGet.Protocol;
 using TestAPI.Data;
 using TestAPI.DTO;
 using TestAPI.Entities;
+using TestAPI.Exceptions;
 using TestAPI.Persistence.Interfaces;
 
 
@@ -78,9 +79,13 @@ namespace TestAPI.Persistence.Implementation
         {
             var examFromDb = await _context.Exams
             .Include( e=> e.Category)
-            .Include(e => e.Questions!)
-            .ThenInclude(q => q.AnswerOptions!)
+            .Include(e => e.Questions)
+            .ThenInclude(q => q.AnswerOptions)
             .FirstOrDefaultAsync(e => e.Id == id);
+
+            if(examFromDb == null) {
+                throw new RecordNotFoundException("Exam not found");
+            }
 
             return examFromDb;
         }
@@ -130,6 +135,10 @@ namespace TestAPI.Persistence.Implementation
         public async Task AddQuestionsToExamAsync(int examId, ICollection<Question> questions)
         {
             var exam = await _context.Exams.FindAsync(examId);
+
+            if(exam == null) {
+                throw new RecordNotFoundException("Exam not found");
+            }
 
             foreach (var question in questions)
             {

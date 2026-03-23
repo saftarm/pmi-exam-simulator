@@ -12,13 +12,13 @@ namespace TestAPI.Entities
         public int Id { get; set; }
         [Required]
         [MaxLength(200)]
-        public string? Title { get; set; }
+        public string  Title { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(500)]
         public string? Description { get; set;  }
         
-        public ICollection<Exam>? Exams { get; set; } = new List<Exam>();
+        public ICollection<Exam> Exams { get; set; } = new List<Exam>();
 
 
         [DefaultValue(0)]

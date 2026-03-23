@@ -35,7 +35,12 @@ namespace TestAPI.Services.Implementation
         public string GenerateToken(User user)
         {
 
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.Value.SecretKey));
+            var secretKey = _authSettings.Value.SecretKey;
+
+            if( secretKey == null) {
+                throw new ArgumentNullException(nameof(secretKey), "Secret key not found");
+            }
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.Value.SecretKey!));
 
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 

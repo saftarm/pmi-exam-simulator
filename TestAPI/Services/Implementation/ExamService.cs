@@ -208,7 +208,7 @@ namespace TestAPI.Services.Implementation
                     Title = pe.Title,
                     DurationInMinutes = pe.DurationInMinutes,
                     NumberOfQuestions = pe.NumberOfQuestions,
-                    Category = pe.Category.Title
+                    Category = pe.Category.Title 
 
                 }; 
             }).ToList(); 

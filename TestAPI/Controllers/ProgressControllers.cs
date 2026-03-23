@@ -25,6 +25,24 @@ namespace TestAPI.Controllers
 
         }
 
+        [HttpGet("/api/user/progress")]
+
+        // public async Task<IActionResult> GetProgress() {
+
+        // }
+
+
+        
+
+        
+
+         
+
+
+
+        
+
+
 
 
 

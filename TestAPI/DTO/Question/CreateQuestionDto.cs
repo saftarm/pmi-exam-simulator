@@ -13,7 +13,7 @@ namespace TestAPI.DTO
 
         public int DomainId {get;set;}
         
-        public ICollection<CreateAnswerOptionDto>? AnswerOptionsDtos { get; set; }
+        public ICollection<CreateAnswerOptionDto> AnswerOptionsDtos { get; set; } = new List<CreateAnswerOptionDto>();
 
     }
 }

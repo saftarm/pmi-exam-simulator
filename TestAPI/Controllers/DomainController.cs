@@ -27,16 +27,25 @@ namespace TestAPI.Controllers
 
         [HttpGet("/api/domains")]
 
-        public async Task<ActionResult<IEnumerable<DomainDto>>> GetAllCategories()
+        public async Task<ActionResult<IEnumerable<DomainDto>>> GetAllDomains()
         {
             return Ok(await _domainService.GetAllAsync());
         }
 
         [HttpPost("api/domains")]
 
-        public async Task<ActionResult<CategoryDto>> Create(CreateDomainDto createDomainDto)
+        public async Task<ActionResult<CategoryDto>> Create(CreateDomainDto dto)
         {
-            await _domainService.CreateDomain(createDomainDto);
+            await _domainService.CreateDomain(dto);
+            return Ok();
+        }
+
+
+        [HttpPatch("api/domains/{id}")]
+
+        public async Task<IActionResult> Update(int id, UpdateDomainDto dto) 
+        {
+            await _domainService.UpdateDomain(id, dto);
             return Ok();
         }
 
@@ -47,14 +56,7 @@ namespace TestAPI.Controllers
             return NoContent();
         }
 
-       
-
-
-
-
-
-
-
+    
 
     }
 }

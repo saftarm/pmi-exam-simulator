@@ -4,9 +4,9 @@ namespace TestAPI.DTO
     {
 
         public int CategoryId {get;set;}
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string? Context { get; set; }
+        public string Context { get; set; } = string.Empty;
 
         public int PassScore {get;set;}
         
@@ -14,7 +14,7 @@ namespace TestAPI.DTO
 
         public int NumberOfQuestions { get; set; }
 
-        public IEnumerable<CreateDomainDto>? CreateDomainDtos {get;set;}
+        public IEnumerable<CreateDomainDto> CreateDomainDtos {get;set;} = new List<CreateDomainDto>();
 
 
     }

@@ -1,1 +1,0 @@
-C:\Users\MSN\Desktop\ReactWithASP\TestAPI\ReactClient\obj\Debug\reactclient.esproj.CoreCompileInputs.cache

@@ -13,7 +13,6 @@ namespace TestAPI.DTO
         public int CategoryId { get; set; }
 
         
-
         public int NumberOfQuestions { get; set; }
 
         public int DurationInMinutes { get; set; }

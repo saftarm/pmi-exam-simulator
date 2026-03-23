@@ -39,14 +39,12 @@ namespace TestAPI.Services.Implementation
             if(exam == null) {
                 throw new Exception("Exam is not found");
             }
-        
             var domainIds = exam.Domains.Select(d => d.Id).ToList();
 
             var existingRecords = await _context.DomainPerformances.
             Where(dp =>dp.UserId == userId 
             && dp.ExamId == exam.Id 
             && domainIds.Contains(dp.DomainId)).ToListAsync();
-            
             
             System.Console.WriteLine(existingRecords.Count());
 
@@ -90,6 +88,10 @@ namespace TestAPI.Services.Implementation
             await _context.SaveChangesAsync();
                  
             
+        }
+
+        public async Task<UserProgressSummaryDto> GetUserProress() {
+           
         }
         
         

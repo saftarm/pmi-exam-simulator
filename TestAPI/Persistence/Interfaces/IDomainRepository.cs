@@ -5,7 +5,7 @@ namespace TestAPI.Persistence.Interfaces
 {
     public interface IDomainRepository
     {
-        public Task<Domain> GetByIdAsync(int categoryId);
+        public Task<Domain> GetByIdAsync(int id);
         public Task<IEnumerable<Domain>> GetAllAsync();
 
         public Task<IEnumerable<Domain>> GetByIdsAsync(List<int> domainIds);
