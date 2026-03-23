@@ -26,11 +26,12 @@ namespace TestAPI.Services.Implementation
             }
             return new QuestionDto {
                 Id = question.Id,
-                Title = question.Text,
+                Title = question.Title,
                 AnswerOptionsDtos = question.AnswerOptions.Select(o => 
                 new AnswerOptionDto {
                     Id = o.Id,
                     Text = o.Text!
+                    
                 }).ToList()
             }; 
         }
@@ -38,7 +39,7 @@ namespace TestAPI.Services.Implementation
         private static ICollection<Question> MapQuestionDtosToQuestions(IEnumerable<CreateQuestionDto> createQuestionDtos) {
             var questions = createQuestionDtos.Select(
                 q => new Question {
-                    Text = q.Title,
+                    Title = q.Title,
                     Explanation = q.Explanation,
                     DomainId = q.DomainId,
                     AnswerOptions = q.AnswerOptionsDtos.Select(
@@ -83,7 +84,7 @@ namespace TestAPI.Services.Implementation
         public async Task<int> CreateAsync(CreateQuestionDto createQuestionDto)
         {
             var newQuestion = new Question {
-                Text = createQuestionDto.Title,
+                Title = createQuestionDto.Title,
                 Explanation = createQuestionDto.Explanation,
                 DomainId = createQuestionDto.DomainId,
                 AnswerOptions = createQuestionDto.AnswerOptionsDtos.Select(
@@ -98,18 +99,24 @@ namespace TestAPI.Services.Implementation
            return await _questionRepository.AddAsync(newQuestion);
         }
 
-        public async Task CreateRangeAsync(CreateQuestionsDto createQuestionsDto) {
+        // Create Multiple Questions
+        public async Task CreateRangeAsync(List<CreateQuestionDto> dto) {
+
+            var questions =  MapQuestionDtosToQuestions(dto);
             
-            await _questionRepository.AddRangeAsync(MapQuestionDtosToQuestions(createQuestionsDto.CreateQuestionDtos));
+            await _questionRepository.AddRangeAsync(questions);
         }
 
 
+        // Delete Question
         public async Task DeleteQuestion(int questionId)
         {
             await _questionRepository.DeleteAsync(questionId);
             
         }
 
+
+        // Update Question
         public async Task<UpdateQuestionDto> UpdateAsync(int questionId, UpdateQuestionDto questionDto)
         {
                 return await _questionRepository.UpdateAsync(questionId, questionDto);

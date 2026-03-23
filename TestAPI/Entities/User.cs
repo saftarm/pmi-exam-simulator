@@ -1,21 +1,36 @@
-﻿namespace TestAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TestAPI.Entities
 {
     public class User
     {
 
+        [Key]
         public int Id { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public string FirstName {get; set;} = string.Empty;
 
-        public string? FirstName {get; set;}
+        [Required]
+        [MaxLength(50)]
+        public string UserName {get; set;} = string.Empty;
 
-        public string? UserName {get; set;}
+        [Required]
+        [MaxLength(50)]
+        public string DisplayName { get; set; } = string.Empty;
 
-        public string? DisplayName { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public string Email {get;set; } = string.Empty;
 
-        public string? Email {get;set; }
+        [Required]
+        [EmailAddress]
+        [MaxLength(255)]
+        public string PasswordHash {get;set;} = string.Empty;
 
-        public string? PasswordHash {get;set;}
+        public ICollection<DomainPerformance>  DomainPerfomances {get;set;} = new List<DomainPerformance>();
 
-        public ICollection<ExamAttempt>? ExamAttempts {get;set;}
+        public ICollection<ExamAttempt> ExamAttempts {get;set;} = new List<ExamAttempt>();
 
 
 

@@ -5,14 +5,14 @@
 namespace TestAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class NullabilityFix3 : Migration
+    public partial class QuestionExamContstraintRemoval : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
-                name: "CategoryId",
-                table: "Exams",
+                name: "ExamId",
+                table: "Questions",
                 type: "integer",
                 nullable: true,
                 oldClrType: typeof(int),
@@ -23,8 +23,8 @@ namespace TestAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
-                name: "CategoryId",
-                table: "Exams",
+                name: "ExamId",
+                table: "Questions",
                 type: "integer",
                 nullable: false,
                 defaultValue: 0,

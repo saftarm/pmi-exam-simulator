@@ -7,9 +7,9 @@ namespace TestAPI.DTO
     {
 
 
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string? Explanation {get;set;}
+        public string Explanation {get;set;}= string.Empty;
 
         public int DomainId {get;set;}
         

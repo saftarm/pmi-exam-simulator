@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.Intrinsics.Arm;
+using Microsoft.EntityFrameworkCore;
 using TestAPI.Entities;
 using TestAPI.Models;
 
@@ -28,6 +29,12 @@ namespace TestAPI.Data
 
         public DbSet<Domain> Domains { get; set; }
 
+         public DbSet<DomainPerformance> DomainPerformances { get; set; }
+
+
+
+        
+ 
     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +45,10 @@ namespace TestAPI.Data
             modelBuilder.Entity<Question>()
             .HasKey(q => q.Id);
 
+            modelBuilder.Entity<User>()
+            .HasIndex(u => u.UserName)
+            .IsUnique();
+
 
             modelBuilder.Entity<AnswerOption>().
             HasOne(o => o.Question)
@@ -46,14 +57,8 @@ namespace TestAPI.Data
             .HasConstraintName("FK_AnswerOptions_Exams_ExamId")
             .OnDelete(DeleteBehavior.Cascade);
 
-
-            modelBuilder.Entity<AnswerOption>()
-            .HasOne(e => e.Exam)
-            .WithMany(o => o.AnswerOptions)
-            .HasForeignKey(e => e.ExamId);
-
             modelBuilder.Entity<ExamAttempt>()
-            .HasOne(ea => ea.User)
+            .HasOne<User>()
             .WithMany(u => u.ExamAttempts)
             .HasForeignKey(ea => ea.UserId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -61,7 +66,22 @@ namespace TestAPI.Data
             modelBuilder.Entity<UserExamResponse>()
             .HasOne(r => r.ExamAttempt)
             .WithMany(e => e.UserExamResponses)
-            .HasForeignKey(r => r.ExamAttemptId);
+            .HasForeignKey(r => r.ExamAttemptId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserExamResponse>()
+            .HasOne(r => r.Question)
+            .WithMany(q => q.UserExamResponses)
+            .HasForeignKey(r => r.QuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+             modelBuilder.Entity<UserExamResponse>()
+            .HasOne(r => r.SelectedOption)
+            .WithMany()
+            .HasForeignKey(r => r.SelectedOptionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
 
             modelBuilder.Entity<ExamAttempt>()
             .Property(e => e.Status)
@@ -74,13 +94,11 @@ namespace TestAPI.Data
             .HasForeignKey(e => e.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
 
-            
-
-
-            modelBuilder.Entity<Exam>()
-                .HasMany(e => e.Questions)
-                .WithMany(q => q.Exams)
-                .UsingEntity(j => j.ToTable("ExamQuestion"));
+            modelBuilder.Entity<Question>()
+            .HasOne(q => q.Exam)
+            .WithMany(e => e.Questions)
+            .HasForeignKey(q => q.ExamId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Domain>()
                 .HasOne(d => d.Exam)
@@ -94,6 +112,37 @@ namespace TestAPI.Data
             .WithMany(d => d.Questions)
             .HasForeignKey(q => q.DomainId)
             .OnDelete(DeleteBehavior.Cascade);
+    
+            modelBuilder.Entity<DomainPerformance>()
+            .HasOne<User>()
+            .WithMany(u => u.DomainPerfomances)
+            .HasForeignKey(dp => dp.UserId);
+
+            modelBuilder.Entity<DomainPerformance>()
+            .HasOne(dp => dp.Domain)
+            .WithMany(d => d.DomainPerformances)
+            .HasForeignKey(dp => dp.DomainId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<DomainPerformance>()
+            .HasOne(dp => dp.Exam)
+            .WithMany(d => d.DomainPerfomances)
+            .HasForeignKey(dp => dp.ExamId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DomainPerformance>()
+            .HasIndex(dp => new {dp.UserId, dp.DomainId, dp.ExamId })
+            .IsUnique();
+
+            
+
+ 
+            
+             
+        
+
+
+
 
 
 

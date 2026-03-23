@@ -15,15 +15,19 @@ namespace TestAPI.Services.Implementation
 
         private readonly IQuestionRepository _questionRepository;
 
+        private readonly IProgressService _progressService;
+
         public ExamAttemptService (
             IExamAttemptRepository examAttemptRepository,
             IExamRepository examRepository,
-            IQuestionRepository questionRepository
+            IQuestionRepository questionRepository,
+            IProgressService progressService
             ) 
             {
             _examAttemptRepository = examAttemptRepository;
             _examRepository = examRepository;
             _questionRepository = questionRepository;
+            _progressService = progressService;
            }
 
         public async Task<ExamAttemptDto> GetByIdAsync(int examAttemptId) {
@@ -38,7 +42,7 @@ namespace TestAPI.Services.Implementation
                 Score = examAttempt.Score,
                 Status = examAttempt.Status
             };
-            return examAttemptDto;
+            return examAttemptDto; 
         }
         
         public async Task<ExamAttemptDto> GetByUserId (int userId) {
@@ -66,7 +70,7 @@ namespace TestAPI.Services.Implementation
                 ExamTitle = exam.Title,
                 Score = 0,
                 UserExamResponses = new List<UserExamResponse>(),
-                Status = ExamStatus.InProgress
+                Status = AttemptStatus.InProgress
             };
             return await _examAttemptRepository.AddAsync(examAttempt);
 
@@ -75,10 +79,10 @@ namespace TestAPI.Services.Implementation
 
          public async Task FinishAttemptAsync(int examAttemptId) {
             var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
-            examAttempt.Status = ExamStatus.Completed;
+            examAttempt.Status = AttemptStatus.Completed;
             examAttempt.SubmittedAt = DateTime.UtcNow;
             await CalculateScore(examAttempt);
-            
+            await _progressService.UpdateDomainPerformance(examAttempt);
             
 
          }
@@ -125,6 +129,7 @@ namespace TestAPI.Services.Implementation
 
                 if(isCorrect) {
                     correctCount ++;
+                    userAnswer.IsCorrect = true;
                 }
 
             }
@@ -167,7 +172,7 @@ namespace TestAPI.Services.Implementation
                 ExamId = examId,
                 Score = 0,
                 StartedAt = DateTime.UtcNow,
-                Status = ExamStatus.InProgress
+                Status = AttemptStatus.InProgress
             };
 
             await _examAttemptRepository.AddAsync(newAttempt);

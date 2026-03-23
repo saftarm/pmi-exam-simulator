@@ -12,8 +12,8 @@ using TestAPI.Data;
 namespace TestAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260316221007_NullabilityFix3")]
-    partial class NullabilityFix3
+    [Migration("20260320165155_DatabaseUpdates")]
+    partial class DatabaseUpdates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,9 +48,6 @@ namespace TestAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ExamId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("boolean");
 
@@ -58,11 +55,11 @@ namespace TestAPI.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Text")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExamId");
 
                     b.HasIndex("QuestionId");
 
@@ -78,13 +75,17 @@ namespace TestAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("NumberOfExams")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
 
@@ -100,13 +101,17 @@ namespace TestAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("ExamId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Weight")
                         .HasColumnType("integer");
@@ -116,6 +121,44 @@ namespace TestAPI.Migrations
                     b.HasIndex("ExamId");
 
                     b.ToTable("Domains");
+                });
+
+            modelBuilder.Entity("TestAPI.Entities.DomainPerformance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DomainId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TotalAnswered")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalCorrect")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DomainId");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("UserId", "DomainId", "ExamId")
+                        .IsUnique();
+
+                    b.ToTable("DomainPerformances");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.Exam", b =>
@@ -130,7 +173,9 @@ namespace TestAPI.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Context")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("integer");
@@ -138,7 +183,11 @@ namespace TestAPI.Migrations
                     b.Property<int>("NumberOfQuestions")
                         .HasColumnType("integer");
 
+                    b.Property<int>("PassScore")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -156,11 +205,16 @@ namespace TestAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CorrectCount")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ExamId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ExamTitle")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Score")
                         .HasColumnType("integer");
@@ -195,10 +249,22 @@ namespace TestAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("DomainId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
                     b.Property<string>("Text")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DomainId");
 
                     b.ToTable("Questions");
                 });
@@ -212,21 +278,34 @@ namespace TestAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -255,6 +334,10 @@ namespace TestAPI.Migrations
 
                     b.HasIndex("ExamAttemptId");
 
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("SelectedOptionId");
+
                     b.ToTable("UserExamResponses");
                 });
 
@@ -275,21 +358,12 @@ namespace TestAPI.Migrations
 
             modelBuilder.Entity("TestAPI.Entities.AnswerOption", b =>
                 {
-                    b.HasOne("TestAPI.Entities.Exam", "Exam")
-                        .WithMany("AnswerOptions")
-                        .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_AnswerOptions_Exams_ExamId1");
-
                     b.HasOne("TestAPI.Entities.Question", "Question")
                         .WithMany("AnswerOptions")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_AnswerOptions_Exams_ExamId");
-
-                    b.Navigation("Exam");
 
                     b.Navigation("Question");
                 });
@@ -301,6 +375,31 @@ namespace TestAPI.Migrations
                         .HasForeignKey("ExamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Exam");
+                });
+
+            modelBuilder.Entity("TestAPI.Entities.DomainPerformance", b =>
+                {
+                    b.HasOne("TestAPI.Entities.Domain", "Domain")
+                        .WithMany("DomainPerformances")
+                        .HasForeignKey("DomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestAPI.Entities.Exam", "Exam")
+                        .WithMany("DomainPerfomances")
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestAPI.Entities.User", null)
+                        .WithMany("DomainPerfomances")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Domain");
 
                     b.Navigation("Exam");
                 });
@@ -323,15 +422,24 @@ namespace TestAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestAPI.Entities.User", "User")
+                    b.HasOne("TestAPI.Entities.User", null)
                         .WithMany("ExamAttempts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Exam");
+                });
 
-                    b.Navigation("User");
+            modelBuilder.Entity("TestAPI.Entities.Question", b =>
+                {
+                    b.HasOne("TestAPI.Entities.Domain", "Domain")
+                        .WithMany("Questions")
+                        .HasForeignKey("DomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Domain");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.UserExamResponse", b =>
@@ -342,7 +450,23 @@ namespace TestAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TestAPI.Entities.Question", "Question")
+                        .WithMany("UserExamResponses")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TestAPI.Entities.AnswerOption", "SelectedOption")
+                        .WithMany()
+                        .HasForeignKey("SelectedOptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("ExamAttempt");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("SelectedOption");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.Category", b =>
@@ -350,9 +474,16 @@ namespace TestAPI.Migrations
                     b.Navigation("Exams");
                 });
 
+            modelBuilder.Entity("TestAPI.Entities.Domain", b =>
+                {
+                    b.Navigation("DomainPerformances");
+
+                    b.Navigation("Questions");
+                });
+
             modelBuilder.Entity("TestAPI.Entities.Exam", b =>
                 {
-                    b.Navigation("AnswerOptions");
+                    b.Navigation("DomainPerfomances");
 
                     b.Navigation("Domains");
                 });
@@ -365,10 +496,14 @@ namespace TestAPI.Migrations
             modelBuilder.Entity("TestAPI.Entities.Question", b =>
                 {
                     b.Navigation("AnswerOptions");
+
+                    b.Navigation("UserExamResponses");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.User", b =>
                 {
+                    b.Navigation("DomainPerfomances");
+
                     b.Navigation("ExamAttempts");
                 });
 #pragma warning restore 612, 618

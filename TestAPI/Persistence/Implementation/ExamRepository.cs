@@ -21,31 +21,32 @@ namespace TestAPI.Persistence.Implementation
         }
 
 
-        public async Task<IEnumerable<Exam>> GetAllAsync()
+        public IQueryable<Exam> GetAllAsync()
         {
-            return await _context.Exams.ToListAsync();
+            var examsQuery = _context.Exams
+            .Include(e => e.Category)
+            .Include(e => e.Questions)
+            .AsQueryable();
+            return examsQuery; 
         }
 
-        public async Task AddAsync(Exam exam)
+        public async Task AddAsync(IEnumerable<Exam> exams)
         {
-            await _context.Exams.AddAsync(exam);
+            await _context.Exams.AddRangeAsync(exams);
             await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId)
         {
 
-
             var questions = await _context.Questions
-            .Where(q => q.Exams.Any(e => e.Id == examId))
+            .Where(q => q.ExamId == examId)
             .Include(q => q.AnswerOptions)
             .ToListAsync();
-
-            if (questions == null)
-            {
-                throw new Exception("Questions not found");
-            }
-
+            // if (questions.Any())
+            // {
+            //     throw new KeyNotFoundException("Questions not found");
+            // }
             return questions;
         }
 
@@ -75,7 +76,9 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task<Exam> GetByIdAsync(int id)
         {
-            var examFromDb = await _context.Exams.Include(e => e.Questions!)
+            var examFromDb = await _context.Exams
+            .Include( e=> e.Category)
+            .Include(e => e.Questions!)
             .ThenInclude(q => q.AnswerOptions!)
             .FirstOrDefaultAsync(e => e.Id == id);
 
@@ -89,39 +92,39 @@ namespace TestAPI.Persistence.Implementation
 
         }
 
-        public async Task AddQuestionToExamAsync(int questionId, Exam exam)
-        {
+        // public async Task AddQuestionToExamAsync(int questionId, Exam exam)
+        // {
 
-            if (exam.Questions == null)
-            {
-                exam.Questions = new List<Question>();
-            }
-
-
-            var question = await _context.Questions.FindAsync(questionId);
-
-            if (question == null)
-            {
-                throw new ArgumentException($"Question with id{questionId} not found");
-            }
-
-            exam.Questions.Add(question);
-
-            if (question.Exams == null)
-            {
-                question.Exams = new List<Exam>();
-            }
+        //     if (exam.Questions == null)
+        //     {
+        //         exam.Questions = new List<Question>();
+        //     }
 
 
-            if (exam.Questions.Contains(question))
-            {
-                exam.Questions.Add(question);
-                question.Exams.Add(exam);
-                await _context.SaveChangesAsync();
-            }
+        //     var question = await _context.Questions.FindAsync(questionId);
+
+        //     if (question == null)
+        //     {
+        //         throw new ArgumentException($"Question with id{questionId} not found");
+        //     }
+
+        //     exam.Questions.Add(question);
+
+        //     if (question.Exams == null)
+        //     {
+        //         question.Exams = new List<Exam>();
+        //     } 
 
 
-        }
+        //     if (exam.Questions.Contains(question))
+        //     {
+        //         exam.Questions.Add(question);
+        //         question.Exams.Add(exam);
+        //         await _context.SaveChangesAsync();
+        //     }
+
+
+        // }
 
 
         public async Task AddQuestionsToExamAsync(int examId, ICollection<Question> questions)
@@ -133,6 +136,17 @@ namespace TestAPI.Persistence.Implementation
                 exam.Questions.Add(question);
             }
 
+        }
+
+
+        public async Task<ExamStatus> GetExamStatusByIdAsync(int id) {
+            var examStatus = await _context.Exams
+            .Where(e => e.Id == id) 
+            .Select(e => e.Status) 
+            .FirstOrDefaultAsync();
+
+            return examStatus; 
+            
         }
     }
 }

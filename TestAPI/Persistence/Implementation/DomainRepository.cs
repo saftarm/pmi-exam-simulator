@@ -6,6 +6,7 @@
 using TestAPI.Data;
 using TestAPI.DTO;
 using TestAPI.Entities;
+using TestAPI.Exceptions;
 using TestAPI.Persistence.Interfaces;
 
 namespace TestAPI.Persistence.Implementation
@@ -22,12 +23,12 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
-        public async Task<Domain>? GetByIdAsync(int id)
+        public async Task<Domain> GetByIdAsync(int id)
         {
             var domain = await _context.Domains.FindAsync(id);
             if (domain == null)
             {
-                throw new Exception("Domain Not Found");
+                throw new RecordNotFoundException("Domain Not Found");
             }
             return domain;
 
@@ -38,7 +39,10 @@ namespace TestAPI.Persistence.Implementation
             return await _context.Domains.ToListAsync();
 
         }
-
+        public async Task<IEnumerable<Domain>> GetByIdsAsync(List<int> domainIds) {
+            return await _context.Domains.Where(d => domainIds.Contains(d.Id)).ToListAsync();
+        }
+ 
 
         public async Task AddAsync(Domain domain)
         {

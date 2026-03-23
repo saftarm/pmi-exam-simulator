@@ -11,7 +11,7 @@ namespace TestAPI.Services.Interfaces
 
         public  Task<int> CreateAsync(CreateQuestionDto createQuestionDto);
         
-        public Task CreateRangeAsync(CreateQuestionsDto createQuestionsDto); 
+        public Task CreateRangeAsync(List<CreateQuestionDto> questions); 
 
         public Task<IEnumerable<QuestionDto>> GetAllAsync();
 

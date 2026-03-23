@@ -9,7 +9,7 @@ namespace TestAPI.Services.Interfaces
         public Task<DomainDto> GetByIdAsync(int id);
 
         public Task<IEnumerable<DomainDto>> GetAllAsync();
-
+    
         public Task CreateDomain(CreateDomainDto createDomainDto);
         
         public Task UpdateDomain(int id, UpdateDomainDto updateDomainDto);

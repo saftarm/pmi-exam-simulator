@@ -8,7 +8,6 @@ using TestAPI.Entities;
 namespace TestAPI.Controllers
 {
 
-    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -30,7 +29,7 @@ namespace TestAPI.Controllers
             _authService = authService;
         }
 
-        [HttpPost("register")]
+        [HttpPost("/api/auth/register")]
 
         public async Task<ActionResult<User>> Register(RegisterUserRequest registerUserRequest)
         {
@@ -39,14 +38,12 @@ namespace TestAPI.Controllers
 
         }
 
-        [HttpPost("login")]
+        [HttpPost("/api/auth/login")]
         public async Task<ActionResult<string>> Login(LoginUserRequest loginUserRequest) {
 
             var token = await _authService.LoginUser(loginUserRequest);
             return Ok(token);
         }
-
-    
 
     }
 }

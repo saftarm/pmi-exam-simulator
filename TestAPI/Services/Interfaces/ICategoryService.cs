@@ -13,6 +13,8 @@ namespace TestAPI.Services.Interfaces
 
         public Task CreateCategory(CreateCategoryDto createCategoryDto);
 
+        public Task UpdateCategory(int id, UpdateCategoryDto dto);
+
         public Task DeleteAsync(int id);
 
         public Task AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto);

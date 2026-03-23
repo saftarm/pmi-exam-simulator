@@ -1,17 +1,20 @@
-﻿namespace TestAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TestAPI.Entities
 {
     public class AnswerOption
     {
 
+        [Key]
         public int Id { get; set; }
         public int QuestionId { get; set; }
-        public int ExamId {get;set;}
 
-        public Question? Question {get;set;}
+        public Question Question {get;set;} = null!;
 
-        public Exam? Exam {get;set;}
-        
-        public string? Text { get; set; }
+        [Required]
+        [MaxLength(500)]
+        public string Text { get; set; } = string.Empty;
+
         public bool IsCorrect { get; set; }
         
     }

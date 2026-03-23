@@ -11,7 +11,7 @@ using TestAPI.Services.Interfaces;
 
 namespace TestAPI.Controllers
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
     public class QuestionController : ControllerBase
     {
@@ -23,12 +23,10 @@ namespace TestAPI.Controllers
         {
             _context = context;
             _questionService = questionService;
-
         }
-
         
         // /api/Question/{id}	Get a single question by ID
-        [HttpGet("/api/Question/{id}")]
+        [HttpGet("/api/questions/{id:int}")]
         public async Task<ActionResult<QuestionDto>> GetQuestionById(int id) {
             return await _questionService.GetByIdAsync(id);
         }
@@ -36,8 +34,8 @@ namespace TestAPI.Controllers
       
 
 
-        // /api/Question	Get all questions (hides isCorrect)
-        [HttpGet]
+        // /api/QuestionGet all questions (hides isCorrect)
+        [HttpGet("/api/questions")]
         public async Task<ActionResult<IEnumerable<QuestionDto>>> GetAllQuestions()
         {
             var questions = await _questionService.GetAllAsync();
@@ -47,35 +45,33 @@ namespace TestAPI.Controllers
             }
 
             return Ok(questions);
-
         }
 
         // /api/Question	Create a new question with answer options
-        [HttpPost]
+        [HttpPost("/api/questions")]
         public async Task<CreatedAtActionResult> Create(CreateQuestionDto createQuestionDto){
             var newQuestionid = await _questionService.CreateAsync(createQuestionDto);
             return CreatedAtAction(nameof(GetQuestionById), new { id = newQuestionid}, createQuestionDto);
         }
 
-        [HttpPost("/CreateRange")]
-        public async Task<IActionResult> CreateRange(CreateQuestionsDto createQuestionsDto) {
-            await _questionService.CreateRangeAsync(createQuestionsDto);
+        [HttpPost("/api/questions/")]
+        public async Task<IActionResult> CreateRange([FromBody] List<CreateQuestionDto> questions) {
+            await _questionService.CreateRangeAsync(questions);
             return Ok();
         }
 
 
         // /api/Question/{id}  Update an existing question
 
-        [HttpPut("{id:int}")]
+        [HttpPut("/api/questions/{id:int}")]
 
         public async Task<ActionResult> Update(int id, UpdateQuestionDto updateQuestionDto){
             var updatedQuestion = await _questionService.UpdateAsync(id,updateQuestionDto);
             return Ok(updatedQuestion);
         }
 
-
         // /api/Question/{id}	Delete a question
-        [HttpDelete("{id:int}")]
+        [HttpDelete("/api/questions/{id:int}")]
         public IActionResult Delete(int id)
         {
             var question = _context.Questions.Find(id);
@@ -88,17 +84,16 @@ namespace TestAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
+        [HttpDelete("/api/questions")]
 
         public async Task<IActionResult> DeleteRange(DeleteQuestionsRequest request) {
+
+            if(request.QuestionIds == null) {
+                throw new ArgumentNullException("Invalid Question Id input");
+            }
             await _questionService.DeleteRangeAsync(request.QuestionIds);
             return Ok();
         }
-
-
-
-     
-
 
     }
 }

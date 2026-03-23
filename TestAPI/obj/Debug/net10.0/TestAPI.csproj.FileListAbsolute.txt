@@ -765,3 +765,4 @@ C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\TestA
 C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\TestAPI.genruntimeconfig.cache
 C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\ref\TestAPI.dll
 C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\obj\Debug\net10.0\TestAPI.sourcelink.json
+C:\Users\MSN\Desktop\CSharp\ReactWithASP\TestAPI\TestAPI\bin\Debug\net10.0\FluentValidation.dll

@@ -1,10 +1,10 @@
-// namespace TestAPI.DTO {
+namespace TestAPI.DTO {
 
-//     public class GetProgressResponse {
+    public class GetProgressResponse {
 
 
 
         
-//     }
-// }
+    }
+}
 

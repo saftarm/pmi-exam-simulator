@@ -20,7 +20,9 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task<Category>? GetByIdAsync(int categoryId)
         {
-            var category = await _context.Categories.FindAsync(categoryId);
+            var category = await _context.Categories
+            .Include(c => c.Exams)
+            .FirstOrDefaultAsync(c => c.Id == categoryId);
             if (category == null)
             {
                 throw new Exception("Category Not Found");
@@ -68,7 +70,7 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(int categoryId, Category updatedCategory)
+        public async Task Update(Category updatedCategory)
         {
             _context.Categories.Update(updatedCategory);
             await _context.SaveChangesAsync();

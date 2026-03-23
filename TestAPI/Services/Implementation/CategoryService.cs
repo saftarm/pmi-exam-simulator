@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using TestAPI.DTO;
@@ -14,10 +15,14 @@ namespace TestAPI.Services.Implementation
         private readonly ICategoryRepository _categoryRepository;
         private readonly IExamRepository _examRepository;
 
+      
+
         public CategoryService(ICategoryRepository categoryRepository, IExamRepository examRepository)
         {
             _categoryRepository = categoryRepository;
             _examRepository = examRepository;
+     
+
 
         }
 
@@ -33,8 +38,6 @@ namespace TestAPI.Services.Implementation
                 DurationInMinutes = e.DurationInMinutes,
                 NumberOfQuestions = e.NumberOfQuestions
             });
-            
-
         }
 
         private static IEnumerable<CategoryDto> MapToCategoryDtos(IEnumerable<Category> categories)
@@ -51,20 +54,12 @@ namespace TestAPI.Services.Implementation
 
         private static CategoryDto MapToCategoryDto(Category category)
         {
-
-
             return new CategoryDto
             {
                 Id = category.Id,
-                Title = category.Title
-                
-                
+                Title = category.Title   
             };
         }
-
-
-
-
 
         public async Task<IEnumerable<ExamSummaryDto>> GetExamSummariesByCategoryId(int categoryId)
         {
@@ -76,7 +71,7 @@ namespace TestAPI.Services.Implementation
 
         public async Task<CategoryDto> GetByIdAsync(int categoryId)
         {
-
+           
             var category = await _categoryRepository.GetByIdAsync(categoryId);
             if (category == null)
             {
@@ -84,7 +79,6 @@ namespace TestAPI.Services.Implementation
             }
 
             return MapToCategoryDto(category);
-
 
         }
 
@@ -108,6 +102,26 @@ namespace TestAPI.Services.Implementation
 
         }
 
+         public async Task UpdateCategory(int id, UpdateCategoryDto dto) {
+
+            var category = await _categoryRepository.GetByIdAsync(id);
+
+            if(category == null) {
+                throw new KeyNotFoundException();
+            }
+
+            
+            if(dto.Title != null) {
+                category.Title = dto.Title;
+            }
+            if(dto.Description != null ){
+                category.Description = dto.Description;
+            }
+            
+            await _categoryRepository.Update(category);
+
+         }
+
         public async Task DeleteAsync(int id)
         {
             await _categoryRepository.DeleteAsync(id);
@@ -115,35 +129,25 @@ namespace TestAPI.Services.Implementation
 
         public async Task AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto)
         {
-
-
             var category = await _categoryRepository.GetByIdAsync(addExamsToCategoryDto.CategoryId);
 
-            var exams = await _examRepository.GetAllById(addExamsToCategoryDto.ExamIds);
+            var existingIds = category.Exams.Select(e => e.Id);
 
-            if(category.Exams == null) {
-                throw new Exception("Category has no Exams Collection");
-                
-            }
+            var newExamIds = addExamsToCategoryDto.ExamIds
+            .Where(id => !existingIds.Contains(id))
+            .ToList();
 
-            if(exams == null) {
-                throw new Exception("Exams not found");
+            var exams = await _examRepository.GetAllById(newExamIds);
+
+            if(!newExamIds.Any()) {
+                return;
             }
 
             category.Exams.AddRange(exams);
-            await _categoryRepository.Update(category.Id, category);
+            category.NumberOfExams += newExamIds.Count();
+            await _categoryRepository.Update(category);
 
         }
-
-
-
-
-
-
-
-
-
-
 
 
     }

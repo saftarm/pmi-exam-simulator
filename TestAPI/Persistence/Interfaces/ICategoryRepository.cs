@@ -12,7 +12,7 @@ namespace TestAPI.Persistence.Interfaces
         //public Task<string> GetTitleByExamId(int examId);
 
         public Task AddAsync(Category category);
-        public Task Update(int categoryId, Category updatedCategory);
+        public Task Update(Category Category);
 
         public Task DeleteAsync(int categoryId); 
 

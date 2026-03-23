@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "KeTgAqZUK1I=",
+  "dgSpecHash": "PbVV9ipc88E=",
   "success": true,
   "projectFilePath": "C:\\Users\\MSN\\Desktop\\CSharp\\ReactWithASP\\TestAPI\\TestAPI\\TestAPI.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\MSN\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
     "C:\\Users\\MSN\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\MSN\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\MSN\\.nuget\\packages\\humanizer.core.af\\2.14.1\\humanizer.core.af.2.14.1.nupkg.sha512",

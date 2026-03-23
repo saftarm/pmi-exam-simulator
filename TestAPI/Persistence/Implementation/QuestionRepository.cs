@@ -55,7 +55,7 @@ namespace TestAPI.Persistence.Implementation
                     IsCorrect = o.IsCorrect
                 }
             ).ToList();
-            question.Text = updateQuestionDto.Text;
+            question.Title = updateQuestionDto.Text;
 
             
             await _context.SaveChangesAsync();

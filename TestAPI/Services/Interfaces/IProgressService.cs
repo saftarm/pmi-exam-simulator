@@ -8,8 +8,8 @@ namespace TestAPI.Services.Interfaces
     {
 
         // public Task<IEnumerable<ExamAttemptDto>> GetExamHistoryByUserId (int userId);
-        
 
+        public Task UpdateDomainPerformance(ExamAttempt examAttempt);
 
 
 

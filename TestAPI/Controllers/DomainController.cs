@@ -4,7 +4,6 @@ using TestAPI.DTO.Category;
 using TestAPI.Services.Interfaces;
 namespace TestAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class DomainController : ControllerBase
     {
@@ -19,21 +18,21 @@ namespace TestAPI.Controllers
 
 
 
-        [HttpGet("{id:int}")]
+        [HttpGet("/api/domains/{id:int}")]
         public async Task<ActionResult<DomainDto>> GetDomain(int id)
         {
             var category = await _domainService.GetByIdAsync(id);
             return Ok(category);
         }
 
-        [HttpGet]
+        [HttpGet("/api/domains")]
 
         public async Task<ActionResult<IEnumerable<DomainDto>>> GetAllCategories()
         {
             return Ok(await _domainService.GetAllAsync());
         }
 
-        [HttpPost]
+        [HttpPost("api/domains")]
 
         public async Task<ActionResult<CategoryDto>> Create(CreateDomainDto createDomainDto)
         {
@@ -41,7 +40,7 @@ namespace TestAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("/api/domains/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _domainService.DeleteAsync(id);

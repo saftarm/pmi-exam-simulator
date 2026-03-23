@@ -12,7 +12,7 @@ using TestAPI.Data;
 namespace TestAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260314110151_InitialCreate")]
+    [Migration("20260319215626_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -48,9 +48,6 @@ namespace TestAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ExamId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("boolean");
 
@@ -61,8 +58,6 @@ namespace TestAPI.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExamId");
 
                     b.HasIndex("QuestionId");
 
@@ -77,6 +72,9 @@ namespace TestAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<int>("NumberOfExams")
                         .HasColumnType("integer");
 
@@ -88,6 +86,71 @@ namespace TestAPI.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("TestAPI.Entities.Domain", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamId");
+
+                    b.ToTable("Domains");
+                });
+
+            modelBuilder.Entity("TestAPI.Entities.DomainPerformance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DomainId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TotalAnswered")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalCorrect")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DomainId");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("UserId", "DomainId", "ExamId")
+                        .IsUnique();
+
+                    b.ToTable("DomainPerformances");
+                });
+
             modelBuilder.Entity("TestAPI.Entities.Exam", b =>
                 {
                     b.Property<int>("Id")
@@ -96,13 +159,19 @@ namespace TestAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Context")
+                        .HasColumnType("text");
 
                     b.Property<int>("DurationInMinutes")
                         .HasColumnType("integer");
 
                     b.Property<int>("NumberOfQuestions")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PassScore")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
@@ -122,6 +191,9 @@ namespace TestAPI.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CorrectCount")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ExamId")
                         .HasColumnType("integer");
@@ -162,10 +234,18 @@ namespace TestAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("DomainId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Explanation")
+                        .HasColumnType("text");
+
                     b.Property<string>("Text")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DomainId");
 
                     b.ToTable("Questions");
                 });
@@ -222,26 +302,11 @@ namespace TestAPI.Migrations
 
                     b.HasIndex("ExamAttemptId");
 
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("SelectedOptionId");
+
                     b.ToTable("UserExamResponses");
-                });
-
-            modelBuilder.Entity("TestAPI.Models.QuestionCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("QuestionId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("QuestionCategories");
                 });
 
             modelBuilder.Entity("ExamQuestion", b =>
@@ -261,13 +326,6 @@ namespace TestAPI.Migrations
 
             modelBuilder.Entity("TestAPI.Entities.AnswerOption", b =>
                 {
-                    b.HasOne("TestAPI.Entities.Exam", "Exam")
-                        .WithMany("AnswerOptions")
-                        .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_AnswerOptions_Exams_ExamId1");
-
                     b.HasOne("TestAPI.Entities.Question", "Question")
                         .WithMany("AnswerOptions")
                         .HasForeignKey("QuestionId")
@@ -275,9 +333,43 @@ namespace TestAPI.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_AnswerOptions_Exams_ExamId");
 
-                    b.Navigation("Exam");
-
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("TestAPI.Entities.Domain", b =>
+                {
+                    b.HasOne("TestAPI.Entities.Exam", "Exam")
+                        .WithMany("Domains")
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exam");
+                });
+
+            modelBuilder.Entity("TestAPI.Entities.DomainPerformance", b =>
+                {
+                    b.HasOne("TestAPI.Entities.Domain", "Domain")
+                        .WithMany("DomainPerfomances")
+                        .HasForeignKey("DomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestAPI.Entities.Exam", "Exam")
+                        .WithMany("DomainPerfomances")
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestAPI.Entities.User", null)
+                        .WithMany("DomainPerfomances")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Domain");
+
+                    b.Navigation("Exam");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.Exam", b =>
@@ -285,8 +377,7 @@ namespace TestAPI.Migrations
                     b.HasOne("TestAPI.Entities.Category", "Category")
                         .WithMany("Exams")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
                 });
@@ -299,15 +390,24 @@ namespace TestAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestAPI.Entities.User", "User")
+                    b.HasOne("TestAPI.Entities.User", null)
                         .WithMany("ExamAttempts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Exam");
+                });
 
-                    b.Navigation("User");
+            modelBuilder.Entity("TestAPI.Entities.Question", b =>
+                {
+                    b.HasOne("TestAPI.Entities.Domain", "Domain")
+                        .WithMany("Questions")
+                        .HasForeignKey("DomainId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Domain");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.UserExamResponse", b =>
@@ -318,7 +418,23 @@ namespace TestAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TestAPI.Entities.Question", "Question")
+                        .WithMany("UserExamResponses")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TestAPI.Entities.AnswerOption", "SelectedOption")
+                        .WithMany()
+                        .HasForeignKey("SelectedOptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("ExamAttempt");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("SelectedOption");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.Category", b =>
@@ -326,9 +442,18 @@ namespace TestAPI.Migrations
                     b.Navigation("Exams");
                 });
 
+            modelBuilder.Entity("TestAPI.Entities.Domain", b =>
+                {
+                    b.Navigation("DomainPerfomances");
+
+                    b.Navigation("Questions");
+                });
+
             modelBuilder.Entity("TestAPI.Entities.Exam", b =>
                 {
-                    b.Navigation("AnswerOptions");
+                    b.Navigation("DomainPerfomances");
+
+                    b.Navigation("Domains");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.ExamAttempt", b =>
@@ -339,10 +464,14 @@ namespace TestAPI.Migrations
             modelBuilder.Entity("TestAPI.Entities.Question", b =>
                 {
                     b.Navigation("AnswerOptions");
+
+                    b.Navigation("UserExamResponses");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.User", b =>
                 {
+                    b.Navigation("DomainPerfomances");
+
                     b.Navigation("ExamAttempts");
                 });
 #pragma warning restore 612, 618

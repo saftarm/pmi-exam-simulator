@@ -8,6 +8,8 @@ namespace TestAPI.Persistence.Interfaces
         public Task<Domain> GetByIdAsync(int categoryId);
         public Task<IEnumerable<Domain>> GetAllAsync();
 
+        public Task<IEnumerable<Domain>> GetByIdsAsync(List<int> domainIds);
+
         public Task AddAsync(Domain domain);
         public Task UpdateAsync(Domain domain);
 

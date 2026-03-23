@@ -1,4 +1,5 @@
 
+using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.Data;
@@ -33,11 +34,11 @@ namespace TestAPI.Services.Implementation
         }
 
 
-        public async Task<User> RegisterUser(RegisterUserRequest registerUserRequest) {
+        public async Task<User> RegisterUser(RegisterUserRequest? registerUserRequest) {
 
             if( registerUserRequest.UserName == null || registerUserRequest.Password == null) {
 
-                throw new ArgumentException("Invalid register request");
+                throw new ArgumentException("Sign Up credentials");
             }
             
 
@@ -47,8 +48,6 @@ namespace TestAPI.Services.Implementation
                 FirstName = registerUserRequest.FirstName,
                 Email = registerUserRequest.Email,
                 DisplayName = registerUserRequest.UserName
-                
-
 
             };
             var hashedPassword = new PasswordHasher<User>().HashPassword(newUser  , registerUserRequest.Password);

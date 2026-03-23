@@ -7,9 +7,11 @@ namespace TestAPI.Persistence.Interfaces
     {
 
 
-        public Task<IEnumerable<Exam>> GetAllAsync();
+        public IQueryable<Exam> GetAllAsync();
 
-        public Task AddAsync(Exam exam);
+        public Task<ExamStatus> GetExamStatusByIdAsync(int id);
+
+        public Task AddAsync(IEnumerable<Exam> exams);
 
         public Task DeleteAsync(int examId);
 
@@ -24,7 +26,7 @@ namespace TestAPI.Persistence.Interfaces
 
         public Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId);
 
-        public Task AddQuestionToExamAsync(int questionId, Exam exam);
+        // public Task AddQuestionToExamAsync(int questionId, Exam exam);
 
         public Task AddQuestionsToExamAsync(int examId, ICollection<Question> questions);
 

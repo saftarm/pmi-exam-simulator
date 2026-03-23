@@ -8,6 +8,7 @@ using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 
 namespace TestAPI.Persistence.Implementation
@@ -25,7 +26,12 @@ namespace TestAPI.Persistence.Implementation
         public async Task<ExamAttempt> GetByIdAsync(int examAttemptId) {
             var examAttempt = await _context.ExamAttempts
             .Include(ea => ea.UserExamResponses)
-            .FirstOrDefaultAsync(ea => ea.Id == examAttemptId); 
+            .Include(ea => ea.Exam)
+                .ThenInclude(e => e.Domains)
+            .Include(ea => ea.Exam)
+            .ThenInclude(e => e.Questions)
+            .FirstOrDefaultAsync(ea => ea.Id == examAttemptId);
+            
             
             return examAttempt;
         }

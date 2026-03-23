@@ -11,7 +11,7 @@ namespace TestAPI.DTO
         public int CorrectAnswersCount {get;set;}
         public string? ExamTitle {get;set;}
 
-        public ExamStatus Status {get;set;}
+        public AttemptStatus Status {get;set;}
 
 
     }

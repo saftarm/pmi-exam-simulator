@@ -11,10 +11,7 @@ using TestAPI.Services.Implementation;
 using TestAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using TestAPI.Entities;
-
-
-
-
+using TestAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +63,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDomainService, DomainService>();
+builder.Services.AddScoped<IProgressService, ProgressService>();
+
+builder.Services.AddExceptionHandler<ExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 
@@ -115,6 +117,7 @@ if (app.Environment.IsDevelopment())
     app.MapGet("/", () => Results.Redirect("/scalar"));
 }
 
+app.UseExceptionHandler( _ => { });
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
