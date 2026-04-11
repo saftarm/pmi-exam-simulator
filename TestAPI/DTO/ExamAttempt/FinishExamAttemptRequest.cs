@@ -4,7 +4,7 @@ namespace TestAPI.DTO
 {
     public class FinishExamAttemptRequest {
 
-        public int ExamAttemptId {get;set;}
+        public Guid ExamAttemptId {get;set;}
         public IEnumerable<UserExamResponseDto>?  userExamResponses {get;set;}
 
 

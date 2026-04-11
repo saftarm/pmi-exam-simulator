@@ -2,18 +2,16 @@
 
 namespace TestAPI.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
 
-        [Key]
-        public int Id { get; set; }
         [Required]
         [MaxLength(50)]
-        public string FirstName {get; set;} = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(50)]
-        public string UserName {get; set;} = string.Empty;
+        public string UserName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(50)]
@@ -21,20 +19,20 @@ namespace TestAPI.Entities
 
         [Required]
         [MaxLength(50)]
-        public string Email {get;set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
         [MaxLength(255)]
-        public string PasswordHash {get;set;} = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
 
-        public ICollection<DomainPerformance>  DomainPerfomances {get;set;} = new List<DomainPerformance>();
+        public ICollection<DomainPerformance> DomainPerfomances { get; set; } = new List<DomainPerformance>();
 
-        public ICollection<ExamAttempt> ExamAttempts {get;set;} = new List<ExamAttempt>();
+        public ICollection<ExamAttempt> ExamAttempts { get; set; } = new List<ExamAttempt>();
 
 
 
-        
+
 
 
     }

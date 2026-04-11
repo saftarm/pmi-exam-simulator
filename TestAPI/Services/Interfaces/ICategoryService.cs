@@ -1,30 +1,20 @@
 using TestAPI.DTO;
 using TestAPI.DTO.Category;
-using TestAPI.Entities;
 
 namespace TestAPI.Services.Interfaces
 {
     public interface ICategoryService
     {
-        public Task<CategoryDto> GetByIdAsync(int categoryId);
 
-        public Task<IEnumerable<CategoryDto>> GetAllAsync();
+        public Task<CategoryDto> CreateCategory(CreateCategoryDto createCategoryDto, CancellationToken ct);
 
+        public Task<CategoryDto> GetByIdAsync(Guid categoryId, CancellationToken ct);
 
-        public Task CreateCategory(CreateCategoryDto createCategoryDto);
+        public Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken ct);
+        public Task UpdateCategory(Guid id, UpdateCategoryDto dto);
 
-        public Task UpdateCategory(int id, UpdateCategoryDto dto);
-
-        public Task DeleteAsync(int id);
-
+        public Task DeleteAsync(Guid id);
         public Task AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto);
-
-        public Task<IEnumerable<ExamSummaryDto>> GetExamSummariesByCategoryId(int categoryId);
-
-
-
-
-
 
 
     }

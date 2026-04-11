@@ -59,9 +59,9 @@ namespace TestAPI.Services.Implementation
                 Weight = domain.Weight,
                 ExamId = domain.ExamId 
             };
-        }
+        } 
 
-        public async Task<DomainDto> GetByIdAsync(int id)
+        public async Task<DomainDto> GetByIdAsync(Guid id)
         {
 
             var domain = await _domainRepository.GetByIdAsync(id);
@@ -98,13 +98,13 @@ namespace TestAPI.Services.Implementation
 
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             await _domainRepository.DeleteAsync(id);
         }
 
 
-        public async Task UpdateDomain(int id, UpdateDomainDto updateDomainDto) {
+        public async Task UpdateDomain(Guid id, UpdateDomainDto updateDomainDto) {
 
             var domain = await _domainRepository.GetByIdAsync(id);
 

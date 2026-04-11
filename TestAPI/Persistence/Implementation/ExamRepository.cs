@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol;
+﻿using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
-using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Exceptions;
+using TestAPI.Models;
 using TestAPI.Persistence.Interfaces;
 
 
@@ -21,6 +18,16 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
+        public async Task<IEnumerable<Exam>?> GetPublishedExamsByCategoryIdAsync(Guid categoryId, PageParameters pageParameters, CancellationToken ct)
+        {
+            return await _context.Exams
+                .AsNoTracking()
+                .Where(e => e.CategoryId == categoryId && e.Status == ExamStatus.Published)
+                .OrderBy(e => e.CreatedAt)
+                .Skip((pageParameters.PageNumber - 1) * pageParameters.PageSize)
+                .Take(pageParameters.PageSize)
+                .ToListAsync(ct);
+        }
 
         public IQueryable<Exam> GetAllAsync()
         {
@@ -28,7 +35,7 @@ namespace TestAPI.Persistence.Implementation
             .Include(e => e.Category)
             .Include(e => e.Questions)
             .AsQueryable();
-            return examsQuery; 
+            return examsQuery;
         }
 
         public async Task AddAsync(IEnumerable<Exam> exams)
@@ -37,30 +44,29 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId)
+        public async Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(Guid examId)
         {
 
             var questions = await _context.Questions
-            .Where(q => q.ExamId == examId)
-            .Include(q => q.AnswerOptions)
-            .ToListAsync();
-            // if (questions.Any())
-            // {
-            //     throw new KeyNotFoundException("Questions not found");
-            // }
+                .AsNoTracking()
+                .Where(q => q.ExamId == examId)
+                .Include(q => q.AnswerOptions)
+                .ToListAsync();
+
             return questions;
         }
 
-     
 
 
 
-        public async Task UpdateAsync(Exam exam) {
+
+        public async Task UpdateAsync(Exam exam)
+        {
             _context.Exams.Update(exam);
             await _context.SaveChangesAsync();
 
         }
-        public async Task DeleteAsync(int examId)
+        public async Task DeleteAsync(Guid examId)
         {
             await _context.Exams.Where(e => e.Id == examId).ExecuteDeleteAsync();
 
@@ -70,34 +76,42 @@ namespace TestAPI.Persistence.Implementation
         }
 
 
-        public async Task DeleteRangeAsync(IEnumerable<int> examIds) {
+        public async Task DeleteRangeAsync(IEnumerable<Guid> examIds)
+        {
             await _context.Exams.Where(q => examIds.Contains(q.Id)).ExecuteDeleteAsync();
-            
+
         }
 
-        public async Task<Exam> GetByIdAsync(int id)
+        public async Task<Exam> GetByIdAsync(Guid id)
         {
             var examFromDb = await _context.Exams
-            .Include( e=> e.Category)
+            .Include(e => e.Domains)
+            .Include(e => e.Category)
             .Include(e => e.Questions)
             .ThenInclude(q => q.AnswerOptions)
             .FirstOrDefaultAsync(e => e.Id == id);
 
-            if(examFromDb == null) {
+            if (examFromDb == null)
+            {
                 throw new RecordNotFoundException("Exam not found");
             }
 
             return examFromDb;
         }
-
-
-        public async Task<IEnumerable<Exam>> GetAllById(ICollection<int> examIds)
+        public async Task<IEnumerable<Guid>> GetDomainIdsById(Guid id)
         {
-            return await _context.Exams.Where(e => examIds.Contains(e.Id)).ToListAsync() ;
+            var domainIds = await _context.Domains.Where(d => d.ExamId == id).Select(d => d.Id).ToListAsync();
+            return domainIds;
+        }
+
+
+        public async Task<IEnumerable<Exam>> GetAllById(ICollection<Guid> examIds)
+        {
+            return await _context.Exams.Where(e => examIds.Contains(e.Id)).ToListAsync();
 
         }
 
-        // public async Task AddQuestionToExamAsync(int questionId, Exam exam)
+        // public async Task AddQuestionToExamAsync(Guid questionId, Exam exam)
         // {
 
         //     if (exam.Questions == null)
@@ -132,11 +146,12 @@ namespace TestAPI.Persistence.Implementation
         // }
 
 
-        public async Task AddQuestionsToExamAsync(int examId, ICollection<Question> questions)
+        public async Task AddQuestionsToExamAsync(Guid examId, ICollection<Question> questions)
         {
             var exam = await _context.Exams.FindAsync(examId);
 
-            if(exam == null) {
+            if (exam == null)
+            {
                 throw new RecordNotFoundException("Exam not found");
             }
 
@@ -148,14 +163,15 @@ namespace TestAPI.Persistence.Implementation
         }
 
 
-        public async Task<ExamStatus> GetExamStatusByIdAsync(int id) {
+        public async Task<ExamStatus> GetExamStatusByIdAsync(Guid id)
+        {
             var examStatus = await _context.Exams
-            .Where(e => e.Id == id) 
-            .Select(e => e.Status) 
+            .Where(e => e.Id == id)
+            .Select(e => e.Status)
             .FirstOrDefaultAsync();
 
-            return examStatus; 
-            
+            return examStatus;
+
         }
     }
 }

@@ -1,24 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TestAPI.DTO
 {
     public class ExamSummaryDto
     {
+        public Guid Id { get; set; }
+        [Required]
+        public string? Title { get; set; } = string.Empty;
 
+        [Required]
+        public string CategoryTitle { get; set; } = string.Empty;
 
+        public Guid CategoryId { get; set; }
+        [Required]
 
-        public int Id { get; set; }
-        public string? Title { get; set; }
-
-        public string CategoryTitle {get; set;} = string.Empty;
-
-        public int CategoryId { get; set; }
-
-        
         public int NumberOfQuestions { get; set; }
 
+        [Required]
         public int DurationInMinutes { get; set; }
-
-
-
     }
 }
 

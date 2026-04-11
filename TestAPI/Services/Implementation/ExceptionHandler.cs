@@ -1,13 +1,15 @@
-using System.Runtime.InteropServices;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.Exceptions;
 
-namespace TestAPI.Services {
+namespace TestAPI.Services
+{
 
 
 
-    public class ExceptionHandler : IExceptionHandler {
+    public class ExceptionHandler : IExceptionHandler
+    {
 
         private readonly ILogger<ExceptionHandler> _logger;
 
@@ -15,11 +17,12 @@ namespace TestAPI.Services {
         {
             _logger = logger;
         }
-            
+
         public async ValueTask<bool> TryHandleAsync(
-            HttpContext httpContext, 
-            Exception exception, 
-            CancellationToken cancellationToken) {
+            HttpContext httpContext,
+            Exception exception,
+            CancellationToken cancellationToken)
+        {
 
             _logger.LogError(exception, "Exception occured: {Message}", exception.Message);
 
@@ -32,6 +35,8 @@ namespace TestAPI.Services {
                 ArgumentException => StatusCodes.Status400BadRequest,
                 FormatException => StatusCodes.Status400BadRequest,
                 UnauthorizedAccessException => StatusCodes.Status403Forbidden,
+
+                ValidationException => StatusCodes.Status422UnprocessableEntity,
 
                 _ => StatusCodes.Status500InternalServerError
 
@@ -52,20 +57,20 @@ namespace TestAPI.Services {
 
             return true;
         }
-        
 
 
- 
-
-        
 
 
-        
+
+
+
+
+
     }
 
 
 
-    
+
 
 
 

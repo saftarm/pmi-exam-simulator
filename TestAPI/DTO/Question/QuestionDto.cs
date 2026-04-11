@@ -4,7 +4,7 @@ namespace TestAPI.DTO
     {
 
 
-        public int Id {get;set;}
+        public Guid Id {get;set;}
         public string? Title { get; set; }
 
         public List<AnswerOptionDto>? AnswerOptionsDtos { get; set; }

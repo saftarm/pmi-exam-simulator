@@ -5,23 +5,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TestAPI.Entities
 {
-    public class Category
+    public class Category : BaseEntity
     {
-
-        [Key]
-        public int Id { get; set; }
         [Required]
         [MaxLength(200)]
-        public string  Title { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(500)]
-        public string? Description { get; set;  }
-        
+        public string? Description { get; set; }
+
         public ICollection<Exam> Exams { get; set; } = new List<Exam>();
 
 
         [DefaultValue(0)]
-        public int NumberOfExams {get;set;}
+        public int NumberOfExams { get; set; } 
     }
 }

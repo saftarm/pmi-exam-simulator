@@ -11,7 +11,7 @@ namespace TestAPI.DTO
 
         public string Explanation {get;set;}= string.Empty;
 
-        public int DomainId {get;set;}
+        public Guid DomainId {get;set;}
         
         public ICollection<CreateAnswerOptionDto> AnswerOptionsDtos { get; set; } = new List<CreateAnswerOptionDto>();
 

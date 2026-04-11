@@ -24,7 +24,7 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
  
-        public async Task<ExamAttempt> GetByIdAsync(int examAttemptId) {
+        public async Task<ExamAttempt> GetByIdAsync(Guid examAttemptId) {
             var examAttempt = await _context.ExamAttempts
             .Include(ea => ea.UserExamResponses)
             .Include(ea => ea.Exam)
@@ -41,7 +41,7 @@ namespace TestAPI.Persistence.Implementation
             return await _context.ExamAttempts.ToListAsync();
         }
 
-        public async Task<ExamAttempt> GetByUserId(int userId) {
+        public async Task<ExamAttempt> GetByUserId(Guid userId) {
             var examAttempt = await _context.ExamAttempts.FirstOrDefaultAsync(e => e.UserId == userId);
 
             if(examAttempt == null) {
@@ -50,19 +50,19 @@ namespace TestAPI.Persistence.Implementation
             return examAttempt;
         }
 
-          public async Task<int> AddAsync(ExamAttempt examAttempt) {
+          public async Task<Guid> AddAsync(ExamAttempt examAttempt) {
 
             await _context.ExamAttempts.AddAsync(examAttempt);
             await _context.SaveChangesAsync();
             return examAttempt.Id;
           }
 
-        public async Task<int> UpdateAsync (ExamAttempt updatedExamAttempt) {
+        public async Task<Guid> UpdateAsync (ExamAttempt updatedExamAttempt) {
             _context.ExamAttempts.Update(updatedExamAttempt);
             await _context.SaveChangesAsync();
             return updatedExamAttempt.Id;
         }
-         public async Task DeleteAsync(int examAttemptId) {
+         public async Task DeleteAsync(Guid examAttemptId) {
             var examAttempt = await _context.ExamAttempts.FindAsync(examAttemptId);
             if(examAttempt == null) {
                 throw new RecordNotFoundException("Attempt not found");
@@ -78,11 +78,11 @@ namespace TestAPI.Persistence.Implementation
         // }
 
 
-        // public async Task<AnswerOption> GetAnswerOptionAsync(int selectedOptionId) {
+        // public async Task<AnswerOption> GetAnswerOptionAsync(Guid selectedOptionId) {
         //     return await _context.AnswerOptions.FirstOrDefaultAsync(o => o.Id == selectedOptionId);
         // }
  
-        public async Task<IEnumerable<UserExamResponse>> GetResponsesAsync(int examAttemptId) {
+        public async Task<IEnumerable<UserExamResponse>> GetResponsesAsync(Guid examAttemptId) {
             var examAttempt = await _context.ExamAttempts
             .Include(r => r.UserExamResponses)
             .FirstOrDefaultAsync(a => a.Id == examAttemptId);

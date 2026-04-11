@@ -1,9 +1,8 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using TestAPI.DTO;
 using TestAPI.DTO.Category;
 using TestAPI.Entities;
+using TestAPI.Exceptions;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.Services.Interfaces;
 
@@ -14,115 +13,94 @@ namespace TestAPI.Services.Implementation
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IExamRepository _examRepository;
+        private readonly IMapperService _mapperService;
 
-      
-
-        public CategoryService(ICategoryRepository categoryRepository, IExamRepository examRepository)
+        public CategoryService(ICategoryRepository categoryRepository, IExamRepository examRepository, IMapperService mapperService)
         {
             _categoryRepository = categoryRepository;
             _examRepository = examRepository;
-     
-
-
+            _mapperService = mapperService;
         }
 
-
-
-        private static IEnumerable<ExamSummaryDto> MapToExamSummaryDtos(IEnumerable<Exam> exams)
+        public async Task<CategoryDto> CreateCategory(CreateCategoryDto createCategoryDto, CancellationToken ct)
         {
-            return exams.Select(e =>
-            new ExamSummaryDto
+
+            var exists = await _categoryRepository.ExistsByTitleAsync(createCategoryDto.Title, ct);
+
+            if (exists)
             {
-                Id = e.Id,
-                Title = e.Title,
-                DurationInMinutes = e.DurationInMinutes,
-                NumberOfQuestions = e.NumberOfQuestions
-            });
-        }
-
-        private static IEnumerable<CategoryDto> MapToCategoryDtos(IEnumerable<Category> categories)
-        {
-            return categories.Select(c =>
-                new CategoryDto
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    NumberOfExams = c.NumberOfExams
-                });
-        }
-
-        private static CategoryDto MapToCategoryDto(Category category)
-        {
-            return new CategoryDto
-            {
-                Id = category.Id,
-                Title = category.Title   
-            };
-        }
-
-        public async Task<IEnumerable<ExamSummaryDto>> GetExamSummariesByCategoryId(int categoryId)
-        {
-            var exams = await  _categoryRepository.GetExamsByCategoryId(categoryId);
-
-            return MapToExamSummaryDtos(exams);
-
-        }
-
-        public async Task<CategoryDto> GetByIdAsync(int categoryId)
-        {
-           
-            var category = await _categoryRepository.GetByIdAsync(categoryId);
-            if (category == null)
-            {
-                throw new Exception("Category not Found");
+                throw new RecordAlreadyExists($"Category with name {createCategoryDto.Title} already exists");
             }
 
-            return MapToCategoryDto(category);
-
-        }
-
-        public async Task<IEnumerable<CategoryDto>> GetAllAsync()
-        {
-            var categories = await _categoryRepository.GetAllAsync();
-       
-            return MapToCategoryDtos(categories);
-        }
-
-   
-        public async Task CreateCategory(CreateCategoryDto createCategoryDto)
-        {
             var newCategory = new Category
             {
                 Title = createCategoryDto.Title,
                 Description = createCategoryDto.Description
-
             };
+
             await _categoryRepository.AddAsync(newCategory);
 
+            return new CategoryDto
+            {
+                Id = newCategory.Id,
+                Title = newCategory.Title,
+                Description = newCategory.Description,
+                NumberOfExams = newCategory.NumberOfExams
+            };
+
+        }
+        // Get Category By Id
+        public async Task<CategoryDto> GetByIdAsync(Guid categoryId, CancellationToken ct)
+        {
+            var category = await _categoryRepository.GetByIdAsync(categoryId);
+            if (category == null)
+            {
+                throw new RecordNotFoundException($"Category not Found by id = {categoryId}");
+            }
+            return _mapperService.MapCategoryToCategoryDto(category);
         }
 
-         public async Task UpdateCategory(int id, UpdateCategoryDto dto) {
+
+
+        public async Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken ct)
+        {
+            var categories = await _categoryRepository.GetAllAsync(ct);
+
+            if (categories == null)
+            {
+                throw new RecordNotFoundException("Categories not found");
+            }
+
+            return _mapperService.MapCategoriesToCategoryDtos(categories);
+        }
+
+
+        // Update Category
+        public async Task UpdateCategory(Guid id, UpdateCategoryDto dto)
+        {
 
             var category = await _categoryRepository.GetByIdAsync(id);
 
-            if(category == null) {
+            if (category == null)
+            {
                 throw new KeyNotFoundException();
             }
 
-            
-            if(dto.Title != null) {
+
+            if (dto.Title != null)
+            {
                 category.Title = dto.Title;
             }
-            if(dto.Description != null ){
+            if (dto.Description != null)
+            {
                 category.Description = dto.Description;
             }
-            
+
             await _categoryRepository.Update(category);
 
-         }
+        }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             await _categoryRepository.DeleteAsync(id);
         }
@@ -139,7 +117,8 @@ namespace TestAPI.Services.Implementation
 
             var exams = await _examRepository.GetAllById(newExamIds);
 
-            if(!newExamIds.Any()) {
+            if (!newExamIds.Any())
+            {
                 return;
             }
 

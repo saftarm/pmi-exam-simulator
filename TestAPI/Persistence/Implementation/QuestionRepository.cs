@@ -1,12 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
+using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
-using TestAPI.DTO;
-using NuGet.Protocol.Core.Types;
-using NuGet.Versioning;
 
 namespace TestAPI.Persistence.Implementation
 {
@@ -20,7 +16,7 @@ namespace TestAPI.Persistence.Implementation
         }
 
         // Add 
-        public async Task<int> AddAsync(Question newQuestion)
+        public async Task<Guid> AddAsync(Question newQuestion)
         {
 
             await _context.Questions.AddAsync(newQuestion);
@@ -28,7 +24,8 @@ namespace TestAPI.Persistence.Implementation
             return newQuestion.Id;
         }
 
-        public async Task AddRangeAsync(ICollection<Question> questions) {
+        public async Task AddRangeAsync(IEnumerable<Question> questions)
+        {
             _context.Questions.AddRange(questions);
             await _context.SaveChangesAsync();
         }
@@ -36,37 +33,42 @@ namespace TestAPI.Persistence.Implementation
 
 
         // Update
-        public async Task<UpdateQuestionDto> UpdateAsync(int questionId, UpdateQuestionDto updateQuestionDto)
+        public async Task<UpdateQuestionDto> UpdateAsync(Guid questionId, UpdateQuestionDto updateQuestionDto)
         {
-            
+
             var question = await _context.Questions.
             Include(o => o.AnswerOptions).
             FirstOrDefaultAsync(q => q.Id == questionId);
 
-            if( question == null) {
+            if (question == null)
+            {
                 throw new Exception("Question not found");
+            }
+
+            if (updateQuestionDto.Text == null)
+            {
+                throw new ArgumentNullException(nameof(updateQuestionDto), "Question lacks Text field");
             }
 
             _context.AnswerOptions.RemoveRange(question.AnswerOptions);
 
-            question.AnswerOptions = updateQuestionDto.AnswerOptionsDtos.Select( 
-                o => new AnswerOption{
+            question.AnswerOptions = updateQuestionDto.AnswerOptionsDtos.Select(
+                o => new AnswerOption
+                {
                     Text = o.Text,
                     IsCorrect = o.IsCorrect
                 }
             ).ToList();
             question.Title = updateQuestionDto.Text;
 
-            
+
             await _context.SaveChangesAsync();
 
             return updateQuestionDto;
 
-           
-
         }
         // Delete
-        public async Task DeleteAsync(int questionId)
+        public async Task DeleteAsync(Guid questionId)
         {
             var question = _context.Questions.Find(questionId)!;
             _context.Questions.Remove(question);
@@ -74,21 +76,23 @@ namespace TestAPI.Persistence.Implementation
         }
 
         // Get By Id
-        public async Task<Question> GetByIdAsync(int questionId) {
-            
+        public async Task<Question> GetByIdAsync(Guid questionId)
+        {
+
             var question = await _context.Questions
             .Include(o => o.AnswerOptions)
             .FirstOrDefaultAsync(q => q.Id == questionId);
 
-            
-            if(question == null ) {
+
+            if (question == null)
+            {
                 throw new Exception("Question Not Found");
             }
-            
+
             return question;
         }
 
-        public async Task<ICollection<Question>> GetByIdsAsync(ICollection<int> questionIds)
+        public async Task<ICollection<Question>> GetByIdsAsync(ICollection<Guid> questionIds)
         {
             return await _context.Questions.Where(q => questionIds.Contains(q.Id))
                 .Include(q => q.AnswerOptions)
@@ -97,7 +101,7 @@ namespace TestAPI.Persistence.Implementation
         }
 
         // Get all
-        public async Task <IEnumerable<Question>> GetAllAsync()
+        public async Task<IEnumerable<Question>> GetAllAsync()
         {
 
 
@@ -106,19 +110,31 @@ namespace TestAPI.Persistence.Implementation
             .ToListAsync();
 
             return questions;
-            
+
         }
 
 
-        public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsByQuestionID (int questionId) {
+        public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsByQuestionID(Guid questionId)
+        {
             return await _context.AnswerOptions.Where(o => o.QuestionId == questionId).ToListAsync();
         }
 
 
 
-        public async Task DeleteRangeAsync(IEnumerable<int> questionIds) {
+        public async Task DeleteRangeAsync(IEnumerable<Guid> questionIds)
+        {
             await _context.Questions.Where(q => questionIds.Contains(q.Id)).ExecuteDeleteAsync();
-            
+
+        }
+
+        public async Task<IEnumerable<Question>> GetFixedAmountOfRandomQuestionsByDomainId(Guid domainId, int numberOfQuestions)
+        {
+            return await _context.Questions
+            .Where(q => q.DomainId == domainId)
+            .OrderBy(q => EF.Functions.Random())
+            .Take(numberOfQuestions)
+            .ToListAsync();
+
         }
 
     }

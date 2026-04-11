@@ -5,7 +5,7 @@ namespace TestAPI.DTO
 {
     public class DeleteQuestionsRequest
     {
-        public ICollection<int>? QuestionIds { get; set; }
+        public ICollection<Guid>? QuestionIds { get; set; }
 
     }
 }

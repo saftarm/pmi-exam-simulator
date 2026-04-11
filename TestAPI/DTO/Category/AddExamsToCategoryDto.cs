@@ -5,7 +5,7 @@ namespace TestAPI.DTO.Category
     public class AddExamsToCategoryDto
     {
        
-        public int CategoryId { get; set; }
-        public ICollection<int>? ExamIds { get; set; }
+        public Guid CategoryId { get; set; }
+        public ICollection<Guid>? ExamIds { get; set; }
     }
 }

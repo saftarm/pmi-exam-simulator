@@ -1,16 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
-using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
 
 namespace TestAPI.Persistence.Implementation
 {
-
-
     public class CategoryRepository : ICategoryRepository
     {
-
         private readonly ApplicationDbContext _context;
 
         public CategoryRepository(ApplicationDbContext context)
@@ -18,26 +14,33 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
-        public async Task<Category>? GetByIdAsync(int categoryId)
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return true;
+        }
+
+        // Exists By Title
+        public async Task<bool> ExistsByTitleAsync(string title, CancellationToken ct)
+        {
+            return await _context.Categories.AnyAsync(c => c.Title == title, ct);
+        }
+
+
+        // Get By Id 
+        public async Task<Category?> GetByIdAsync(Guid categoryId)
         {
             var category = await _context.Categories
             .Include(c => c.Exams)
             .FirstOrDefaultAsync(c => c.Id == categoryId);
-            if (category == null)
-            {
-                throw new Exception("Category Not Found");
-            }
             return category;
-
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync()
+        public async Task<IEnumerable<Category>> GetAllAsync(CancellationToken ct)
         {
             return await _context.Categories.ToListAsync();
-
         }
 
-        public async Task<string> GetTitleByExamId(int examId)
+        public async Task<string> GetTitleByExamId(Guid examId)
         {
 
             var exam = await _context.Exams.FindAsync(examId);
@@ -62,7 +65,7 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int categoryId)
+        public async Task DeleteAsync(Guid categoryId)
         {
 
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
@@ -76,7 +79,7 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Exam>> GetExamsByCategoryId(int categoryId)
+        public async Task<IEnumerable<Exam>> GetExamsByCategoryId(Guid categoryId)
         {
 
             var exams = await _context.Exams.Where(e => e.CategoryId == categoryId).ToListAsync();

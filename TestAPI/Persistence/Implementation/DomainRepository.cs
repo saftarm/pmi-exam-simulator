@@ -1,10 +1,9 @@
- 
- 
 
 
- using Microsoft.EntityFrameworkCore;
+
+
+using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
-using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Exceptions;
 using TestAPI.Persistence.Interfaces;
@@ -23,7 +22,7 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
-        public async Task<Domain> GetByIdAsync(int id)
+        public async Task<Domain> GetByIdAsync(Guid id)
         {
             var domain = await _context.Domains.FindAsync(id);
             if (domain == null)
@@ -39,10 +38,11 @@ namespace TestAPI.Persistence.Implementation
             return await _context.Domains.ToListAsync();
 
         }
-        public async Task<IEnumerable<Domain>> GetByIdsAsync(List<int> domainIds) {
+        public async Task<IEnumerable<Domain>> GetByIdsAsync(List<Guid> domainIds)
+        {
             return await _context.Domains.Where(d => domainIds.Contains(d.Id)).ToListAsync();
         }
- 
+
 
         public async Task AddAsync(Domain domain)
         {
@@ -50,12 +50,13 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
 
             var domain = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
 
-            if(domain == null ) {
+            if (domain == null)
+            {
                 throw new Exception("Domain Not Found");
             }
             _context.Categories.Remove(domain);
@@ -68,7 +69,14 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
-    
+        public async Task<Guid> GetIdByTitleAsync(string title, CancellationToken ct)
+        {
+            return await _context.Domains
+                .Where(d => d.Title == title)
+                .Select(d => d.Id)
+                .FirstOrDefaultAsync(ct);
+        }
+
 
 
 

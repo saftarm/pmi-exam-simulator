@@ -3,9 +3,9 @@ namespace TestAPI.DTO
     public class SaveResponseRequest{
 
 
-        public int ExamAttemptId {get;set;}
-        public int QuestionId {get;set;}
-        public int SelectedOptionId {get;set;}
+        public Guid ExamAttemptId {get;set;}
+        public Guid QuestionId {get;set;}
+        public Guid SelectedOptionId {get;set;}
         
     }
 }

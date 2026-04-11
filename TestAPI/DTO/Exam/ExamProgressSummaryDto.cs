@@ -5,7 +5,7 @@ namespace TestAPI.DTO
 {
     public class ExamProgressSummaryDto
     { 
-        public int ExamId { get; set; }
+        public Guid ExamId { get; set; }
         public string Title { get; set; } = string.Empty;
 
         public AttemptStatus Status {get;set;}

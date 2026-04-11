@@ -6,15 +6,15 @@ namespace TestAPI.Services.Interfaces
 {
     public interface IDomainService
     {
-        public Task<DomainDto> GetByIdAsync(int id);
+        public Task<DomainDto> GetByIdAsync(Guid id);
 
         public Task<IEnumerable<DomainDto>> GetAllAsync();
     
         public Task CreateDomain(CreateDomainDto createDomainDto);
         
-        public Task UpdateDomain(int id, UpdateDomainDto updateDomainDto);
+        public Task UpdateDomain(Guid id, UpdateDomainDto updateDomainDto);
 
-        public Task DeleteAsync(int id);
+        public Task DeleteAsync(Guid id);
 
     }
 }

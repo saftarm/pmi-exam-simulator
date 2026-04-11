@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
-using TestAPI.DTO.Category;
 using TestAPI.Services.Interfaces;
 namespace TestAPI.Controllers
 {
@@ -9,69 +8,53 @@ namespace TestAPI.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-
-
-
         public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
 
-
-
-        [HttpGet("/api/categories/{id:int}")]
-        public async Task<ActionResult<CategoryDto>> GetCategory(int id)
+        // Create Category
+        [HttpPost("api/categories")]
+        public async Task<IActionResult> Create(CreateCategoryDto dto, CancellationToken ct)
         {
-            var category = await _categoryService.GetByIdAsync(id);
+            var newCategory = await _categoryService.CreateCategory(dto, ct);
+            return CreatedAtAction(nameof(GetCategory), new { id = newCategory.Id }, newCategory);
+        }
+
+
+        // Get Category
+        [HttpGet("/api/categories/{id}")]
+        public async Task<ActionResult<CategoryDto>> GetCategory(Guid id, CancellationToken ct)
+        {
+            var category = await _categoryService.GetByIdAsync(id, ct);
+
             return Ok(category);
         }
 
+
         [HttpGet("/api/categories")]
-
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories()
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories(CancellationToken ct)
         {
-            return Ok(await _categoryService.GetAllAsync());
+            var categories = await _categoryService.GetAllAsync(ct);
+            return Ok(categories);
         }
 
-        // [HttpPost("/AddExam")]
 
-        // public async Task<IActionResult> AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto) {
-        //     await  _categoryService.AddExamsToCategory(addExamsToCategoryDto);
-        //     return Ok();
-        // }
-
-        [HttpPost("api/categories")]
-
-        public async Task<ActionResult<CategoryDto>> Create(CreateCategoryDto dto)
+        // Update Category
+        [HttpPut("api/categories/{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCategoryDto dto)
         {
-            await _categoryService.CreateCategory(dto);
-            return Ok();
-        }
-
-        [HttpPatch("api/categories/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto dto) {
             await _categoryService.UpdateCategory(id, dto);
             return Ok();
         }
 
-        [HttpDelete("/api/categories/{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        // Delete Category
+        [HttpDelete("/api/categories/{id:Guid}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             await _categoryService.DeleteAsync(id);
             return NoContent();
         }
-        
-
-
-
-       
-
-
-
-
-
-
-
 
     }
 }

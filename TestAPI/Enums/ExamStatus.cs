@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using TestAPI.Enums;
 namespace TestAPI.Entities
 {
     public enum ExamStatus
@@ -7,7 +5,5 @@ namespace TestAPI.Entities
         Draft,
         Compiled,
         Published
-        
-
     }
 }

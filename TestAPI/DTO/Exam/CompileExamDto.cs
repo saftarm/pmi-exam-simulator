@@ -7,9 +7,9 @@ namespace TestAPI.DTO
     public class CompileExamDto
     {
 
-        public int ExamId {get;set;}
+        public Guid ExamId {get;set;}
         
-        public List<int> QuestionIds { get; set; } = new List<int >();
+        public List<Guid> QuestionIds { get; set; } = new List<Guid>();
        
     } 
 }

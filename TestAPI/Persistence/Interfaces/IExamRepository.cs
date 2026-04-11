@@ -1,34 +1,36 @@
-﻿using TestAPI.DTO;
-using TestAPI.Entities;
+﻿using TestAPI.Entities;
+using TestAPI.Models;
 
 namespace TestAPI.Persistence.Interfaces
 {
     public interface IExamRepository
     {
-
-
         public IQueryable<Exam> GetAllAsync();
 
-        public Task<ExamStatus> GetExamStatusByIdAsync(int id);
+        public Task<ExamStatus> GetExamStatusByIdAsync(Guid id);
 
         public Task AddAsync(IEnumerable<Exam> exams);
 
-        public Task DeleteAsync(int examId);
+        public Task DeleteAsync(Guid examId);
 
-        public Task DeleteRangeAsync(IEnumerable<int> examIds);
+        public Task DeleteRangeAsync(IEnumerable<Guid> examIds);
 
         public Task UpdateAsync(Exam exam);
 
-        public Task<Exam> GetByIdAsync(int id);
+        public Task<Exam> GetByIdAsync(Guid id);
+
+        public Task<IEnumerable<Guid>> GetDomainIdsById(Guid id);
 
 
-        public Task<IEnumerable<Exam>> GetAllById(ICollection<int> examIds);
+        public Task<IEnumerable<Exam>> GetAllById(ICollection<Guid> examIds);
 
-        public Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId);
+        public Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(Guid examId);
 
-        // public Task AddQuestionToExamAsync(int questionId, Exam exam);
+        // public Task AddQuestionToExamAsync(Guid questionId, Exam exam);
 
-        public Task AddQuestionsToExamAsync(int examId, ICollection<Question> questions);
+        public Task AddQuestionsToExamAsync(Guid examId, ICollection<Question> questions);
+
+        public Task<IEnumerable<Exam>?> GetPublishedExamsByCategoryIdAsync(Guid categoryId, PageParameters pageParameters, CancellationToken ct);
 
 
 

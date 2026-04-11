@@ -10,7 +10,7 @@ namespace TestAPI.DTO
 
         public int Weight { get; set; }
 
-        
+
 
     }
 }

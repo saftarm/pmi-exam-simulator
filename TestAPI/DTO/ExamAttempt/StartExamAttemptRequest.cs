@@ -2,9 +2,9 @@ namespace TestAPI.DTO
 {
     public class StartExamAttemptRequest{
 
-        public int UserId {get;set;}
+        public Guid UserId {get;set;}
         
-        public int ExamId {get;set;}
+        public Guid ExamId {get;set;}
     }
 }
 

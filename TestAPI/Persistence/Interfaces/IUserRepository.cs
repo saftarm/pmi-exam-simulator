@@ -6,12 +6,12 @@ namespace TestAPI.Persistence.Interfaces
     {
 
 
-        public Task<User> GetByIdAsync(int userId);
+        public Task<User> GetByIdAsync(Guid userId);
 
         public Task<User> GetByUserNameAsync(string UserName);
         public Task AddAsync(User user);
 
-        public Task Delete(int userId);
+        public Task Delete(Guid userId);
 
 
 

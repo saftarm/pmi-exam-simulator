@@ -90,13 +90,6 @@ namespace TestAPI.Services.Implementation
             
         }
 
-        public async Task<UserProgressSummaryDto> GetUserProress() {
-           
-        }
-        
-        
-
-
 
 
 

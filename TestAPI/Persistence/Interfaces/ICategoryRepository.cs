@@ -1,25 +1,22 @@
-using TestAPI.DTO;
 using TestAPI.Entities;
 
 namespace TestAPI.Persistence.Interfaces
 {
     public interface ICategoryRepository
     {
-        public Task<Category>? GetByIdAsync(int categoryId);
+        public Task<Category?> GetByIdAsync(Guid categoryId);
 
-        public Task<IEnumerable<Category>> GetAllAsync();
+        public Task<IEnumerable<Category>> GetAllAsync(CancellationToken ct);
 
-        //public Task<string> GetTitleByExamId(int examId);
+        //public Task<string> GetTitleByExamId(Guid examId);
 
         public Task AddAsync(Category category);
         public Task Update(Category Category);
 
-        public Task DeleteAsync(int categoryId); 
+        public Task DeleteAsync(Guid categoryId);
 
-        public Task<IEnumerable<Exam>> GetExamsByCategoryId(int category);
-
-
-        //public Task AddExamsToCategory(Category category);
+        public Task<IEnumerable<Exam>> GetExamsByCategoryId(Guid category);
+        public Task<bool> ExistsByTitleAsync(string title, CancellationToken ct);
 
 
     }

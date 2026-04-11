@@ -25,7 +25,7 @@ namespace TestAPI.Persistence.Implementation
 
         }
 
-        public async Task Delete(int userId) {
+        public async Task Delete(Guid userId) {
 
             var userInDb = await _context.Users.FindAsync(userId);
             if( userInDb == null ){
@@ -37,7 +37,7 @@ namespace TestAPI.Persistence.Implementation
 
         }
 
-        public async Task<User> GetByIdAsync(int userId) {
+        public async Task<User> GetByIdAsync(Guid userId) {
             var user = await _context.Users.FindAsync(userId);
             if( user == null ){
 

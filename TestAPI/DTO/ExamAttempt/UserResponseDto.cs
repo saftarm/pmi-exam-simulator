@@ -2,8 +2,8 @@ namespace TestAPI.DTO {
 
     public class UserResponseDto {
 
-        public int QuestionId {get;set;}
-        public int SelectedOptionId {get;set;}
+        public Guid QuestionId {get;set;}
+        public Guid SelectedOptionId {get;set;}
     }
 }
 

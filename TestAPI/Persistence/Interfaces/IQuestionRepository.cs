@@ -1,27 +1,29 @@
-﻿using TestAPI.Entities;
-using TestAPI.DTO;
+﻿using TestAPI.DTO;
+using TestAPI.Entities;
 namespace TestAPI.Persistence.Interfaces
 {
     public interface IQuestionRepository
     {
-        
-        public Task<int> AddAsync(Question newQuestion);
 
-        public Task AddRangeAsync(ICollection<Question> questions);
+        public Task<Guid> AddAsync(Question newQuestion);
 
-        public Task<UpdateQuestionDto> UpdateAsync(int questionId, UpdateQuestionDto questionDto);
+        public Task AddRangeAsync(IEnumerable<Question> questions);
 
-        public Task DeleteAsync(int questionId);
+        public Task<UpdateQuestionDto> UpdateAsync(Guid questionId, UpdateQuestionDto questionDto);
+
+        public Task DeleteAsync(Guid questionId);
 
         public Task<IEnumerable<Question>> GetAllAsync();
 
-        public Task<Question> GetByIdAsync(int questionId);
+        public Task<Question> GetByIdAsync(Guid questionId);
 
-        public Task<ICollection<Question>> GetByIdsAsync(ICollection<int> questionIds);
-        
-        public Task<IEnumerable<AnswerOption>> GetAnswerOptionsByQuestionID (int questionId);
+        public Task<ICollection<Question>> GetByIdsAsync(ICollection<Guid> questionIds);
 
-        public Task DeleteRangeAsync(IEnumerable<int> questionIds);
+        public Task<IEnumerable<AnswerOption>> GetAnswerOptionsByQuestionID(Guid questionId);
+
+        public Task DeleteRangeAsync(IEnumerable<Guid> questionIds);
+
+        public Task<IEnumerable<Question>> GetFixedAmountOfRandomQuestionsByDomainId(Guid domainId, int numberOfQuestions);
 
 
 

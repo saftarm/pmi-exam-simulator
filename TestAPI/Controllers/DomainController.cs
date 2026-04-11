@@ -8,18 +8,13 @@ namespace TestAPI.Controllers
     public class DomainController : ControllerBase
     {
         private readonly IDomainService _domainService;
-
-
-
         public DomainController(IDomainService domainService)
         {
             _domainService = domainService;
         }
 
-
-
-        [HttpGet("/api/domains/{id:int}")]
-        public async Task<ActionResult<DomainDto>> GetDomain(int id)
+        [HttpGet("/api/domains/{id}")]
+        public async Task<ActionResult<DomainDto>> GetDomain(Guid id)
         {
             var category = await _domainService.GetByIdAsync(id);
             return Ok(category);
@@ -43,14 +38,14 @@ namespace TestAPI.Controllers
 
         [HttpPatch("api/domains/{id}")]
 
-        public async Task<IActionResult> Update(int id, UpdateDomainDto dto) 
+        public async Task<IActionResult> Update(Guid id, UpdateDomainDto dto) 
         {
             await _domainService.UpdateDomain(id, dto);
             return Ok();
         }
 
-        [HttpDelete("/api/domains/{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("/api/domains/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             await _domainService.DeleteAsync(id);
             return NoContent();

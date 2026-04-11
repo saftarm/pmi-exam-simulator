@@ -6,7 +6,7 @@ namespace TestAPI.DTO
     public class DeleteExamsRequest
     {
 
-        public ICollection<int>? ExamIds { get; set; }
+        public ICollection<Guid>? ExamIds { get; set; }
 
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestAPI.Data;
-using TestAPI.Entities;
-using TestAPI.Services.Interfaces;
 using TestAPI.DTO;
+using TestAPI.Entities;
 using TestAPI.Models;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using TestAPI.Services.Interfaces;
 
 namespace TestAPI.Controllers
 {
@@ -21,70 +20,62 @@ namespace TestAPI.Controllers
             _context = context;
         }
 
-
-        [HttpGet("/api/exams")] 
-
-        public async Task<IActionResult> GetPublishedExams([FromQuery] PageParameters pageParameters) {
-            var exams = await _examService.GetPublishedExamsAsync(pageParameters);
+        [HttpGet("/api/exams")]
+        public async Task<IActionResult> GetPublishedExams([FromQuery] Guid categoryId, [FromQuery] PageParameters pageParameters, CancellationToken ct)
+        {
+            var exams = await _examService.GetPublishedExamSummariesByCategoryId(categoryId, pageParameters, ct);
 
             return Ok(exams);
         }
 
-        
-        // [HttpPost("/api/exams")]
-        // public async Task<IActionResult> Create(CreateExamsDto dto) {
-        //     await _examService.CreateExam(dto);
-        //     return Ok();
-        // }
-
         [HttpPost("/api/exams")]
-        public async Task<IActionResult> Create([FromBody] List<CreateExamDto> dto) {
-            await _examService.CreateExams(dto);
+        public async Task<ActionResult<IEnumerable<ExamSummaryDto>>> Create([FromBody] List<CreateExamDto> dto)
+        {
+            var createdExams = await _examService.CreateExams(dto);
+            return Ok(createdExams);
+        }
+
+        [HttpPost("/api/exams/{id}/compile")]
+        public async Task<ActionResult<Exam>> CompileExam(Guid id)
+        {
+            await _examService.CompileExam(id);
             return Ok();
         }
-        // [HttpPost("/api/exam/bulk")]
-
-        // public async Task<IActionResult> CreateBulk(CreateExamDto createExamDto) {
-        //     await _examService.CreateExam(createExamDto);
-        //     return Ok();
-        // }
 
         // // GET: api/Exam/Summary
         [HttpGet("/api/exams/summary")]
         public async Task<ActionResult<IEnumerable<ExamSummaryDto>>> GetSummariesAsync([FromQuery] PageParameters pageParameters)
         {
             var examsSummaries = await _examService.GetSummariesAsync(pageParameters);
-            
+
             return Ok(examsSummaries);
         }
-        [HttpGet("/api/exams/{id:int}/summary")]
-        public async Task<ActionResult<ExamSummaryDto>> GetSummaryByIdAsync(int id)
+        [HttpGet("/api/exams/{id}/summary")]
+        public async Task<ActionResult<ExamSummaryDto>> GetSummaryByIdAsync(Guid id)
         {
-            
             var examSummary = await _examService.GetSummaryByIdAsync(id);
             return Ok(examSummary);
-            
-        } 
+        }
 
 
         [HttpGet("/api/exams/details")]
         public async Task<ActionResult<IEnumerable<ExamDetailsDto>>> GetDetailsAsync([FromQuery] PageParameters pageParameters)
         {
             var examDetails = await _examService.GetDetailsAsync(pageParameters);
-            
+
             return Ok(examDetails);
         }
-    
+
 
 
         [HttpGet("/api/exams/{id:int}/details")]
 
-        public async Task<ActionResult<ExamDetailsDto>> GetDetailsByIdAsync(int id)
+        public async Task<ActionResult<ExamDetailsDto>> GetDetailsByIdAsync(Guid id)
         {
 
             var examDetails = await _examService.GetDetailsByIdAsync(id);
 
-            if(examDetails == null)
+            if (examDetails == null)
             {
                 return NotFound($"Exam with Id: {id} not found");
             }
@@ -96,17 +87,20 @@ namespace TestAPI.Controllers
 
 
 
-        [HttpDelete("api/exams/{id:int}")]
+        [HttpDelete("api/exams/{id}")]
 
-        public async Task<IActionResult> Delete(int id){
+        public async Task<IActionResult> Delete(Guid id)
+        {
             await _examService.DeleteAsync(id);
 
             return NoContent();
         }
         [HttpDelete("api/exams")]
-        public async Task<IActionResult> DeleteRange(DeleteExamsRequest request) {
+        public async Task<IActionResult> DeleteRange(DeleteExamsRequest request)
+        {
 
-            if(request.ExamIds == null) {
+            if (request.ExamIds == null)
+            {
                 throw new ArgumentNullException("Invalid Exam Id input");
             }
 
@@ -114,15 +108,17 @@ namespace TestAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("api/exams/{id}/publish")]
+
+        public async Task<IActionResult> PublishExam(Guid id)
+        {
+            await _examService.PublihExam(id);
+
+            return Ok();
+        }
 
 
-        
-    //     [HttpPost("/api/exams/{id:int}")]
-    //     public async Task<ActionResult<Exam>> CompileExam(int id)
-    //     {
-    //        await _examService.CompileExam(id);
-    //        return Ok();
-    // }
+
 
 
 

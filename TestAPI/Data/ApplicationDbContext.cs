@@ -1,18 +1,14 @@
-﻿using System.Runtime.Intrinsics.Arm;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TestAPI.Entities;
-using TestAPI.Models;
 
 namespace TestAPI.Data
 {
     public class ApplicationDbContext : DbContext
     {
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
-
         public DbSet<Question> Questions { get; set; }
 
         public DbSet<AnswerOption> AnswerOptions { get; set; }
@@ -29,26 +25,15 @@ namespace TestAPI.Data
 
         public DbSet<Domain> Domains { get; set; }
 
-         public DbSet<DomainPerformance> DomainPerformances { get; set; }
-
-
-
-        
- 
-    
+        public DbSet<DomainPerformance> DomainPerformances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-
-            modelBuilder.Entity<Question>()
-            .HasKey(q => q.Id);
-
             modelBuilder.Entity<User>()
             .HasIndex(u => u.UserName)
             .IsUnique();
-
 
             modelBuilder.Entity<AnswerOption>().
             HasOne(o => o.Question)
@@ -75,36 +60,33 @@ namespace TestAPI.Data
             .HasForeignKey(r => r.QuestionId)
             .OnDelete(DeleteBehavior.Restrict);
 
-             modelBuilder.Entity<UserExamResponse>()
-            .HasOne(r => r.SelectedOption)
-            .WithMany()
-            .HasForeignKey(r => r.SelectedOptionId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-
+            modelBuilder.Entity<UserExamResponse>()
+           .HasOne(r => r.SelectedOption)
+           .WithMany()
+           .HasForeignKey(r => r.SelectedOptionId)
+           .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ExamAttempt>()
             .Property(e => e.Status)
             .HasConversion<string>();
 
-
             modelBuilder.Entity<Exam>()
             .HasOne(e => e.Category)
             .WithMany(c => c.Exams)
             .HasForeignKey(e => e.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Question>()
             .HasOne(q => q.Exam)
             .WithMany(e => e.Questions)
             .HasForeignKey(q => q.ExamId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Domain>()
                 .HasOne(d => d.Exam)
                 .WithMany(e => e.Domains)
                 .HasForeignKey(d => d.ExamId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Question>()
@@ -112,43 +94,28 @@ namespace TestAPI.Data
             .WithMany(d => d.Questions)
             .HasForeignKey(q => q.DomainId)
             .OnDelete(DeleteBehavior.Cascade);
-    
+
             modelBuilder.Entity<DomainPerformance>()
             .HasOne<User>()
             .WithMany(u => u.DomainPerfomances)
-            .HasForeignKey(dp => dp.UserId);
+            .HasForeignKey(dp => dp.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DomainPerformance>()
             .HasOne(dp => dp.Domain)
             .WithMany(d => d.DomainPerformances)
             .HasForeignKey(dp => dp.DomainId)
-            .OnDelete(DeleteBehavior.Cascade);
-            
+            .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<DomainPerformance>()
             .HasOne(dp => dp.Exam)
             .WithMany(d => d.DomainPerfomances)
             .HasForeignKey(dp => dp.ExamId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DomainPerformance>()
-            .HasIndex(dp => new {dp.UserId, dp.DomainId, dp.ExamId })
+            .HasIndex(dp => new { dp.UserId, dp.DomainId, dp.ExamId })
             .IsUnique();
-
-            
-
- 
-            
-             
-        
-
-
-
-
-
-
-
-
-
 
 
 

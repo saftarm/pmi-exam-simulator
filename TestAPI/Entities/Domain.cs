@@ -1,39 +1,34 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TestAPI.Entities
 {
-public class Domain
-{
+    public class Domain : BaseEntity
+    {
 
-	[Key]
-	public int Id { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Title { get; set; } = string.Empty;
 
-	[Required]
-	[MaxLength(100)]
-	public string Title { get; set; } = string.Empty;
 
-	
-	[Required]
-	[MaxLength(500)]
-	public string Description { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(500)]
+        public string Description { get; set; } = string.Empty;
 
-	[Required]
-	[Range(0, 99)]
-	public int Weight { get; set; }
+        [Required]
+        [Range(0, 99)]
+        public int Weight { get; set; }
 
-	public int ExamId { get; set; }
+        public Guid ExamId { get; set; }
 
-	public Exam? Exam { get; set; }
+        public Exam? Exam { get; set; }
 
-	public ICollection<Question> Questions {get;set;} = new List<Question>();
+        public ICollection<Question> Questions { get; set; } = new List<Question>();
 
-	public ICollection<DomainPerformance> DomainPerformances {get;set;} = new List<DomainPerformance>();
+        public ICollection<DomainPerformance> DomainPerformances { get; set; } = new List<DomainPerformance>();
 
 
 
 
-}
+    }
 
 }

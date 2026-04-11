@@ -2,24 +2,22 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TestAPI.Entities
 {
-    public class UserExamResponse
+    public class UserExamResponse : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
 
         public bool IsCorrect { get; set; }
 
-        public int QuestionId {get;set;}
+        public Guid QuestionId { get; set; }
 
-        public Question? Question {get;set;}
+        public Question? Question { get; set; }
 
-        public int SelectedOptionId {get;set;}
+        public Guid SelectedOptionId { get; set; }
 
-        public AnswerOption? SelectedOption {get;set;}
+        public AnswerOption? SelectedOption { get; set; }
 
-        public int ExamAttemptId {get;set;}
+        public Guid ExamAttemptId { get; set; }
 
-        public ExamAttempt? ExamAttempt {get;set;}
-        
+        public ExamAttempt? ExamAttempt { get; set; }
+
     }
 }
