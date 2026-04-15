@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
 using TestAPI.Services.Interfaces;
@@ -14,6 +15,7 @@ namespace TestAPI.Controllers
         }
 
         // Create Category
+        [Authorize]
         [HttpPost("api/categories")]
         public async Task<IActionResult> Create(CreateCategoryDto dto, CancellationToken ct)
         {

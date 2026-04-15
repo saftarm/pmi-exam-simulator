@@ -1,12 +1,12 @@
 ﻿using NuGet.Packaging;
 using TestAPI.DTO;
+using TestAPI.DTO.Exam.Requests;
 using TestAPI.DTO.Exam.Responses;
 using TestAPI.Entities;
 using TestAPI.Exceptions;
 using TestAPI.Models;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.Services.Interfaces;
-
 
 
 namespace TestAPI.Services.Implementation
@@ -17,9 +17,7 @@ namespace TestAPI.Services.Implementation
         private readonly IExamAttemptRepository _examAttemptRepository;
         private readonly IQuestionRepository _questionRepository;
         private readonly IQuestionService _questionService;
-
         private readonly IDomainRepository _domainRepository;
-
         private readonly IMapperService _mapperService;
 
         public ExamService(IExamRepository examRepository,
@@ -39,6 +37,7 @@ namespace TestAPI.Services.Implementation
         }
 
 
+
         public async Task CompileExam(Guid id)
         {
             var exam = await _examRepository.GetByIdAsync(id);
@@ -51,7 +50,19 @@ namespace TestAPI.Services.Implementation
 
                 var numberOfQuestions = (exam.NumberOfQuestions * weight) / 100;
 
+                var decimalPart = numberOfQuestions - (int)numberOfQuestions;
+
+                if (decimalPart >= 0.5)
+                {
+                    numberOfQuestions += (1 - decimalPart);
+                }
+                else
+                {
+                    numberOfQuestions -= decimalPart;
+                }
+
                 var questions = await _questionRepository.GetFixedAmountOfRandomQuestionsByDomainId(domainId, numberOfQuestions);
+
 
                 exam.Questions.AddRange(questions);
 
@@ -67,16 +78,15 @@ namespace TestAPI.Services.Implementation
 
         public async Task<ExamFullDto> GetByIdAsync(Guid examId)
         {
-            ExamFullDto dto = new();
+            ExamFullDto dto = new ExamFullDto();
             return dto;
         }
+
         // Get Summary
         public async Task<IEnumerable<ExamSummaryDto>> GetSummariesAsync(PageParameters pageParameters)
         {
             var examsQuery = _examRepository.GetAllAsync();
-
             var pagedExams = await PagedList<Exam>.CreateAsync(examsQuery, pageParameters.PageNumber, pageParameters.PageSize);
-
             var examSummaries = pagedExams.Items.Select(
                 pe => new ExamSummaryDto
                 {
@@ -89,6 +99,28 @@ namespace TestAPI.Services.Implementation
                 }
             );
             return examSummaries;
+        }
+
+        public async Task<ExamSummaryDto> UpdateAsync(Guid id, UpdateExamRequest request)
+        {
+            var exam = await _examRepository.GetByIdAsync(id);
+
+            if (exam == null)
+            {
+                throw new RecordNotFoundException("Exam not found");
+            }
+
+            exam.NumberOfQuestions = request.NumberOfQuestions;
+            exam.DurationInMinutes = request.DurationInMinutes;
+
+
+            await _examRepository.UpdateAsync(exam);
+
+            return new ExamSummaryDto
+            {
+                Title = exam.Title,
+                CategoryTitle = exam.CategoryTitle
+            };
         }
         public async Task<IEnumerable<ExamDetailsDto>> GetDetailsAsync(PageParameters pageParameters)
         {

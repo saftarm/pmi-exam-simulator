@@ -9,7 +9,6 @@ namespace TestAPI.Extensions
     {
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-
             services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
 
             services.AddAuthentication(options =>
@@ -27,7 +26,7 @@ namespace TestAPI.Extensions
                         ValidIssuer = configuration["AuthSettings:Issuer"],
                         ValidAudience = configuration["AuthSettings:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecretKey")!))
+                            Encoding.UTF8.GetBytes(configuration["AuthSettings:SecretKey"]!))
                     };
                 });
             return services;

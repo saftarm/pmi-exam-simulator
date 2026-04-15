@@ -1,4 +1,5 @@
 ﻿using TestAPI.DTO;
+using TestAPI.DTO.Exam.Requests;
 using TestAPI.DTO.Exam.Responses;
 using TestAPI.Models;
 
@@ -7,6 +8,8 @@ namespace TestAPI.Services.Interfaces
     public interface IExamService
     {
         public Task<IEnumerable<CreateExamResponse>> CreateExams(List<CreateExamDto> dto);
+
+        public Task<ExamSummaryDto> UpdateAsync(Guid id, UpdateExamRequest request);
         public Task CompileExam(Guid id);
         public Task<IEnumerable<ExamSummaryDto>> GetSummariesAsync(PageParameters pageParameters);
         public Task<ExamSummaryDto> GetSummaryByIdAsync(Guid id);

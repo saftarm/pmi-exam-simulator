@@ -9,7 +9,6 @@ namespace TestAPI.Persistence.Implementation
     public class QuestionRepository : IQuestionRepository
     {
         private readonly ApplicationDbContext _context;
-
         public QuestionRepository(ApplicationDbContext context)
         {
             _context = context;
@@ -23,7 +22,6 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
             return newQuestion.Id;
         }
-
         public async Task AddRangeAsync(IEnumerable<Question> questions)
         {
             _context.Questions.AddRange(questions);
@@ -113,7 +111,6 @@ namespace TestAPI.Persistence.Implementation
 
         }
 
-
         public async Task<IEnumerable<AnswerOption>> GetAnswerOptionsByQuestionID(Guid questionId)
         {
             return await _context.AnswerOptions.Where(o => o.QuestionId == questionId).ToListAsync();
@@ -136,6 +133,13 @@ namespace TestAPI.Persistence.Implementation
             .ToListAsync();
 
         }
+
+
+        public async Task<int> GetNumberOfQuestionsByDomainId(Guid domainId)
+        {
+            return await _context.Questions.CountAsync(q => q.DomainId == domainId);
+        }
+
 
     }
 

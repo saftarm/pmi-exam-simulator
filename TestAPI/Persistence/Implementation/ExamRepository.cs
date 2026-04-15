@@ -10,7 +10,6 @@ namespace TestAPI.Persistence.Implementation
 {
     public class ExamRepository : IExamRepository
     {
-
         private readonly ApplicationDbContext _context;
 
         public ExamRepository(ApplicationDbContext context)
@@ -56,10 +55,6 @@ namespace TestAPI.Persistence.Implementation
             return questions;
         }
 
-
-
-
-
         public async Task UpdateAsync(Exam exam)
         {
             _context.Exams.Update(exam);
@@ -98,6 +93,9 @@ namespace TestAPI.Persistence.Implementation
 
             return examFromDb;
         }
+
+        
+
         public async Task<IEnumerable<Guid>> GetDomainIdsById(Guid id)
         {
             var domainIds = await _context.Domains.Where(d => d.ExamId == id).Select(d => d.Id).ToListAsync();
@@ -111,39 +109,6 @@ namespace TestAPI.Persistence.Implementation
 
         }
 
-        // public async Task AddQuestionToExamAsync(Guid questionId, Exam exam)
-        // {
-
-        //     if (exam.Questions == null)
-        //     {
-        //         exam.Questions = new List<Question>();
-        //     }
-
-
-        //     var question = await _context.Questions.FindAsync(questionId);
-
-        //     if (question == null)
-        //     {
-        //         throw new ArgumentException($"Question with id{questionId} not found");
-        //     }
-
-        //     exam.Questions.Add(question);
-
-        //     if (question.Exams == null)
-        //     {
-        //         question.Exams = new List<Exam>();
-        //     } 
-
-
-        //     if (exam.Questions.Contains(question))
-        //     {
-        //         exam.Questions.Add(question);
-        //         question.Exams.Add(exam);
-        //         await _context.SaveChangesAsync();
-        //     }
-
-
-        // }
 
 
         public async Task AddQuestionsToExamAsync(Guid examId, ICollection<Question> questions)

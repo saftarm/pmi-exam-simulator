@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestAPI.Data;
 using TestAPI.DTO;
+using TestAPI.DTO.Exam.Requests;
 using TestAPI.Entities;
 using TestAPI.Models;
 using TestAPI.Services.Interfaces;
@@ -118,6 +119,13 @@ namespace TestAPI.Controllers
         }
 
 
+        [HttpPatch("api/exams/{id}/update")]
+        public async Task<ExamSummaryDto> UpdateExam([FromRoute] Guid id, UpdateExamRequest request)
+        {
+            var updatedExam = await _examService.UpdateAsync(id, request);
+
+            return updatedExam;
+        }
 
 
 

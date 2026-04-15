@@ -26,14 +26,11 @@ namespace TestAPI.Entities
         [MaxLength(255)]
         public string PasswordHash { get; set; } = string.Empty;
 
+        [Required]
+        public RefreshToken RefreshToken {get;set;} = new RefreshToken();
         public ICollection<DomainPerformance> DomainPerfomances { get; set; } = new List<DomainPerformance>();
 
         public ICollection<ExamAttempt> ExamAttempts { get; set; } = new List<ExamAttempt>();
-
-
-
-
-
 
     }
 }

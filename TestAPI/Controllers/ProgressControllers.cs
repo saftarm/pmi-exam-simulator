@@ -1,11 +1,7 @@
-
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
 using TestAPI.DTO;
-using TestAPI.Entities;
 using TestAPI.Services.Interfaces;
 
 namespace TestAPI.Controllers
@@ -14,41 +10,27 @@ namespace TestAPI.Controllers
     [ApiController]
     public class ProgressController : ControllerBase
     {
-
-        private readonly IProgressService  _progressService;
-
-        
+        private readonly IProgressService _progressService;
 
         public ProgressController(ApplicationDbContext context, IProgressService progressService)
         {
             _progressService = progressService;
-
         }
 
-        // [HttpGet("/api/user/progress")]
+        [Authorize]
+        [HttpGet("/api/user/progress")]
+        public async Task<ActionResult<ExamProgressSummaryDto>> GetProgress([FromQuery] Guid examId, CancellationToken ct)
+        {
 
-        // public async Task<IActionResult> GetProgress() {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-         
+            if (!Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+            var examProgressSummary = await _progressService.GetExamProgressSummaryAsync(userId, examId, ct);
+            return Ok(examProgressSummary);
 
-
-
-        
-
-
-
-
-
-
-        
-
-
-
-
-
-
-     
-
-
+        }
     }
 }

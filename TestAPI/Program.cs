@@ -21,9 +21,9 @@ builder.Services.AddCors(options =>
 });
 
 
-builder.Services.AddAuthentication();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddRepositories();
 
 

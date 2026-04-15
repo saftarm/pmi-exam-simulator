@@ -1,9 +1,11 @@
-﻿using TestAPI.Models;
-using TestAPI.Entities;
+﻿using TestAPI.Entities;
+using TestAPI.Models;
+using TestAPI.DTO;
 namespace TestAPI.Services.Interfaces
 {
     public interface IJWTService
     {
-        string GenerateToken(User user);
+        public Task<TokenResponse> ProvideToken(User user);
+         public Task<TokenResponse> RefreshToken(RefreshTokenRequest request);
     }
 }

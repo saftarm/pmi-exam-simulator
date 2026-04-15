@@ -17,7 +17,7 @@ namespace TestAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -168,6 +168,10 @@ namespace TestAPI.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CategoryTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Context")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -232,6 +236,9 @@ namespace TestAPI.Migrations
                     b.Property<DateTime?>("SubmittedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("TotalQuesitons")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -285,6 +292,40 @@ namespace TestAPI.Migrations
                     b.HasIndex("ExamId");
 
                     b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("TestAPI.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Revoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.User", b =>
@@ -341,6 +382,9 @@ namespace TestAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("DomainId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("ExamAttemptId")
                         .HasColumnType("uuid");
 
@@ -357,6 +401,8 @@ namespace TestAPI.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DomainId");
 
                     b.HasIndex("ExamAttemptId");
 
@@ -384,7 +430,7 @@ namespace TestAPI.Migrations
                     b.HasOne("TestAPI.Entities.Exam", "Exam")
                         .WithMany("Domains")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Exam");
@@ -448,7 +494,7 @@ namespace TestAPI.Migrations
                     b.HasOne("TestAPI.Entities.Domain", "Domain")
                         .WithMany("Questions")
                         .HasForeignKey("DomainId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TestAPI.Entities.Exam", "Exam")
@@ -461,8 +507,23 @@ namespace TestAPI.Migrations
                     b.Navigation("Exam");
                 });
 
+            modelBuilder.Entity("TestAPI.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("TestAPI.Entities.User", null)
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("TestAPI.Entities.RefreshToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TestAPI.Entities.UserExamResponse", b =>
                 {
+                    b.HasOne("TestAPI.Entities.Domain", "Domain")
+                        .WithMany("UserExamResponses")
+                        .HasForeignKey("DomainId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("TestAPI.Entities.ExamAttempt", "ExamAttempt")
                         .WithMany("UserExamResponses")
                         .HasForeignKey("ExamAttemptId")
@@ -481,6 +542,8 @@ namespace TestAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Domain");
+
                     b.Navigation("ExamAttempt");
 
                     b.Navigation("Question");
@@ -498,6 +561,8 @@ namespace TestAPI.Migrations
                     b.Navigation("DomainPerformances");
 
                     b.Navigation("Questions");
+
+                    b.Navigation("UserExamResponses");
                 });
 
             modelBuilder.Entity("TestAPI.Entities.Exam", b =>
@@ -526,6 +591,9 @@ namespace TestAPI.Migrations
                     b.Navigation("DomainPerfomances");
 
                     b.Navigation("ExamAttempts");
+
+                    b.Navigation("RefreshToken")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

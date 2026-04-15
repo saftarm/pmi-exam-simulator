@@ -10,22 +10,16 @@ namespace TestAPI.Data
 
         }
         public DbSet<Question> Questions { get; set; }
-
         public DbSet<AnswerOption> AnswerOptions { get; set; }
-
         public DbSet<User> Users { get; set; }
-
         public DbSet<Exam> Exams { get; set; }
-
         public DbSet<ExamAttempt> ExamAttempts { get; set; }
-
         public DbSet<UserExamResponse> UserExamResponses { get; set; }
-
         public DbSet<Category> Categories { get; set; }
-
         public DbSet<Domain> Domains { get; set; }
-
         public DbSet<DomainPerformance> DomainPerformances { get; set; }
+
+        public DbSet<RefreshToken> RefreshTokens {get;set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,6 +60,12 @@ namespace TestAPI.Data
            .HasForeignKey(r => r.SelectedOptionId)
            .OnDelete(DeleteBehavior.Restrict);
 
+           modelBuilder.Entity<UserExamResponse>()
+           .HasOne(r => r.Domain)
+           .WithMany(d => d.UserExamResponses)
+           .HasForeignKey(r => r.DomainId)
+           .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<ExamAttempt>()
             .Property(e => e.Status)
             .HasConversion<string>();
@@ -86,14 +86,14 @@ namespace TestAPI.Data
                 .HasOne(d => d.Exam)
                 .WithMany(e => e.Domains)
                 .HasForeignKey(d => d.ExamId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<Question>()
             .HasOne(q => q.Domain)
             .WithMany(d => d.Questions)
             .HasForeignKey(q => q.DomainId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<DomainPerformance>()
             .HasOne<User>()
@@ -117,7 +117,11 @@ namespace TestAPI.Data
             .HasIndex(dp => new { dp.UserId, dp.DomainId, dp.ExamId })
             .IsUnique();
 
-
+            modelBuilder.Entity<RefreshToken>()
+            .HasOne<User>()
+            .WithOne(u => u.RefreshToken)
+            .HasForeignKey<RefreshToken>(rt => rt.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         }
 

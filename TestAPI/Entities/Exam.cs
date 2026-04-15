@@ -12,7 +12,7 @@ namespace TestAPI.Entities
         [MaxLength(500)]
         public string Context { get; set; } = string.Empty;
         public ExamStatus Status { get; set; }
-
+        public string CategoryTitle { get; set; } = string.Empty;
         public Guid CategoryId { get; set; }
 
         public Category Category { get; set; } = null!;

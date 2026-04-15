@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TestAPI.Services.Interfaces;
-using TestAPI.Data;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
-using TestAPI.Entities;
+using TestAPI.DTO.Auth.Requests;
+using TestAPI.Models;
+using TestAPI.Services.Interfaces;
 
 
 namespace TestAPI.Controllers
@@ -11,39 +12,35 @@ namespace TestAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-
         private readonly IAuthService _authService;
-
         private readonly IUserService _userService;
-        private readonly ApplicationDbContext _context;
-
         private readonly IJWTService _jwtService;
-       
-
-        public AuthController(  IUserService userService, ApplicationDbContext context, IJWTService jWTService, IAuthService authService)
+        public AuthController(IUserService userService, IJWTService jWTService, IAuthService authService)
         {
-   
             _userService = userService;
-            _context = context;
             _jwtService = jWTService;
             _authService = authService;
         }
 
         [HttpPost("/api/auth/register")]
-
-        public async Task<ActionResult<User>> Register(RegisterUserRequest registerUserRequest)
+        public async Task<IActionResult> Register(RegisterUserRequest registerUserRequest)
         {
-            var newUser = await _authService.RegisterUser(registerUserRequest);
-            return Ok(newUser);
-
+            await _authService.RegisterUser(registerUserRequest);
+            return Ok();
         }
 
         [HttpPost("/api/auth/login")]
-        public async Task<ActionResult<string>> Login(LoginUserRequest loginUserRequest) {
-
+        public async Task<ActionResult<string>> Login([FromBody] LoginUserRequest loginUserRequest)
+        {
             var token = await _authService.LoginUser(loginUserRequest);
             return Ok(token);
         }
+
+        [HttpPost("api/auth/refresh")]
+        public async Task<TokenResponse> RefreshToken(RefreshTokenRequest request) {
+            return await _jwtService.RefreshToken(request);
+        }
+
 
     }
 }

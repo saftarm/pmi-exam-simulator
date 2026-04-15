@@ -12,23 +12,24 @@ namespace TestAPI.Services.Implementation
     public class ExamAttemptService : IExamAttemptService
     {
         private readonly IExamAttemptRepository _examAttemptRepository;
+        private readonly IUserExamResponseRepository _userExamResponseRepository;
         private readonly IExamRepository _examRepository;
-
         private readonly IQuestionRepository _questionRepository;
-
         private readonly IProgressService _progressService;
 
         public ExamAttemptService(
             IExamAttemptRepository examAttemptRepository,
             IExamRepository examRepository,
             IQuestionRepository questionRepository,
-            IProgressService progressService
+            IProgressService progressService,
+            IUserExamResponseRepository userExamResponseRepository
             )
         {
             _examAttemptRepository = examAttemptRepository;
             _examRepository = examRepository;
             _questionRepository = questionRepository;
             _progressService = progressService;
+            _userExamResponseRepository = userExamResponseRepository;
         }
 
         public async Task<ExamAttemptDto> GetByIdAsync(Guid examAttemptId)
@@ -78,10 +79,10 @@ namespace TestAPI.Services.Implementation
                 ExamTitle = exam.Title,
                 Score = 0,
                 UserExamResponses = new List<UserExamResponse>(),
-                Status = AttemptStatus.InProgress
+                Status = AttemptStatus.InProgress,
+                TotalQuesitons = exam.NumberOfQuestions
             };
             return await _examAttemptRepository.AddAsync(examAttempt);
-
         }
 
         public async Task FinishAttemptAsync(Guid examAttemptId)
@@ -97,35 +98,28 @@ namespace TestAPI.Services.Implementation
             await _progressService.UpdateDomainPerformance(examAttempt);
         }
 
-        public async Task<Guid> SaveResponse(Guid examAttemptId, Guid questionId, Guid selectedOptionId)
+        public async Task<Guid> SaveResponse(Guid examAttemptId, Guid questionId, Guid domainId, Guid selectedOptionId)
         {
-            var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
+            var exists = await _examAttemptRepository.ExistsAsync(examAttemptId);
 
-            if (examAttempt == null)
+            if (!exists)
             {
-                throw new Exception($"ExamAttempt {examAttemptId} not found");
+                throw new RecordNotFoundException($"ExamAttempt {examAttemptId} not found");
             }
-
-
             var newResponse = new UserExamResponse
             {
                 SelectedOptionId = selectedOptionId,
                 QuestionId = questionId,
+                DomainId = domainId,
                 ExamAttemptId = examAttemptId
             };
-            if (examAttempt.UserExamResponses == null)
-            {
-                examAttempt.UserExamResponses = new List<UserExamResponse>();
-            }
-            examAttempt.UserExamResponses.Add(newResponse);
-            await _examAttemptRepository.UpdateAsync(examAttempt);
-            return examAttempt.Id;
 
+            await _userExamResponseRepository.AddAsync(newResponse);
+            return newResponse.Id;
         }
 
         public async Task CalculateScore(ExamAttempt examAttempt)
         {
-
             int correctCount = 0;
             var userExamResponses = examAttempt.UserExamResponses;
 
@@ -156,9 +150,6 @@ namespace TestAPI.Services.Implementation
             await _examAttemptRepository.UpdateAsync(examAttempt);
 
         }
-
-
-
 
         public async Task DeleteAsync(Guid id)
         {

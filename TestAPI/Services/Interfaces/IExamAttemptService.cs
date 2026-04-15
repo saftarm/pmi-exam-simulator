@@ -18,13 +18,7 @@ namespace TestAPI.Services.Interfaces
 
         public  Task CalculateScore (ExamAttempt examAttempt);
 
-        public Task<Guid> SaveResponse (Guid examAttemptId, Guid questionId, Guid selectedOptionId );
-
-        // public Task<IEnumerable<UserExamResponseDto>> GetResponsesAsync(Guid examAttemptId);
-
-
-        // public Task<int> FinishAttempt(FinishExamAttemptRequest request);
-        //  public Task<ExamAttempt> FinishAttempt(int examAttemptId);
+        public Task<Guid> SaveResponse (Guid examAttemptId, Guid questionId, Guid domainId, Guid selectedOptionId );
 
         
     }

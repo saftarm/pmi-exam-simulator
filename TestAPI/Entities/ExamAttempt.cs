@@ -10,15 +10,12 @@ namespace TestAPI.Entities
         [Required]
         [MaxLength(100)]
         public string ExamTitle { get; set; } = string.Empty;
-
-        public Exam? Exam { get; set; }
-
+        public Exam Exam { get; set; }
         public int CorrectCount { get; set; }
+        public int TotalQuesitons { get; set; }
 
         [Range(0, 99)]
         public int Score { get; set; }
-
-
         public DateTime StartedAt { get; set; }
 
         public DateTime? SubmittedAt { get; set; }

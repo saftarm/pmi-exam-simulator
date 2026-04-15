@@ -26,6 +26,8 @@ namespace TestAPI.Entities
 
         public ICollection<DomainPerformance> DomainPerformances { get; set; } = new List<DomainPerformance>();
 
+        public ICollection<UserExamResponse>? UserExamResponses {get;set;}
+
 
 
 
