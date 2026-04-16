@@ -11,7 +11,6 @@ namespace TestAPI.Persistence.Implementation
     public class ExamRepository : IExamRepository
     {
         private readonly ApplicationDbContext _context;
-
         public ExamRepository(ApplicationDbContext context)
         {
             _context = context;
@@ -43,58 +42,44 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
+        // Get questions(and answer options) of specific exam
         public async Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(Guid examId)
         {
-
-            var questions = await _context.Questions
+            return await _context.Questions
                 .AsNoTracking()
                 .Where(q => q.ExamId == examId)
                 .Include(q => q.AnswerOptions)
                 .ToListAsync();
-
-            return questions;
         }
-
+        // Updating Exam
         public async Task UpdateAsync(Exam exam)
         {
             _context.Exams.Update(exam);
             await _context.SaveChangesAsync();
-
         }
+
+        // Hard delet Exam by id
         public async Task DeleteAsync(Guid examId)
         {
             await _context.Exams.Where(e => e.Id == examId).ExecuteDeleteAsync();
-
-
-            await _context.SaveChangesAsync();
-
         }
 
-
+        // Hard delete multiple Exams by ids
         public async Task DeleteRangeAsync(IEnumerable<Guid> examIds)
         {
             await _context.Exams.Where(q => examIds.Contains(q.Id)).ExecuteDeleteAsync();
 
         }
 
-        public async Task<Exam> GetByIdAsync(Guid id)
+        public async Task<Exam?> GetByIdAsync(Guid id)
         {
-            var examFromDb = await _context.Exams
+            return await _context.Exams
             .Include(e => e.Domains)
             .Include(e => e.Category)
             .Include(e => e.Questions)
             .ThenInclude(q => q.AnswerOptions)
             .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (examFromDb == null)
-            {
-                throw new RecordNotFoundException("Exam not found");
-            }
-
-            return examFromDb;
         }
-
-        
 
         public async Task<IEnumerable<Guid>> GetDomainIdsById(Guid id)
         {
@@ -102,14 +87,11 @@ namespace TestAPI.Persistence.Implementation
             return domainIds;
         }
 
-
         public async Task<IEnumerable<Exam>> GetAllById(ICollection<Guid> examIds)
         {
             return await _context.Exams.Where(e => examIds.Contains(e.Id)).ToListAsync();
 
         }
-
-
 
         public async Task AddQuestionsToExamAsync(Guid examId, ICollection<Question> questions)
         {

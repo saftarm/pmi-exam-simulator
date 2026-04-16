@@ -9,15 +9,11 @@ namespace TestAPI.Services.Implementation
     public class QuestionService : IQuestionService
     { 
         private readonly IQuestionRepository _questionRepository;
-
-
-
         public QuestionService(IQuestionRepository questionRepository)
         {
             _questionRepository = questionRepository;
 
         }
-
         private static QuestionDto MapToQuestionDto(Question question)
         {
 
@@ -131,6 +127,9 @@ namespace TestAPI.Services.Implementation
         // Update Question
         public async Task<UpdateQuestionDto> UpdateAsync(Guid questionId, UpdateQuestionDto questionDto)
         {
+            // validation 
+            // mapping dto to entity
+            // calling repository service for 
             return await _questionRepository.UpdateAsync(questionId, questionDto);
         }
 

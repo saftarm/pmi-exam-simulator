@@ -16,6 +16,5 @@ namespace TestAPI.Persistence.Interfaces
         public Task<IEnumerable<Question>> GetFixedAmountOfRandomQuestionsByDomainId(Guid domainId, int numberOfQuestions);
         public Task<int> GetNumberOfQuestionsByDomainId(Guid domainId);
 
-
     }
 }

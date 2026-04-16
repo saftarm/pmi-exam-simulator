@@ -10,49 +10,41 @@ using TestAPI.Persistence.Interfaces;
 
 namespace TestAPI.Persistence.Implementation
 {
-
-
     public class DomainRepository : IDomainRepository
     {
-
         private readonly ApplicationDbContext _context;
-
         public DomainRepository(ApplicationDbContext context)
         {
             _context = context;
         }
-
-        public async Task<Domain> GetByIdAsync(Guid id)
+        // Get Domain by Id
+        public async Task<Domain?> GetByIdAsync(Guid id)
         {
-            var domain = await _context.Domains.FindAsync(id);
-            if (domain == null)
-            {
-                throw new RecordNotFoundException("Domain Not Found");
-            }
-            return domain;
-
+            return await _context.Domains.FindAsync(id);
         }
 
+        // Get all domains
         public async Task<IEnumerable<Domain>> GetAllAsync()
         {
             return await _context.Domains.ToListAsync();
-
         }
+
+        // Get multiple Domains by Ids
         public async Task<IEnumerable<Domain>> GetByIdsAsync(List<Guid> domainIds)
         {
             return await _context.Domains.Where(d => domainIds.Contains(d.Id)).ToListAsync();
         }
 
-
+        // Add new Domain
         public async Task AddAsync(Domain domain)
         {
             await _context.Domains.AddAsync(domain);
             await _context.SaveChangesAsync();
         }
 
+        // Hard delete domain
         public async Task DeleteAsync(Guid id)
         {
-
             var domain = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
 
             if (domain == null)
@@ -63,12 +55,14 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         }
 
+        // Update domain
         public async Task UpdateAsync(Domain domain)
         {
             _context.Domains.Update(domain);
             await _context.SaveChangesAsync();
         }
 
+        // Domain Id by Title
         public async Task<Guid> GetIdByTitleAsync(string title, CancellationToken ct)
         {
             return await _context.Domains
@@ -76,9 +70,6 @@ namespace TestAPI.Persistence.Implementation
                 .Select(d => d.Id)
                 .FirstOrDefaultAsync(ct);
         }
-
-
-
 
 
     }

@@ -14,7 +14,7 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
-        // Add 
+        // Add Question
         public async Task<Guid> AddAsync(Question newQuestion)
         {
 
@@ -22,15 +22,15 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
             return newQuestion.Id;
         }
+
+        // Add range of questions
         public async Task AddRangeAsync(IEnumerable<Question> questions)
         {
             _context.Questions.AddRange(questions);
             await _context.SaveChangesAsync();
         }
 
-
-
-        // Update
+        // Update question
         public async Task<UpdateQuestionDto> UpdateAsync(Guid questionId, UpdateQuestionDto updateQuestionDto)
         {
 
