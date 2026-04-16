@@ -3,9 +3,11 @@ using TestAPI.Models;
 
 namespace TestAPI.DTO
 {
-    public class UpdateQuestionDto
+    public class UpdateQuestionRequest
     {
-        public string? Text { get; set; }
+
+        public Guid Id {get;set;}
+        public string? Title { get; set; }
 
         public ICollection<UpdateAnswerOptionDto> AnswerOptionsDtos { get; set; } = new List<UpdateAnswerOptionDto>();
 

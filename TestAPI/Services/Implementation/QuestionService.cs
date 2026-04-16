@@ -1,18 +1,25 @@
 ﻿using System.Data;
+using System.Runtime.CompilerServices;
+using FluentValidation;
 using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.Services.Interfaces;
+using TestAPI.Validation;
 
 namespace TestAPI.Services.Implementation
 {
     public class QuestionService : IQuestionService
-    { 
+    {
         private readonly IQuestionRepository _questionRepository;
-        public QuestionService(IQuestionRepository questionRepository)
+        private readonly ValidatorResolver _validatorResolver;
+        public QuestionService(
+            IQuestionRepository questionRepository,
+            ValidatorResolver validatorResolver
+        )
         {
             _questionRepository = questionRepository;
-
+            _validatorResolver = validatorResolver;
         }
         private static QuestionDto MapToQuestionDto(Question question)
         {
@@ -125,12 +132,25 @@ namespace TestAPI.Services.Implementation
 
 
         // Update Question
-        public async Task<UpdateQuestionDto> UpdateAsync(Guid questionId, UpdateQuestionDto questionDto)
+        public async Task UpdateAsync(UpdateQuestionRequest request)
         {
-            // validation 
-            // mapping dto to entity
-            // calling repository service for 
-            return await _questionRepository.UpdateAsync(questionId, questionDto);
+            var validationResult = await _validatorResolver.ValidateAsync(request);
+
+            if(!validationResult.IsValid) {
+                var errors = string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new ValidationException($"Update question request is not valid: {errors}");
+            }
+
+            var question = await _questionRepository.GetByIdAsync(request.Id);
+            question.Title = request.Title!;
+            question.AnswerOptions = request.AnswerOptionsDtos.Select( 
+                o => new AnswerOption {
+                    Text = o.Text,
+                    IsCorrect = o.IsCorrect
+                }
+            ).ToList();
+
+            await _questionRepository.UpdateAsync(question);
         }
 
 

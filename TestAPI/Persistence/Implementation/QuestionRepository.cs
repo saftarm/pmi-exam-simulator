@@ -14,6 +14,9 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken ct) {
+            return await _context.Questions.AnyAsync(q => q.Id == id, ct);
+        }
         // Add Question
         public async Task<Guid> AddAsync(Question newQuestion)
         {
@@ -31,39 +34,10 @@ namespace TestAPI.Persistence.Implementation
         }
 
         // Update question
-        public async Task<UpdateQuestionDto> UpdateAsync(Guid questionId, UpdateQuestionDto updateQuestionDto)
+        public async Task UpdateAsync(Question question)
         {
-
-            var question = await _context.Questions.
-            Include(o => o.AnswerOptions).
-            FirstOrDefaultAsync(q => q.Id == questionId);
-
-            if (question == null)
-            {
-                throw new Exception("Question not found");
-            }
-
-            if (updateQuestionDto.Text == null)
-            {
-                throw new ArgumentNullException(nameof(updateQuestionDto), "Question lacks Text field");
-            }
-
-            _context.AnswerOptions.RemoveRange(question.AnswerOptions);
-
-            question.AnswerOptions = updateQuestionDto.AnswerOptionsDtos.Select(
-                o => new AnswerOption
-                {
-                    Text = o.Text,
-                    IsCorrect = o.IsCorrect
-                }
-            ).ToList();
-            question.Title = updateQuestionDto.Text;
-
-
+            _context.Questions.Update(question);
             await _context.SaveChangesAsync();
-
-            return updateQuestionDto;
-
         }
         // Delete
         public async Task DeleteAsync(Guid questionId)

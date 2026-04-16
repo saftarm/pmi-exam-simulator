@@ -57,10 +57,11 @@ namespace TestAPI.Controllers
 
         // Update an existing question
         [HttpPut("/api/questions/{id:Guid}")]
-        public async Task<ActionResult> Update(Guid id, UpdateQuestionDto updateQuestionDto)
+        public async Task<ActionResult> Update(Guid id, UpdateQuestionRequest request)
         {
-            var updatedQuestion = await _questionService.UpdateAsync(id, updateQuestionDto);
-            return Ok(updatedQuestion);
+            request.Id = id;
+            await _questionService.UpdateAsync(request);
+            return NoContent();
         }
 
         // /api/Question/{id}	Delete a question
