@@ -4,7 +4,7 @@ namespace TestAPI.Persistence.Interfaces
 {
     public interface IExamAttemptRepository
     {
-        public Task<ExamAttempt> GetByIdAsync(Guid id);
+        public Task<ExamAttempt?> GetByIdAsync(Guid id);
         public Task<IEnumerable<ExamAttempt>> GetAllAsync();
         public Task<ExamAttempt> GetByUserId(Guid userId);
         public Task<Guid> AddAsync(ExamAttempt examAttempt);

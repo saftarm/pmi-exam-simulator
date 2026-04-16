@@ -21,7 +21,7 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
-        public async Task<ExamAttempt> GetByIdAsync(Guid examAttemptId)
+        public async Task<ExamAttempt?> GetByIdAsync(Guid examAttemptId)
         {
             var examAttempt = await _context.ExamAttempts
             .Include(ea => ea.UserExamResponses)

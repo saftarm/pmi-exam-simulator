@@ -76,6 +76,7 @@ namespace TestAPI.Services.Implementation
         }
 
         public async Task<TokenResponse> RefreshToken(RefreshTokenRequest request) {
+            
             var principal = GetPrincipalFromExpiredToken(request.AccessToken);
 
             var id = principal.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -143,7 +143,7 @@ namespace TestAPI.Services.Implementation
                         stats.correctCount + (response.IsCorrect ? 1 : 0),
                         stats.totalCount + 1 );       
             }
-
+            
             var existingRecords = await _context.DomainPerformances
                 .Where(dp => dp.UserId == examAttempt.UserId 
                 && dp.ExamId == examAttempt.ExamId).ToListAsync();

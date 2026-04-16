@@ -13,7 +13,6 @@ namespace TestAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IQuestionService _questionService;
         private readonly IQuestionImportService _questionImportService;
-
         public QuestionController(
             ApplicationDbContext context,
             IQuestionService questionService,
@@ -33,7 +32,7 @@ namespace TestAPI.Controllers
             return question;
         }
 
-        // /api/QuestionGet all questions (hides isCorrect)
+        // Get all questions (hides isCorrect)
         [HttpGet("/api/questions")]
         public async Task<ActionResult<IEnumerable<QuestionDto>>> GetAllQuestions()
         {
@@ -47,8 +46,8 @@ namespace TestAPI.Controllers
             return Ok(questions);
         }
 
+        // Create new Question
         [HttpPost("/api/questions/")]
-
         public async Task<IActionResult> CreateRange([FromForm] IFormFile file, CancellationToken ct)
         {
             var result = await _questionImportService.ImportFromExcelAsync(file, ct);
@@ -56,10 +55,8 @@ namespace TestAPI.Controllers
             return Ok(result);
         }
 
-        // /api/Question/{id}  Update an existing question
-
+        // Update an existing question
         [HttpPut("/api/questions/{id:Guid}")]
-
         public async Task<ActionResult> Update(Guid id, UpdateQuestionDto updateQuestionDto)
         {
             var updatedQuestion = await _questionService.UpdateAsync(id, updateQuestionDto);
@@ -80,8 +77,8 @@ namespace TestAPI.Controllers
             return NoContent();
         }
 
+        //Delete range of questions
         [HttpDelete("/api/questions")]
-
         public async Task<IActionResult> DeleteRange(DeleteQuestionsRequest request)
         {
 
@@ -92,7 +89,6 @@ namespace TestAPI.Controllers
             await _questionService.DeleteRangeAsync(request.QuestionIds);
             return Ok();
         }
-
 
     }
 }

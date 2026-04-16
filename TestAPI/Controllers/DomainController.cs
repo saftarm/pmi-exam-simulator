@@ -12,7 +12,7 @@ namespace TestAPI.Controllers
         {
             _domainService = domainService;
         }
-
+        // Get Domain By Id 
         [HttpGet("/api/domains/{id}")]
         public async Task<ActionResult<DomainDto>> GetDomain(Guid id)
         {
@@ -20,6 +20,7 @@ namespace TestAPI.Controllers
             return Ok(category);
         }
 
+        // Get All Domains
         [HttpGet("/api/domains")]
 
         public async Task<ActionResult<IEnumerable<DomainDto>>> GetAllDomains()
@@ -35,8 +36,8 @@ namespace TestAPI.Controllers
             return Ok();
         }
 
-
-        [HttpPatch("api/domains/{id}")]
+        // Update Domain
+        [HttpPut("api/domains/{id}")]
 
         public async Task<IActionResult> Update(Guid id, UpdateDomainDto dto) 
         {
@@ -44,6 +45,7 @@ namespace TestAPI.Controllers
             return Ok();
         }
 
+        // Delete Domain
         [HttpDelete("/api/domains/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

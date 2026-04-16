@@ -14,6 +14,7 @@ namespace TestAPI.Controllers
             _examAttemptService = examAttemptService;
         }
 
+        // Start Attempt
         [Authorize]
         [HttpPost("/api/attempts/{id}/start")]
         public async Task<IActionResult> StartExam([FromRoute] Guid id)
@@ -30,6 +31,7 @@ namespace TestAPI.Controllers
             return Ok(examAttemptId);
         }
 
+        // Save Response
         [HttpPost("/api/attempts/save")]
         public async Task<IActionResult> SaveResponse(SaveResponseRequest response)
         {
@@ -37,6 +39,8 @@ namespace TestAPI.Controllers
             return Ok(newResponse);
         }
 
+
+        // Finish Attempt
         [HttpPost("/api/attempts/{id}/finish")]
         public async Task<IActionResult> FinishExam(Guid id)
         {
@@ -44,8 +48,8 @@ namespace TestAPI.Controllers
             return Ok();
         }
 
+        // Get Attempt by Id
         [HttpGet("/{attemptId}")]
-
         public async Task<ActionResult<ExamAttemptDto>> GetAttemptById(Guid attemptId)
         {
 
@@ -54,8 +58,9 @@ namespace TestAPI.Controllers
         }
 
 
-        [HttpDelete("/api/attempts/{id}")]
 
+        // Delete Attempt
+        [HttpDelete("/api/attempts/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _examAttemptService.DeleteAsync(id);

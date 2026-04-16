@@ -11,12 +11,12 @@ namespace TestAPI.Controllers
     public class ProgressController : ControllerBase
     {
         private readonly IProgressService _progressService;
-
         public ProgressController(ApplicationDbContext context, IProgressService progressService)
         {
             _progressService = progressService;
         }
 
+        // Get User Progress by Id
         [Authorize]
         [HttpGet("/api/user/progress")]
         public async Task<ActionResult<ExamProgressSummaryDto>> GetProgress([FromQuery] Guid examId, CancellationToken ct)

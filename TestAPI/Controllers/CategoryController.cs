@@ -13,7 +13,6 @@ namespace TestAPI.Controllers
         {
             _categoryService = categoryService;
         }
-
         // Create Category
         [Authorize]
         [HttpPost("api/categories")]
@@ -22,8 +21,6 @@ namespace TestAPI.Controllers
             var newCategory = await _categoryService.CreateCategory(dto, ct);
             return CreatedAtAction(nameof(GetCategory), new { id = newCategory.Id }, newCategory);
         }
-
-
         // Get Category
         [HttpGet("/api/categories/{id}")]
         public async Task<ActionResult<CategoryDto>> GetCategory(Guid id, CancellationToken ct)
@@ -33,14 +30,13 @@ namespace TestAPI.Controllers
             return Ok(category);
         }
 
-
+        // Get All Categories
         [HttpGet("/api/categories")]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories(CancellationToken ct)
         {
             var categories = await _categoryService.GetAllAsync(ct);
             return Ok(categories);
         }
-
 
         // Update Category
         [HttpPut("api/categories/{id}")]
@@ -57,7 +53,7 @@ namespace TestAPI.Controllers
             await _categoryService.DeleteAsync(id);
             return NoContent();
         }
-
+        
     }
 }
 
