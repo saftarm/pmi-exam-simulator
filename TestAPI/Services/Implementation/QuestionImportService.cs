@@ -13,7 +13,6 @@ namespace TestAPI.Services.Implementation
         private readonly IQuestionRepository _questionRepository;
         private readonly IDomainRepository _domainRepository;
         private readonly IValidator<QuestionImportRowDto> _questionImportRowValidator;
-
         public QuestionImportService(
             IQuestionRepository questionRepository,
             IDomainRepository domainRepository,
@@ -28,9 +27,7 @@ namespace TestAPI.Services.Implementation
         private const int ColExplanation = 2;
         private const int ColDomainName = 3;
         private const int ColQuestionType = 4;
-
         private const int FirstOptionCol = 4;
-
         private const int MaxOptions = 4;
         private const int DataStartsRow = 4;
 
@@ -46,11 +43,13 @@ namespace TestAPI.Services.Implementation
             rows = ParseRows(stream, errors, _questionImportRowValidator, ct);
 
 
+
+
             var questions = new List<Question>();
 
             foreach (var questionRow in rows)
             {
-                var domainId = await _domainRepository.GetIdByTitleAsync(questionRow.DomainName, ct);
+                var domainId = await _domainRepository.GetIdByTitleAsync(questionRow.DomainName!, ct);
                 var question = new Question
                 {
                     Title = questionRow.Title,
@@ -62,20 +61,16 @@ namespace TestAPI.Services.Implementation
                         "TrueFalse" => QuestionType.TrueFalse,
                         _ => throw new ArgumentException($"Unknown question type: {questionRow.QuestionType}")
                     },
-                    Explanation = questionRow.Explanation,
+                    Explanation = questionRow.Explanation!,
                     AnswerOptions = questionRow.AnswerOptions.Select(o => new AnswerOption
                     {
                         Text = o.Text,
                         IsCorrect = o.IsCorrect == "TRUE" ? true : false
 
                     }).ToList()
-
-
                 };
 
                 questions.Add(question);
-
-
             }
 
             await _questionRepository.AddRangeAsync(questions);
@@ -100,10 +95,15 @@ namespace TestAPI.Services.Implementation
             if (worksheet == null)
             {
                 errors.Add(new ImportRowErrorDto { Row = 0, Reason = "Sheet named 'Questions' not found." });
+                return new List<QuestionImportRowDto>();
             }
             var startRow = 3;
-            var lastRow = worksheet.LastRowUsed().RowNumber();
+            var lastRowUsed = worksheet.LastRowUsed();
+            if(lastRowUsed == null) {
+                return new List<QuestionImportRowDto>();
+            }
 
+            var lastRow = lastRowUsed.RowNumber();
             var questions = new List<QuestionImportRowDto>();
 
             for (int rowNum = startRow; rowNum <= lastRow; rowNum++)

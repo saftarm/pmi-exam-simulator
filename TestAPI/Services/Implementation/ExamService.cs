@@ -245,6 +245,10 @@ namespace TestAPI.Services.Implementation
         {
             var examAttempt = await _examAttemptRepository.GetByIdAsync(examAttemptId);
 
+            if(examAttempt == null) {
+                throw new RecordNotFoundException("Exam attempt nout found by Id");
+            }
+
             foreach (var answerOption in examAttempt.UserExamResponses)
             {
                 if (answerOption.IsCorrect)
