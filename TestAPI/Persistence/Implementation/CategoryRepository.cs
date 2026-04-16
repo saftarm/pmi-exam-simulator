@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
 using TestAPI.Entities;
+using TestAPI.Exceptions;
 using TestAPI.Persistence.Interfaces;
 
 namespace TestAPI.Persistence.Implementation
@@ -67,8 +68,10 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task DeleteAsync(Guid categoryId)
         {
-
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+            if(category == null) {
+                throw new RecordNotFoundException("Category not found by Id");
+            }
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
         }
@@ -93,18 +96,9 @@ namespace TestAPI.Persistence.Implementation
 
 
         }
-
-
-
-        //public async Task<IEnumerable<ExamDto>> GetExams { get; set; }
-
-
-
-
-
-
-
-
+        public async Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct) {
+            return await _context.Categories.AnyAsync(c => c.Id == id, ct);
+        }
 
     }
 }

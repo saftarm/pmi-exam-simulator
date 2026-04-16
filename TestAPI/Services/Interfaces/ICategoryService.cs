@@ -11,10 +11,9 @@ namespace TestAPI.Services.Interfaces
         public Task<CategoryDto> GetByIdAsync(Guid categoryId, CancellationToken ct);
 
         public Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken ct);
-        public Task UpdateCategory(Guid id, UpdateCategoryDto dto);
+        public Task UpdateCategory(Guid id, UpdateCategoryRequest dto);
 
         public Task DeleteAsync(Guid id);
-        public Task AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto);
 
 
     }

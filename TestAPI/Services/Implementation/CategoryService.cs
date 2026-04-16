@@ -1,3 +1,4 @@
+using FluentValidation;
 using NuGet.Packaging;
 using TestAPI.DTO;
 using TestAPI.DTO.Category;
@@ -14,12 +15,19 @@ namespace TestAPI.Services.Implementation
         private readonly ICategoryRepository _categoryRepository;
         private readonly IExamRepository _examRepository;
         private readonly IMapperService _mapperService;
+        private readonly IValidator<UpdateCategoryRequest> _updateCategoryRequestValidator;
 
-        public CategoryService(ICategoryRepository categoryRepository, IExamRepository examRepository, IMapperService mapperService)
+        public CategoryService(
+            ICategoryRepository categoryRepository,
+             IExamRepository examRepository,
+              IMapperService mapperService,
+              IValidator<UpdateCategoryRequest> updateCategoryRequestValidator)
         {
             _categoryRepository = categoryRepository;
             _examRepository = examRepository;
             _mapperService = mapperService;
+            _updateCategoryRequestValidator = updateCategoryRequestValidator;
+            
         }
 
         public async Task<CategoryDto> CreateCategory(CreateCategoryDto createCategoryDto, CancellationToken ct)
@@ -76,58 +84,19 @@ namespace TestAPI.Services.Implementation
 
 
         // Update Category
-        public async Task UpdateCategory(Guid id, UpdateCategoryDto dto)
+        public async Task UpdateCategory(Guid id, UpdateCategoryRequest request)
         {
-
+            request.CategoryId = id;
+            var context = new ValidationContext<UpdateCategoryRequest>(request);
+            context.RootContextData["CategoryId"] = id;
+            await _updateCategoryRequestValidator.ValidateAndThrowAsync(request);
             var category = await _categoryRepository.GetByIdAsync(id);
-
-            if (category == null)
-            {
-                throw new KeyNotFoundException();
-            }
-
-
-            if (dto.Title != null)
-            {
-                category.Title = dto.Title;
-            }
-            if (dto.Description != null)
-            {
-                category.Description = dto.Description;
-            }
-
-            await _categoryRepository.Update(category);
-
+            await _categoryRepository.Update(category!);
         }
 
         public async Task DeleteAsync(Guid id)
         {
             await _categoryRepository.DeleteAsync(id);
         }
-
-        public async Task AddExamsToCategory(AddExamsToCategoryDto addExamsToCategoryDto)
-        {
-            var category = await _categoryRepository.GetByIdAsync(addExamsToCategoryDto.CategoryId);
-
-            var existingIds = category.Exams.Select(e => e.Id);
-
-            var newExamIds = addExamsToCategoryDto.ExamIds
-            .Where(id => !existingIds.Contains(id))
-            .ToList();
-
-            var exams = await _examRepository.GetAllById(newExamIds);
-
-            if (!newExamIds.Any())
-            {
-                return;
-            }
-
-            category.Exams.AddRange(exams);
-            category.NumberOfExams += newExamIds.Count();
-            await _categoryRepository.Update(category);
-
-        }
-
-
     }
 }

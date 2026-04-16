@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Office2010.Excel;
 using TestAPI.Entities;
 
 namespace TestAPI.Persistence.Interfaces
@@ -17,7 +18,8 @@ namespace TestAPI.Persistence.Interfaces
 
         public Task<IEnumerable<Exam>> GetExamsByCategoryId(Guid category);
         public Task<bool> ExistsByTitleAsync(string title, CancellationToken ct);
-
+        public Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct);
+ 
 
     }
 }

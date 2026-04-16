@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TestAPI.DTO.Auth.Requests;
@@ -17,13 +18,18 @@ namespace TestAPI.Services.Implementation
         private readonly IUserRepository _userRepository;
         private readonly IJWTService _jwtService;
         private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IValidator<LoginUserRequest> _loginUserRequestValidator;
         public AuthService(IUserRepository userRepository,
             IJWTService jwtService,
-            IPasswordHasher<User> passwordHasher)
+            IPasswordHasher<User> passwordHasher,
+            IValidator<LoginUserRequest> loginUserRequestValidator
+            
+            )
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
             _passwordHasher = passwordHasher;
+            _loginUserRequestValidator = loginUserRequestValidator;
         }
 
 
@@ -57,18 +63,16 @@ namespace TestAPI.Services.Implementation
 
         public async Task<TokenResponse> LoginUser(LoginUserRequest loginUserRequest)
         {
-            if (loginUserRequest.UserName == null)
-            {
-                throw new ArgumentNullException("Invalid username");
-            }
-            var userInDb = await _userRepository.GetByUserNameAsync(loginUserRequest.UserName);
+            _loginUserRequestValidator.ValidateAndThrow(loginUserRequest);
+
+            var userInDb = await _userRepository.GetByUserNameAsync(loginUserRequest.UserName!);
 
             if (userInDb == null)
             {
                 throw new RecordNotFoundException("User not found");
             }
 
-            var result = _passwordHasher.VerifyHashedPassword(userInDb, userInDb.PasswordHash, loginUserRequest.Password);
+            var result = _passwordHasher.VerifyHashedPassword(userInDb, userInDb.PasswordHash, loginUserRequest.Password!);
             if (result == PasswordVerificationResult.Failed)
             {
                 throw new Exception("Invalid password");
@@ -77,14 +81,5 @@ namespace TestAPI.Services.Implementation
 
             return tokens;
         }
-
-
-
-
-
-
-
-
-
     }
 }

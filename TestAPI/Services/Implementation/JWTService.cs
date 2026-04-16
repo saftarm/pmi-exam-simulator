@@ -14,6 +14,7 @@ using TestAPI.Services.Interfaces;
 using TestAPI.DTO;
 using TestAPI.Persistence.Interfaces;
 using Microsoft.IdentityModel.JsonWebTokens;
+using FluentValidation;
 namespace TestAPI.Services.Implementation
 
 {
@@ -22,15 +23,18 @@ namespace TestAPI.Services.Implementation
         private readonly ApplicationDbContext _context;
         private readonly ITokenRepository _tokenRepository;
         private readonly IOptions<AuthSettings> _authSettings;
+        private readonly IValidator<RefreshTokenRequest> _refreshTokenRequestValidator;
         public JWTService(IOptions<AuthSettings> authSettings,
         ApplicationDbContext context,
         IConfiguration configuration,
-        ITokenRepository tokenRepository
+        ITokenRepository tokenRepository,
+        IValidator<RefreshTokenRequest> refreshTokenRequestValidator
         )
         {
             _authSettings = authSettings;
             _context = context;
             _tokenRepository = tokenRepository;
+            _refreshTokenRequestValidator = refreshTokenRequestValidator;
         }
 
         public async Task<TokenResponse> ProvideToken(User user)
@@ -77,7 +81,9 @@ namespace TestAPI.Services.Implementation
 
         public async Task<TokenResponse> RefreshToken(RefreshTokenRequest request) {
             
-            var principal = GetPrincipalFromExpiredToken(request.AccessToken);
+            _refreshTokenRequestValidator.Validate(request);
+
+            var principal = GetPrincipalFromExpiredToken(request.AccessToken!);
 
             var id = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 

@@ -42,9 +42,6 @@ namespace TestAPI.Services.Implementation
 
             rows = ParseRows(stream, errors, _questionImportRowValidator, ct);
 
-
-
-
             var questions = new List<Question>();
 
             foreach (var questionRow in rows)
@@ -136,7 +133,6 @@ namespace TestAPI.Services.Implementation
                     ColExplanation,
                     ColDomainName,
                     ColQuestionType);
-
 
                 var result = validator.Validate(context);
 

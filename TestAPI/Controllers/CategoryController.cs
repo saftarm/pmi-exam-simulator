@@ -26,7 +26,6 @@ namespace TestAPI.Controllers
         public async Task<ActionResult<CategoryDto>> GetCategory(Guid id, CancellationToken ct)
         {
             var category = await _categoryService.GetByIdAsync(id, ct);
-
             return Ok(category);
         }
 
@@ -40,9 +39,9 @@ namespace TestAPI.Controllers
 
         // Update Category
         [HttpPut("api/categories/{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCategoryDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCategoryRequest request)
         {
-            await _categoryService.UpdateCategory(id, dto);
+            await _categoryService.UpdateCategory(id, request);
             return Ok();
         }
 
