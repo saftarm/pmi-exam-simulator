@@ -63,7 +63,7 @@ namespace TestAPI.Services.Implementation
 
         public async Task<TokenResponse> LoginUser(LoginUserRequest loginUserRequest)
         {
-            _loginUserRequestValidator.ValidateAndThrow(loginUserRequest);
+            // _loginUserRequestValidator.ValidateAndThrow(loginUserRequest);
 
             var userInDb = await _userRepository.GetByUserNameAsync(loginUserRequest.UserName!);
 
@@ -77,7 +77,7 @@ namespace TestAPI.Services.Implementation
             {
                 throw new Exception("Invalid password");
             }
-            var tokens = await _jwtService.ProvideToken(userInDb);
+            var tokens = await _jwtService.ProvideTokens(userInDb);
 
             return tokens;
         }

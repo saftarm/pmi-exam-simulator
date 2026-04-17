@@ -5,7 +5,7 @@ using TestAPI.DTO;
 
 namespace TestAPI.Validation
 {
-    public class ValidatorResolver 
+    public class ValidatorResolver : IValidatorResolver
     {
       private readonly IServiceProvider _serviceProvider;
 

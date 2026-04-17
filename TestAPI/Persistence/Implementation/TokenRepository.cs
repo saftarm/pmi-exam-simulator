@@ -17,6 +17,7 @@ namespace TestAPI.Persistence.Implementation
         public async Task<RefreshToken?> GetRefreshTokenByUserIdAsync(Guid userId) {
 
             return await _context.RefreshTokens
+            .OrderByDescending(t => t.CreatedAt)
             .FirstOrDefaultAsync(rt => rt.UserId == userId);
         }
 

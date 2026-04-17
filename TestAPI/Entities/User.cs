@@ -27,9 +27,8 @@ namespace TestAPI.Entities
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
-        public RefreshToken RefreshToken {get;set;} = new RefreshToken();
+        public ICollection<RefreshToken> RefreshTokens {get;set;} = new List<RefreshToken>();
         public ICollection<DomainPerformance> DomainPerfomances { get; set; } = new List<DomainPerformance>();
-
         public ICollection<ExamAttempt> ExamAttempts { get; set; } = new List<ExamAttempt>();
 
     }

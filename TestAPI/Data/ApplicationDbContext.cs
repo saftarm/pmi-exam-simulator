@@ -119,8 +119,8 @@ namespace TestAPI.Data
 
             modelBuilder.Entity<RefreshToken>()
             .HasOne<User>()
-            .WithOne(u => u.RefreshToken)
-            .HasForeignKey<RefreshToken>(rt => rt.UserId)
+            .WithMany(u => u.RefreshTokens)
+            .HasForeignKey(rt => rt.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         }

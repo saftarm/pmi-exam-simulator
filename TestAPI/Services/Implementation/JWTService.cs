@@ -15,6 +15,7 @@ using TestAPI.DTO;
 using TestAPI.Persistence.Interfaces;
 using Microsoft.IdentityModel.JsonWebTokens;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 namespace TestAPI.Services.Implementation
 
 {
@@ -37,7 +38,7 @@ namespace TestAPI.Services.Implementation
             _refreshTokenRequestValidator = refreshTokenRequestValidator;
         }
 
-        public async Task<TokenResponse> ProvideToken(User user)
+        public async Task<TokenResponse> ProvideTokens(User user)
         {
             var secretKey = _authSettings.Value.SecretKey;
             if (secretKey == null)
@@ -61,15 +62,18 @@ namespace TestAPI.Services.Implementation
                 signingCredentials: credentials
                 );
 
+            var refreshTokens = GenerateRefreshToken();
+            
             var tokens = new TokenResponse
             {
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                RefreshToken = GenerateRefreshToken().RawToken
+                RefreshToken = refreshTokens.RawToken
             };
+     
 
-            var newRefreshToken = new RefreshToken {
+                var newRefreshToken = new RefreshToken {
                 UserId = user.Id,
-                TokenHash = GenerateRefreshToken().HashToken,
+                TokenHash = refreshTokens.HashToken,
                 ExpiresAt = DateTime.UtcNow.AddDays(14),
                 Revoked = false
             };
@@ -123,13 +127,6 @@ namespace TestAPI.Services.Implementation
 
         private string GenerateAccessToken(ClaimsPrincipal principal) {
 
-            //  var tokenValidationParameters = new TokenValidationParameters {
-            //     ValidateIssuer = true,
-            //     ValidateAudience = true,
-            //     IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.Value.SecretKey!)),
-            //     ValidateLifetime = true
-            // };
-
             var signingKey = new SymmetricSecurityKey (Encoding.UTF8.GetBytes(_authSettings.Value.SecretKey!));
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
@@ -165,6 +162,8 @@ namespace TestAPI.Services.Implementation
 
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token) {
             var tokenValidationParameters = new TokenValidationParameters {
+                ValidAudience = _authSettings.Value.Audience,
+                ValidIssuer = _authSettings.Value.Issuer,
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.Value.SecretKey!)),

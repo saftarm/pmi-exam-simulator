@@ -5,7 +5,7 @@ namespace TestAPI.Services.Interfaces
 {
     public interface IJWTService
     {
-        public Task<TokenResponse> ProvideToken(User user);
+        public Task<TokenResponse> ProvideTokens(User user);
          public Task<TokenResponse> RefreshToken(RefreshTokenRequest request);
     }
 }

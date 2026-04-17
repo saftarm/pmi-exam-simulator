@@ -12,10 +12,10 @@ namespace TestAPI.Services.Implementation
     public class QuestionService : IQuestionService
     {
         private readonly IQuestionRepository _questionRepository;
-        private readonly ValidatorResolver _validatorResolver;
+        private readonly IValidatorResolver _validatorResolver;
         public QuestionService(
             IQuestionRepository questionRepository,
-            ValidatorResolver validatorResolver
+            IValidatorResolver validatorResolver
         )
         {
             _questionRepository = questionRepository;
@@ -152,10 +152,6 @@ namespace TestAPI.Services.Implementation
 
             await _questionRepository.UpdateAsync(question);
         }
-
-
-
-
 
     }
 }

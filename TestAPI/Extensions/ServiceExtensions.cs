@@ -6,6 +6,7 @@ using TestAPI.Persistence.Interfaces;
 using TestAPI.Services;
 using TestAPI.Services.Implementation;
 using TestAPI.Services.Interfaces;
+using TestAPI.Validation;
 
 namespace TestAPI.Extensions
 {
@@ -25,7 +26,7 @@ namespace TestAPI.Extensions
             services.AddExceptionHandler<ExceptionHandler>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IJWTService, JWTService>();
-
+            services.AddScoped<IValidatorResolver, ValidatorResolver>();
             services.AddSingleton<IMapperService, MapperService>();
             services.AddScoped<IQuestionImportService, QuestionImportService>();
             services.AddValidatorsFromAssemblyContaining<Program>();
