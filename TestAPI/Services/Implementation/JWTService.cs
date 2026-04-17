@@ -54,7 +54,6 @@ namespace TestAPI.Services.Implementation
             };
 
             var jwtToken = new JwtSecurityToken(
-
                 issuer: _authSettings.Value.Issuer,
                 audience: _authSettings.Value.Audience,
                 expires: DateTime.UtcNow.Add(_authSettings.Value.Expires),
@@ -69,7 +68,14 @@ namespace TestAPI.Services.Implementation
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                 RefreshToken = refreshTokens.RawToken
             };
-     
+
+            var existingRefreshToken = await _context.RefreshTokens
+            .OrderByDescending(t => t.CreatedAt)
+            .FirstOrDefaultAsync(t => t.UserId == user.Id);
+            if(existingRefreshToken != null) {
+                existingRefreshToken.Revoked = true;
+                await _context.SaveChangesAsync();
+            }
 
                 var newRefreshToken = new RefreshToken {
                 UserId = user.Id,
@@ -83,7 +89,7 @@ namespace TestAPI.Services.Implementation
             return tokens;
         }
 
-        public async Task<TokenResponse> RefreshToken(RefreshTokenRequest request) {
+        public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request) {
             
             _refreshTokenRequestValidator.Validate(request);
 
@@ -96,31 +102,18 @@ namespace TestAPI.Services.Implementation
             }
             var savedRefreshToken = await _tokenRepository.GetRefreshTokenByUserIdAsync(userId);
 
-            if(savedRefreshToken == null || savedRefreshToken.Revoked || savedRefreshToken.ExpiresAt < DateTime.UtcNow) {
-                throw new Exception("Refresh token expired");
+            if(savedRefreshToken == null) {
+                throw new SecurityTokenException("Refresh token not found");
+            }
+            if(!BCrypt.Net.BCrypt.Verify(request.RefreshToken, savedRefreshToken.TokenHash) || 
+             savedRefreshToken.Revoked || savedRefreshToken.ExpiresAt < DateTime.UtcNow) {
+                throw new SecurityTokenException("Refresh token expired");
             }
 
-            var refreshToken = GenerateRefreshToken();
-    
             var newAccessToken = GenerateAccessToken(principal);
-            var newRawRefreshToken = refreshToken.RawToken;
-            var newHashRefreshToken = refreshToken.HashToken;
 
-            var newRefreshToken = new RefreshToken {
-                UserId = userId,
-                TokenHash = newHashRefreshToken,
-                ExpiresAt = DateTime.UtcNow.AddDays(14),
-                Revoked = false
-            };
-
-            savedRefreshToken.Revoked = true;
-
-            await _tokenRepository.RevokeRefreshToken(savedRefreshToken);
-            await _tokenRepository.SaveRefreshToken(newRefreshToken);
-
-            return new TokenResponse {
-                AccessToken = newAccessToken,
-                RefreshToken = newRawRefreshToken
+            return new RefreshTokenResponse {
+                NewAccessToken = newAccessToken
             };
  
         }

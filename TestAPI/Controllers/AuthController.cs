@@ -37,10 +37,9 @@ namespace TestAPI.Controllers
         }
 
         [HttpPost("api/auth/refresh")]
-        public async Task<TokenResponse> RefreshToken(RefreshTokenRequest request) {
+        public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request) {
             return await _jwtService.RefreshToken(request);
         }
-
 
     }
 }
