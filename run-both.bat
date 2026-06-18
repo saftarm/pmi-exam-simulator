@@ -5,7 +5,7 @@ REM Usage: run-both.bat
 echo Starting React Client and TestAPI...
 
 REM Start the ASP.NET API in a new window
-start "TestAPI" cmd /k "cd /d %~dp0TestAPI && dotnet run"
+start "TestAPI" cmd /k "cd /d %~dp0 && dotnet run"
 
 REM Wait a moment for the API to start
 timeout /t 3 /nobreak >nul

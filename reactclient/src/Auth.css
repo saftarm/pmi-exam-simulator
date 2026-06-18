@@ -200,6 +200,40 @@
   }
   
   .auth-switch-link:hover { opacity: 0.75; }
+
+  .auth-error {
+    background: rgba(255, 80, 80, 0.12);
+    border: 1px solid rgba(255, 80, 80, 0.35);
+    color: #ff6b6b;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .auth-success {
+    background: rgba(80, 200, 120, 0.12);
+    border: 1px solid rgba(80, 200, 120, 0.35);
+    color: #50c878;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .auth-back-link {
+    margin-top: 20px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .auth-back-link:hover { color: #ccc; }
   
   /* ── Footer note ───────────────────────────────── */
   .auth-footer-note {

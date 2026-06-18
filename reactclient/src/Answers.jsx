@@ -8,7 +8,7 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [answers, setAnswers] = useState([]);
-
+  
   const [finished, setFinished] = useState([]);
 
   useEffect(() => {

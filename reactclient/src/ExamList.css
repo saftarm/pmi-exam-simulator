@@ -60,6 +60,29 @@
     font-weight: 600;
 }
 
+.el-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.el-logout-btn {
+    background: transparent;
+    border: 1px solid #2e2e2e;
+    color: #aaa;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.el-logout-btn:hover {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
 /* ── Hero row ──────────────────────────────────── */
 .el-hero {
     display: flex;

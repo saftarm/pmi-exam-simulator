@@ -1,22 +1,25 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './Landing';
 import Auth from './Auth';
-import Exam from './Exam';
 import ExamList from './ExamList';
-import ExamDetails from './ExamDetails';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/"      element={<Landing />} />
-      <Route path="/login" element={<Auth />} />
-      <Route path="/exam"  element={<Exam />} />
-          <Route path="/exams" element={<ExamList />} />
-          <Route path="/examDetails/:id" element={<ExamDetails />} />
-
-
-    </Routes>
-  );
+    return (
+        <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Auth />} />
+            <Route
+                path="/exams"
+                element={
+                    <ProtectedRoute>
+                        <ExamList />
+                    </ProtectedRoute>
+                }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+    );
 }
 
 export default App;

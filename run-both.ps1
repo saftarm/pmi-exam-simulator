@@ -4,7 +4,7 @@
 Write-Host "Starting React Client and TestAPI..." -ForegroundColor Green
 
 # Start the ASP.NET API in a new window
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PSScriptRoot\TestAPI'; dotnet run"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PSScriptRoot'; dotnet run"
 
 # Wait a moment for the API to start
 Start-Sleep -Seconds 3

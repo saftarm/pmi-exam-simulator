@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="ReactClient/reactclient.esproj">
-    <Build />
-    <Deploy />
-  </Project>
-  <Project Path="TestAPI/TestAPI.csproj" />
-</Solution>

@@ -1,0 +1,29 @@
+
+using FluentValidation;
+using FluentValidation.Results;
+using TestAPI.DTO;
+
+namespace TestAPI.Validation
+{
+    public class ValidatorResolver : IValidatorResolver
+    {
+      private readonly IServiceProvider _serviceProvider;
+
+        public ValidatorResolver(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        public async Task<ValidationResult> ValidateAsync(object model){
+            var validatorType = typeof(IValidator<>).MakeGenericType(model.GetType());
+
+            if (_serviceProvider.GetService(validatorType) is not IValidator validator)
+            {
+                throw new InvalidOperationException($"No validator found for {model.GetType().Name}");
+            }
+            var context = new ValidationContext<object>(model);
+            return await validator.ValidateAsync(context);
+
+        }
+    }
+}

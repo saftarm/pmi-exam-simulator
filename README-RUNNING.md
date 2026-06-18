@@ -52,13 +52,18 @@ This opens both services in separate Command Prompt windows.
 
 ### Terminal 1 - Start the API:
 ```bash
-cd TestAPI
 dotnet run
 ```
 
 ### Terminal 2 - Start the React Client:
 ```bash
 cd reactclient
+npm run dev
+```
+
+Or from the repo root, run both together:
+```bash
+npm install
 npm run dev
 ```
 
