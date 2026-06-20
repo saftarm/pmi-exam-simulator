@@ -5,9 +5,9 @@ import StatusBadge from '../../components/admin/StatusBadge';
 import Icon from '../../components/Icon';
 import { getExamDetails, publishExam, getAllExams } from '../../services/adminExamService';
 import { getDomainsByExam } from '../../services/adminDomainService';
-import { importQuestions } from '../../services/adminQuestionService';
-import { logActivity } from '../../services/adminMockStore';
+import { formatApiErrors } from '../../services/authService';
 import { formatExamStatus, statusBadgeType } from '../../utils/examStatus';
+import { DetailPageSkeleton } from '../../components/loading';
 
 export default function AdminExamDetailPage() {
     const { examId } = useParams();
@@ -16,8 +16,6 @@ export default function AdminExamDetailPage() {
     const [examMeta, setExamMeta] = useState(null);
     const [domains, setDomains] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [importing, setImporting] = useState(false);
-    const [importResult, setImportResult] = useState(null);
     const [publishing, setPublishing] = useState(false);
 
     useEffect(() => {
@@ -46,47 +44,14 @@ export default function AdminExamDetailPage() {
         return () => { cancelled = true; };
     }, [examId]);
 
-    const handleImport = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        setImporting(true);
-        setImportResult(null);
-        try {
-            const result = await importQuestions(examId, file);
-            setImportResult({ success: true, message: `Imported ${result?.length ?? 'questions'} successfully.` });
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Imported questions into "${exam?.title}"`,
-                status: 'Success',
-                statusType: 'success',
-            });
-        } catch (err) {
-            setImportResult({
-                success: false,
-                message: err.response?.data?.title || err.message || 'Import failed',
-            });
-        } finally {
-            setImporting(false);
-            e.target.value = '';
-        }
-    };
-
     const handlePublish = async () => {
         setPublishing(true);
         try {
             await publishExam(examId);
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Published exam "${exam?.title}"`,
-                status: 'Published',
-                statusType: 'success',
-            });
             const allExams = await getAllExams();
             setExamMeta(allExams.find((e) => e.id === examId) || null);
         } catch (err) {
-            alert(err.response?.data?.title || err.message || 'Publish failed');
+            alert(formatApiErrors(err));
         } finally {
             setPublishing(false);
         }
@@ -95,7 +60,7 @@ export default function AdminExamDetailPage() {
     if (loading) {
         return (
             <AdminLayout title="Exam Details">
-                <p className="text-on-surface-variant">Loading…</p>
+                <DetailPageSkeleton />
             </AdminLayout>
         );
     }
@@ -139,7 +104,7 @@ export default function AdminExamDetailPage() {
                                 <dd className="font-bold">{exam.durationInMinutes} minutes</dd>
                             </div>
                             <div>
-                                <dt className="text-on-surface-variant">Questions</dt>
+                                <dt className="text-on-surface-variant">Questions (target)</dt>
                                 <dd className="font-bold">{exam.numberOfQuestions}</dd>
                             </div>
                         </dl>
@@ -148,7 +113,7 @@ export default function AdminExamDetailPage() {
                                 to={`/admin/exams/${examId}/edit`}
                                 className="px-md py-sm rounded-lg border border-outline-variant font-bold text-sm hover:bg-surface-container-low"
                             >
-                                Edit duration & questions
+                                Edit duration & settings
                             </Link>
                             {formatExamStatus(status) !== 'Published' && (
                                 <button
@@ -185,71 +150,20 @@ export default function AdminExamDetailPage() {
 
                 <div className="space-y-lg">
                     <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg">
-                        <h2 className="font-headline-sm text-headline-sm font-bold mb-md">Import Questions</h2>
+                        <h2 className="font-headline-sm text-headline-sm font-bold mb-md">Question Pool</h2>
                         <p className="text-sm text-on-surface-variant mb-md">
-                            Upload an Excel file (.xlsx) with questions for this exam.
+                            Questions are managed in the global pool and sampled by domain when learners start a session.
                         </p>
-                        <label className="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant rounded-lg p-lg cursor-pointer hover:bg-surface-container-low transition-colors">
-                            <Icon name="upload_file" className="text-secondary-container mb-sm" />
-                            <span className="text-sm font-bold">
-                                {importing ? 'Importing…' : 'Choose Excel file'}
-                            </span>
-                            <input
-                                type="file"
-                                accept=".xlsx,.xls"
-                                className="hidden"
-                                disabled={importing}
-                                onChange={handleImport}
-                            />
-                        </label>
-                        {importResult && (
-                            <p
-                                className={`mt-md text-sm font-medium ${
-                                    importResult.success ? 'text-green-600' : 'text-red-600'
-                                }`}
-                            >
-                                {importResult.message}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg">
-                        <h2 className="font-headline-sm text-headline-sm font-bold mb-md">Edit Question by ID</h2>
-                        <p className="text-sm text-on-surface-variant mb-md">
-                            Enter a question GUID to open the editor.
-                        </p>
-                        <QuestionIdLookup />
+                        <Link
+                            to="/admin/questions"
+                            className="w-full flex items-center justify-center gap-sm px-md py-sm rounded-lg bg-secondary-container text-white font-bold text-sm hover:brightness-110"
+                        >
+                            <Icon name="library_books" style={{ fontSize: 18 }} />
+                            Open Question Pool
+                        </Link>
                     </div>
                 </div>
             </div>
         </AdminLayout>
-    );
-}
-
-function QuestionIdLookup() {
-    const [questionId, setQuestionId] = useState('');
-    const navigate = useNavigate();
-
-    return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                if (questionId.trim()) navigate(`/admin/questions/${questionId.trim()}`);
-            }}
-            className="flex gap-sm"
-        >
-            <input
-                value={questionId}
-                onChange={(e) => setQuestionId(e.target.value)}
-                placeholder="Question GUID"
-                className="flex-1 border border-outline-variant rounded-lg px-md py-sm text-sm"
-            />
-            <button
-                type="submit"
-                className="px-md py-sm bg-secondary-container text-white rounded-lg text-sm font-bold"
-            >
-                Open
-            </button>
-        </form>
     );
 }

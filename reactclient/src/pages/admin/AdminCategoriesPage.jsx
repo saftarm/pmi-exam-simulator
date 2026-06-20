@@ -7,7 +7,8 @@ import {
     getCategories,
     updateCategory,
 } from '../../services/adminCategoryService';
-import { logActivity } from '../../services/adminMockStore';
+import LoadingButton from '../../components/loading/LoadingButton';
+import { Skeleton } from '../../components/loading';
 
 export default function AdminCategoriesPage() {
     const [categories, setCategories] = useState([]);
@@ -37,13 +38,6 @@ export default function AdminCategoriesPage() {
         setError(null);
         try {
             await createCategory(form);
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Created category "${form.title}"`,
-                status: 'Success',
-                statusType: 'success',
-            });
             setForm({ title: '', description: '' });
             load();
         } catch (err) {
@@ -63,13 +57,6 @@ export default function AdminCategoriesPage() {
                 title: editing.title,
                 description: editing.description,
             });
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Updated category "${editing.title}"`,
-                status: 'Updated',
-                statusType: 'info',
-            });
             setEditing(null);
             load();
         } catch (err) {
@@ -84,13 +71,6 @@ export default function AdminCategoriesPage() {
         setDeleting(true);
         try {
             await deleteCategory(deleteTarget.id);
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Deleted category "${deleteTarget.title}"`,
-                status: 'Removed',
-                statusType: 'error',
-            });
             setDeleteTarget(null);
             load();
         } catch (err) {
@@ -130,13 +110,14 @@ export default function AdminCategoriesPage() {
                             className="w-full border border-outline-variant rounded-lg px-md py-sm"
                         />
                     </div>
-                    <button
+                    <LoadingButton
                         type="submit"
-                        disabled={saving}
+                        loading={saving}
+                        loadingText="Saving…"
                         className="w-full bg-secondary-container text-white py-sm rounded-lg font-bold disabled:opacity-50"
                     >
-                        {saving ? 'Saving…' : 'Add Category'}
-                    </button>
+                        Add Category
+                    </LoadingButton>
                 </form>
 
                 <div className="lg:col-span-2 bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
@@ -144,7 +125,11 @@ export default function AdminCategoriesPage() {
                         <h2 className="font-headline-sm text-headline-sm font-bold">All Categories</h2>
                     </div>
                     {loading ? (
-                        <p className="p-lg text-on-surface-variant">Loading…</p>
+                        <div className="p-lg space-y-md loading-enter" aria-hidden="true">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <Skeleton key={i} className="h-16 w-full rounded-lg" />
+                            ))}
+                        </div>
                     ) : categories.length === 0 ? (
                         <p className="p-lg text-on-surface-variant">No categories yet.</p>
                     ) : (

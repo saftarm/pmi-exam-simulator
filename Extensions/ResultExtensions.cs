@@ -28,6 +28,7 @@ public static class ResultExtensions
         ErrorType.Conflict     => new ConflictObjectResult(error.Description),
         ErrorType.Validation   => new UnprocessableEntityObjectResult(error.Description),
         ErrorType.Unauthorized => new UnauthorizedObjectResult(error.Description),
+        ErrorType.Forbidden    => new ObjectResult(error.Description) { StatusCode = StatusCodes.Status403Forbidden },
         _                      => new ObjectResult(error.Description) { StatusCode = 500 }
     };
 }

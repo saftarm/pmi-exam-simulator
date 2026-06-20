@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using TestAPI.DTO;
 using TestAPI.DTO.Exam.Requests;
@@ -33,6 +34,7 @@ namespace TestAPI.Controllers
     }
 
     // ---------------------------------------   Admin endpoints   -----------------------------------------------
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("/api/exams")]
     public async Task<IActionResult> GetAllExams()
     {
@@ -41,6 +43,7 @@ namespace TestAPI.Controllers
     }
 
     // Update Exam 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPatch("api/exams/{id}/update")]
     public async Task<IActionResult> UpdateExam([FromRoute] Guid id, UpdateExamRequest request)
     {
@@ -49,6 +52,7 @@ namespace TestAPI.Controllers
     }
 
     // Hard Delete Exam
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("api/exams/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -58,6 +62,7 @@ namespace TestAPI.Controllers
     }
 
     // Publish Exam by Id
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("api/exams/{id}/publish")]
     public async Task<IActionResult> PublishExam(Guid id)
     {
@@ -67,6 +72,7 @@ namespace TestAPI.Controllers
     }
 
     // Delete Multiple Exams
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("api/exams")]
     public async Task<IActionResult> DeleteRange(IEnumerable<Guid> examIds)
     {
@@ -75,6 +81,7 @@ namespace TestAPI.Controllers
     }
 
     // Create Exam
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("/api/exams/")]
     public async Task<IActionResult> Create([FromBody] CreateExamDto dto)
     {

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using StackExchange.Redis;
 using TestAPI.Entities;
+using TestAPI.Models;
 using TestAPI.Persistence.Implementation;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.Services;
@@ -16,8 +16,6 @@ namespace TestAPI.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IExamAttemptService, ExamAttemptService>();
-            services.AddScoped<IExamCacheService, RedisExamCacheService>();
-            services.AddScoped<IUserExamResponseRepository, UserExamResponseRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IUserService, UserService>();
@@ -31,14 +29,12 @@ namespace TestAPI.Extensions
             services.AddScoped<IValidatorResolver, ValidatorResolver>();
             services.AddScoped<IQuestionImportService, QuestionImportService>();
             services.AddValidatorsFromAssemblyContaining<Program>();
-
-            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
             services.AddHttpClient();
 
             services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
+            services.Configure<AdminSeedSettings>(configuration.GetSection("AdminSeed"));
 
             return services;
-
         }
     }
 }

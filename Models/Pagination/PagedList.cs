@@ -5,7 +5,7 @@ namespace TestAPI.Models
 {
     public class PagedList<T> (List<T> items, int page, int pageSize, int totalCount)
     {
-        public List<T> Items = items;
+        public List<T> Items { get; } = items;
         public int Page {get;} = page;
 
         public int PageSize {get;} = pageSize;

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 const NAV_LINKS = [
     { label: 'Home', to: '/' },
     { label: 'Exams', to: '/exams' },
+    { label: 'Progress', to: '/progress', authOnly: true },
     { label: 'About', to: '#about' },
 ];
 
@@ -13,7 +14,7 @@ export default function AppHeader({
     onExamsClick,
 }) {
     const navigate = useNavigate();
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated, isAdmin, logout } = useAuth();
 
     const isExamHeader = variant === 'exam';
 
@@ -31,7 +32,7 @@ export default function AppHeader({
                     PMI Exam Simulator
                 </Link>
                 <div className="hidden md:flex items-center gap-xl h-full">
-                    {NAV_LINKS.map((link) => {
+                    {NAV_LINKS.filter((link) => !link.authOnly || isAuthenticated).map((link) => {
                         const isActive = link.label === activeLink;
                         return (
                             <Link
@@ -57,12 +58,21 @@ export default function AppHeader({
                 <div className="flex items-center gap-md">
                     {isAuthenticated ? (
                         <>
+                            {isAdmin && (
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/admin')}
+                                    className="hidden md:block font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-md py-sm rounded"
+                                >
+                                    Admin
+                                </button>
+                            )}
                             <button
                                 type="button"
-                                onClick={() => navigate('/admin')}
+                                onClick={() => navigate('/profile')}
                                 className="hidden md:block font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-md py-sm rounded"
                             >
-                                Admin
+                                Profile
                             </button>
                             <button
                                 type="button"

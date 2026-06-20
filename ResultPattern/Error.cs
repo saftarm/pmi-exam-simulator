@@ -18,6 +18,13 @@
     public static Error ExamDataCorrupted {get;} = new ("UNPROCESSABLE_ENTITY", "Exam data is corrupted", ErrorType.UnprocessableEntity);
     public static Error ValidationFailed {get;} = new ("UNPROCESSABLE_ENTITY", "Validation failed because of invalid input", ErrorType.Validation);
     public static Error UserNotFoundById {get;} = new Error("NOT_FOUND", "User not found by given Id", ErrorType.NotFound);
+    public static Error AccountNotActive {get;} = new ("FORBIDDEN", "Account is not active", ErrorType.Forbidden);
+    public static Error CannotSuspendSelf {get;} = new ("FORBIDDEN", "You cannot change your own account status", ErrorType.Forbidden);
+    public static Error LastAdminRequired {get;} = new ("FORBIDDEN", "At least one admin account must remain", ErrorType.Forbidden);
+    public static Error QuestionNotFound {get;} = new ("NOT_FOUND", "Question not found", ErrorType.NotFound);
+    public static Error DomainNotFound {get;} = new ("NOT_FOUND", "Domain not found", ErrorType.NotFound);
+    public static Error EmailAlreadyExists {get;} = new ("CONFLICT", "Email is already in use", ErrorType.Conflict);
+    public static Error UserNameAlreadyExists {get;} = new ("CONFLICT", "Username is already in use", ErrorType.Conflict);
   }
 
 }

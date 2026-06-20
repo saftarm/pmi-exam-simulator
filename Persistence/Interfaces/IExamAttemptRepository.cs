@@ -4,23 +4,16 @@ namespace TestAPI.Persistence.Interfaces
 {
   public interface IExamAttemptRepository
   {
-    public Task AddAsync(ExamAttempt examAttempt);
-    public Task<ExamAttempt?> GetByIdAsync(Guid id);
-
-    public Task<int> QueryTotalNumberOfQuestionsBySessionId(Guid sessionId);
-
-    public Task SaveSessionResponses(IEnumerable<UserExamResponse> responses);
-
-    public Task UpdateAsync(ExamAttempt updatedExamAttempt);
-
-
-
-
-    public Task<IEnumerable<ExamAttempt>> GetAllAsync();
-    public Task<ExamAttempt?> GetByUserId(Guid userId);
-    public Task DeleteAsync(Guid id);
-    public Task<IEnumerable<UserExamResponse>> GetResponsesAsync(Guid id);
-    public Task<IEnumerable<ExamAttempt>> GetAttemptsByExamAndUserIdAsync(Guid userId, Guid examId, CancellationToken ct);
-    public Task<bool> ExistsAsync(Guid id);
+    Task AddAsync(ExamAttempt examAttempt);
+    Task<ExamAttempt?> GetByIdAsync(Guid id);
+    Task<ExamAttempt?> GetByIdForFinishAsync(Guid id, CancellationToken ct);
+    Task SaveSessionResponses(IEnumerable<UserExamResponse> responses);
+    Task UpdateAsync(ExamAttempt updatedExamAttempt);
+    Task<IEnumerable<ExamAttempt>> GetAllAsync();
+    Task<ExamAttempt?> GetByUserId(Guid userId);
+    Task DeleteAsync(Guid id);
+    Task<IEnumerable<UserExamResponse>> GetResponsesAsync(Guid id);
+    Task<IEnumerable<ExamAttempt>> GetAttemptsByExamAndUserIdAsync(Guid userId, Guid examId, CancellationToken ct);
+    Task<bool> ExistsAsync(Guid id);
   }
 }

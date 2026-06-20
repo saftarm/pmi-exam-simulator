@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
+import LoadingButton from './loading/LoadingButton';
 
 function formatTime(totalSeconds) {
     const mins = Math.floor(totalSeconds / 60);
@@ -68,14 +69,14 @@ export function SessionHeader({
                         </span>
                     </div>
                 </div>
-                <button
-                    type="button"
+                <LoadingButton
                     onClick={onSubmit}
-                    disabled={submitting}
+                    loading={submitting}
+                    loadingText="Submitting…"
                     className="bg-secondary-container text-on-secondary-container px-lg py-sm rounded font-label-lg hover:brightness-110 transition-all active:scale-95 shadow-md disabled:opacity-60"
                 >
-                    {submitting ? 'Submitting...' : 'Submit Exam'}
-                </button>
+                    Submit Exam
+                </LoadingButton>
             </div>
         </header>
     );

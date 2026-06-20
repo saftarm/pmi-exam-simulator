@@ -33,6 +33,12 @@ namespace TestAPI.Persistence.Implementation
             await _context.SaveChangesAsync();
         } 
 
-    } 
+        public async Task RevokeAllForUserAsync(Guid userId, CancellationToken ct)
+        {
+            await _context.RefreshTokens
+                .Where(t => t.UserId == userId && !t.Revoked)
+                .ExecuteUpdateAsync(s => s.SetProperty(t => t.Revoked, true), ct);
+        }
 
+    }
 }

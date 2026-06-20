@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TestAPI.Enums;
 using TestAPI.Services.Implementation;
 
 namespace TestAPI.Extensions
@@ -29,6 +31,13 @@ namespace TestAPI.Extensions
                             Encoding.UTF8.GetBytes(configuration["AuthSettings:SecretKey"]!))
                     };
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                    policy.RequireRole(nameof(UserRole.Admin)));
+            });
+
             return services;
         }
     }

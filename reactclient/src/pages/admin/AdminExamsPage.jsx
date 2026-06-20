@@ -5,8 +5,8 @@ import StatusBadge from '../../components/admin/StatusBadge';
 import DeleteConfirmModal from '../../components/admin/DeleteConfirmModal';
 import Icon from '../../components/Icon';
 import { deleteExam, deleteExamsBulk, getAllExams, publishExam } from '../../services/adminExamService';
-import { logActivity } from '../../services/adminMockStore';
 import { formatExamStatus, statusBadgeType } from '../../utils/examStatus';
+import { TableSkeleton, Skeleton, Spinner } from '../../components/loading';
 
 export default function AdminExamsPage() {
     const navigate = useNavigate();
@@ -48,13 +48,6 @@ export default function AdminExamsPage() {
         setPublishingId(exam.id);
         try {
             await publishExam(exam.id);
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Published exam "${exam.title}"`,
-                status: 'Published',
-                statusType: 'success',
-            });
             loadExams();
         } catch (err) {
             alert(err.response?.data?.title || err.message || 'Publish failed');
@@ -69,23 +62,9 @@ export default function AdminExamsPage() {
         try {
             if (deleteTarget.bulk) {
                 await deleteExamsBulk([...selected]);
-                logActivity({
-                    user: 'Admin',
-                    initials: 'AD',
-                    action: `Deleted ${selected.size} exams`,
-                    status: 'Removed',
-                    statusType: 'error',
-                });
                 setSelected(new Set());
             } else {
                 await deleteExam(deleteTarget.id);
-                logActivity({
-                    user: 'Admin',
-                    initials: 'AD',
-                    action: `Deleted exam "${deleteTarget.title}"`,
-                    status: 'Removed',
-                    statusType: 'error',
-                });
             }
             setDeleteTarget(null);
             loadExams();
@@ -100,7 +79,11 @@ export default function AdminExamsPage() {
         <AdminLayout title="Manage Exams">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md mb-lg">
                 <p className="text-on-surface-variant">
-                    {loading ? 'Loading…' : `${exams.length} exam${exams.length !== 1 ? 's' : ''} in catalog`}
+                    {loading ? (
+                        <Skeleton className="h-4 w-40 inline-block" />
+                    ) : (
+                        `${exams.length} exam${exams.length !== 1 ? 's' : ''} in catalog`
+                    )}
                 </p>
                 <div className="flex gap-md">
                     {selected.size > 0 && (
@@ -149,11 +132,7 @@ export default function AdminExamsPage() {
                         </thead>
                         <tbody className="divide-y divide-outline-variant">
                             {loading ? (
-                                <tr>
-                                    <td colSpan={6} className="px-lg py-xl text-center text-on-surface-variant">
-                                        Loading exams…
-                                    </td>
-                                </tr>
+                                <TableSkeleton rows={5} columns={6} />
                             ) : exams.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="px-lg py-xl text-center text-on-surface-variant">
@@ -201,8 +180,9 @@ export default function AdminExamsPage() {
                                                         type="button"
                                                         disabled={publishingId === exam.id}
                                                         onClick={() => handlePublish(exam)}
-                                                        className="text-xs font-bold text-green-600 hover:underline disabled:opacity-50"
+                                                        className="text-xs font-bold text-green-600 hover:underline disabled:opacity-50 inline-flex items-center gap-xs"
                                                     >
+                                                        {publishingId === exam.id && <Spinner size="sm" label="Publishing" />}
                                                         Publish
                                                     </button>
                                                 )}

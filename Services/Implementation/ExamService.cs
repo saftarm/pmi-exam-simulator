@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using NuGet.Packaging;
-using TestAPI.DTO;
+﻿using TestAPI.DTO;
 using TestAPI.DTO.AnswerOption;
 using TestAPI.DTO.Exam;
 using TestAPI.DTO.Exam.Requests;
@@ -8,66 +6,48 @@ using TestAPI.DTO.ExamAttempt;
 using TestAPI.DTO.Question;
 using TestAPI.Entities;
 using TestAPI.Enums;
-using TestAPI.Exceptions;
-using TestAPI.Models;
 using TestAPI.Models.Pagination;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.ResultPattern;
 using TestAPI.Services.Interfaces;
-
 
 namespace TestAPI.Services.Implementation
 {
   public class ExamService : IExamService
   {
     private readonly ILogger<ExamService> _logger;
-    private readonly IExamCacheService _examCacheService;
-
     private readonly IExamRepository _examRepository;
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IExamAttemptRepository _examAttemptRepository;
     private readonly IQuestionRepository _questionRepository;
-    private readonly IQuestionService _questionService;
-    private readonly IDomainRepository _domainRepository;
+    private readonly IExamAttemptRepository _examAttemptRepository;
 
-    public ExamService(ILogger<ExamService> logger,
-    IExamCacheService examCacheService,
-    IExamRepository examRepository,
-    ICategoryRepository categoryRepository,
-    IQuestionRepository questionRepository,
-    IExamAttemptRepository examAttemptRepository,
-    IQuestionService questionService,
-    IDomainRepository domainRepository
-     )
+    public ExamService(
+        ILogger<ExamService> logger,
+        IExamRepository examRepository,
+        ICategoryRepository categoryRepository,
+        IQuestionRepository questionRepository,
+        IExamAttemptRepository examAttemptRepository)
     {
       _logger = logger;
-      _examCacheService = examCacheService;
       _examRepository = examRepository;
       _categoryRepository = categoryRepository;
       _questionRepository = questionRepository;
       _examAttemptRepository = examAttemptRepository;
-      _questionService = questionService;
-      _domainRepository = domainRepository;
     }
 
-
-
-    // Compile Exam
     public async Task<Result<IEnumerable<QuestionDto>>> CompileExam(Guid sessionId, Guid examId)
     {
-
       var examWithDomains = await _examRepository.QueryExamsWithDomainsById(examId);
       if (examWithDomains is null)
       {
-        _logger.LogWarning("Exam with ID :{ID} not found", examId);
+        _logger.LogWarning("Exam with ID: {ID} not found", examId);
         return Result<IEnumerable<QuestionDto>>.Failure(Errors.RecordNotFoundById);
       }
 
-      else if (!(examWithDomains.Domains.Count == 0))
+      if (examWithDomains.Domains is null || !examWithDomains.Domains.Any())
       {
-        _logger.LogWarning("Exam witd ID: {ID}, has no domains", examId);
+        _logger.LogWarning("Exam with ID: {ID} has no domains", examId);
         return Result<IEnumerable<QuestionDto>>.Failure(Errors.RangeOfRecordsNotFound);
-
       }
 
       Dictionary<Guid, int> numberOfQuestionsPerDomain = [];
@@ -75,10 +55,8 @@ namespace TestAPI.Services.Implementation
       foreach (var domain in examWithDomains.Domains)
       {
         int currentNumberOfQuestions = (int)Math.Round(
-            domain.Weight / 100.0 * examWithDomains!.NumberOfQuestions,
-            MidpointRounding.AwayFromZero
-            );
-        Console.WriteLine($"Number of questions of domain: {domain.Id}: {currentNumberOfQuestions}");
+            domain.Weight / 100.0 * examWithDomains.NumberOfQuestions,
+            MidpointRounding.AwayFromZero);
 
         numberOfQuestionsPerDomain[domain.Id] = currentNumberOfQuestions;
       }
@@ -87,90 +65,72 @@ namespace TestAPI.Services.Implementation
 
       if (!examQuestions.Any())
       {
-        _logger.LogInformation("No questions found by domain, Questions Repository method's logic is incorrect");
-        throw new Exception("ExamService line 89 exception, questions not found per domain");
+        _logger.LogWarning("No questions found for exam {ExamId}", examId);
+        return Result<IEnumerable<QuestionDto>>.Failure(Errors.RangeOfRecordsNotFound);
       }
-      // validation
 
       var compiledQuestionDtos = examQuestions.Select(e => new QuestionDto
       {
         Id = e.Id,
         Title = e.Title,
-        AnswerOptionsDtos = [.. e.AnswerOptions!.Select(o => new AnswerOptionDto {
-                Id = o.Id,
-                Text = o.Text!
-                })]
+        AnswerOptionsDtos = [.. e.AnswerOptions!.Select(o => new AnswerOptionDto
+        {
+          Id = o.Id,
+          Text = o.Text!
+        })]
       }).ToList();
 
-      try
-      {
-        await _examCacheService.SaveActiveSessionAsync(sessionId, examWithDomains!.DurationInMinutes, compiledQuestionDtos);
-      }
-      catch (Exception ex)
-      {
-        if (_logger.IsEnabled(LogLevel.Error))
-        {
-          _logger.LogError("Exception: {Exception message} was thrown while trying to save current exam to the Redis", ex.Message);
-        }
-      }
+      _logger.LogDebug(
+          "Compiled {Count} questions for session {SessionId}",
+          compiledQuestionDtos.Count,
+          sessionId);
 
-      string jsonString = JsonSerializer.Serialize(compiledQuestionDtos);
-      int byteCount = System.Text.Encoding.UTF8.GetByteCount(jsonString);
-      double sizeInKb = byteCount / 1024.0;
-
-      Console.WriteLine($"Memory size of {compiledQuestionDtos.Count} questions: {sizeInKb} KB");
-
-      return Result<IEnumerable<QuestionDto>>.Success(compiledQuestionDtos.Take(20));
+      return Result<IEnumerable<QuestionDto>>.Success(compiledQuestionDtos);
     }
 
-    // CalculateSessionResult
-    public async Task<Result<SessionResultDto>> CalculateSessionResult(Guid sessionId, IEnumerable<UserExamResponseDto> responses)
+    public async Task<Result<SessionCalculationResult>> CalculateSessionResult(
+        int totalQuestionsInSession,
+        Guid sessionId,
+        IEnumerable<UserExamResponseDto> responses)
     {
-      var totalQuestionsInSession = await _examAttemptRepository.QueryTotalNumberOfQuestionsBySessionId(sessionId);
-
       if (totalQuestionsInSession == 0)
       {
-        return Result<SessionResultDto>.Failure(Errors.ExamNotFound);
+        return Result<SessionCalculationResult>.Failure(Errors.ExamNotFound);
       }
-      var optionsIds = responses.Select(r => r.SelectedOptionId).ToList();
 
+      var optionsIds = responses.Select(r => r.SelectedOptionId).ToList();
       var optionsInDb = await _questionRepository.GetAnswerOptionsByIds(optionsIds);
 
       var newResponses = new List<UserExamResponse>();
 
       foreach (var option in optionsInDb)
       {
-        var newResponse = new UserExamResponse(
+        newResponses.Add(new UserExamResponse(
             selectedOptionId: option.Id,
             questionId: option.QuestionId,
             domainId: option.DomainId,
             examAttemptId: sessionId,
-            isCorrect: option.IsCorrect
-            );
-
-        newResponses.Add(newResponse);
-
+            isCorrect: option.IsCorrect));
       }
 
       await _examAttemptRepository.SaveSessionResponses(newResponses);
 
-      int correctCount = newResponses.Count(r => r.IsCorrect == true);
+      int correctCount = newResponses.Count(r => r.IsCorrect);
       decimal percentage = (decimal)correctCount / totalQuestionsInSession * 100;
 
-      return Result<SessionResultDto>.Success(new SessionResultDto
+      return Result<SessionCalculationResult>.Success(new SessionCalculationResult
       {
-        CorrectCount = correctCount,
-        PercentageScore = percentage
+        Result = new SessionResultDto
+        {
+          CorrectCount = correctCount,
+          PercentageScore = percentage
+        },
+        SavedResponses = newResponses
       });
     }
 
-
-    // ------------------------------------------------ Admin side logic ----------------------------------------------
-
-    // Create Exam
     public async Task<Result> CreateExamAsync(CreateExamDto dto)
     {
-      // validation
       var doesExist = await _examRepository.ExamExistsByTitleAsync(dto.Title);
       if (doesExist)
       {
@@ -180,7 +140,6 @@ namespace TestAPI.Services.Implementation
       var categoryTitle = await _categoryRepository.GetByIdAsync(dto.CategoryId);
       if (categoryTitle == null)
       {
-
         return Result.Failure(Errors.RecordNotFoundById);
       }
 
@@ -203,8 +162,8 @@ namespace TestAPI.Services.Implementation
         throw new Exception("Database rows were not affected");
       }
       return Result.Success();
-
     }
+
     public async Task<Result> ArchiveAsync(Guid examId)
     {
       var exam = await _examRepository.GetByIdAsync(examId);
@@ -214,22 +173,20 @@ namespace TestAPI.Services.Implementation
       return Result.Success();
     }
 
-
-
     public async Task<IEnumerable<Exam>> GetAllExams()
     {
       return await _examRepository.GetAllExams();
     }
-
 
     public async Task<Result<ExamDetailsDto>> GetDetailsByIdAsync(Guid examId)
     {
       var examInDb = await _examRepository.GetByIdAsync(examId);
       if (examInDb == null)
       {
-        Console.WriteLine("Exam is null");
+        _logger.LogWarning("Exam {ExamId} not found", examId);
         return Result<ExamDetailsDto>.Failure(Errors.ExamNotFound);
       }
+
       var examDetailsDto = new ExamDetailsDto
       {
         Title = examInDb.Title,
@@ -240,17 +197,13 @@ namespace TestAPI.Services.Implementation
       return Result<ExamDetailsDto>.Success(examDetailsDto);
     }
 
-
-
     public async Task DeleteRangeAsync(IEnumerable<Guid> examIds)
     {
       await _examRepository.DeleteRangeAsync(examIds);
     }
 
-
     public async Task<Result<IEnumerable<ExamDetailsDto>>> GetPublishedExamsDetailsAsync(PageParameters pageParameters)
     {
-
       var paginatedExams = await _examRepository.GetPublishedPaginatedExamsAsync(pageParameters);
 
       if (!paginatedExams.Any())
@@ -267,12 +220,9 @@ namespace TestAPI.Services.Implementation
             Context = e.Context,
             DurationInMinutes = e.DurationInMinutes,
             NumberOfQuestions = e.NumberOfQuestions
-          }
-      );
+          });
       return Result<IEnumerable<ExamDetailsDto>>.Success(examsDetailsDtos);
     }
-
-
 
     public async Task<Result> UpdateAsync(Guid id, UpdateExamRequest request)
     {
@@ -281,14 +231,11 @@ namespace TestAPI.Services.Implementation
       if (exam == null) return Result.Failure(Errors.ExamNotFound);
 
       exam.UpdateExamDetails(request);
-
       await _examRepository.UpdateAsync(exam);
 
       return Result.Success();
-
     }
 
-    // Hard delete Exam by Id
     public async Task DeleteAsync(Guid examId)
     {
       await _examRepository.DeleteAsync(examId);
@@ -307,8 +254,5 @@ namespace TestAPI.Services.Implementation
 
       return Result.Success();
     }
-
-
-
   }
 }

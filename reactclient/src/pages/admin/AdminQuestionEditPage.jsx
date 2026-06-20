@@ -4,13 +4,9 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import Icon from '../../components/Icon';
 import DeleteConfirmModal from '../../components/admin/DeleteConfirmModal';
 import { getQuestion, updateQuestion, deleteQuestion } from '../../services/adminQuestionService';
-import { logActivity } from '../../services/adminMockStore';
-
-const QUESTION_TYPES = [
-    { value: 1, label: 'Single Choice' },
-    { value: 2, label: 'Multiple Choice' },
-    { value: 3, label: 'True / False' },
-];
+import { formatApiErrors } from '../../services/authService';
+import { QUESTION_TYPES, normalizeQuestionType } from '../../utils/questionTypes';
+import { FormSkeleton, LoadingButton } from '../../components/loading';
 
 export default function AdminQuestionEditPage() {
     const { questionId } = useParams();
@@ -23,23 +19,54 @@ export default function AdminQuestionEditPage() {
     const [form, setForm] = useState({
         title: '',
         explanation: '',
-        questionType: 1,
+        questionType: 'SingleChoice',
         answerOptions: [],
     });
+    const [domainMeta, setDomainMeta] = useState({ domainTitle: '', examTitle: '' });
 
     useEffect(() => {
         getQuestion(questionId)
             .then((q) => {
+                setDomainMeta({
+                    domainTitle: q.domainTitle || '',
+                    examTitle: q.examTitle || '',
+                });
                 setForm({
-                    title: q.questionTitle || q.title || '',
+                    title: q.title || '',
                     explanation: q.explanation || '',
-                    questionType: q.questionType || 1,
-                    answerOptions: q.answerOptions || q.answerOptionsDtos || [],
+                    questionType: normalizeQuestionType(q.questionType),
+                    answerOptions: (q.answerOptions || []).map((o) => ({
+                        id: o.id,
+                        text: o.text || '',
+                        isCorrect: !!o.isCorrect,
+                    })),
                 });
             })
             .catch(() => setError('Question not found'))
             .finally(() => setLoading(false));
     }, [questionId]);
+
+    const updateOption = (index, field, value) => {
+        setForm((f) => {
+            const options = [...f.answerOptions];
+            options[index] = { ...options[index], [field]: value };
+            return { ...f, answerOptions: options };
+        });
+    };
+
+    const addOption = () => {
+        setForm((f) => ({
+            ...f,
+            answerOptions: [...f.answerOptions, { text: '', isCorrect: false }],
+        }));
+    };
+
+    const removeOption = (index) => {
+        setForm((f) => ({
+            ...f,
+            answerOptions: f.answerOptions.filter((_, i) => i !== index),
+        }));
+    };
 
     const handleSave = async (e) => {
         e.preventDefault();
@@ -49,22 +76,16 @@ export default function AdminQuestionEditPage() {
             await updateQuestion(questionId, {
                 title: form.title,
                 explanation: form.explanation,
-                questionType: Number(form.questionType),
+                questionType: form.questionType,
                 answerOptionsDtos: form.answerOptions.map((o) => ({
+                    id: o.id || undefined,
                     text: o.text,
-                    isCorrect: o.isCorrect ?? false,
+                    isCorrect: !!o.isCorrect,
                 })),
             });
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Updated question ${questionId.slice(0, 8)}…`,
-                status: 'Updated',
-                statusType: 'info',
-            });
-            navigate(-1);
+            navigate('/admin/questions');
         } catch (err) {
-            setError(err.response?.data?.title || err.message || 'Update failed');
+            setError(formatApiErrors(err));
         } finally {
             setSaving(false);
         }
@@ -74,16 +95,9 @@ export default function AdminQuestionEditPage() {
         setDeleting(true);
         try {
             await deleteQuestion(questionId);
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Deleted question ${questionId.slice(0, 8)}…`,
-                status: 'Removed',
-                statusType: 'error',
-            });
-            navigate(-1);
+            navigate('/admin/questions');
         } catch (err) {
-            alert(err.message || 'Delete failed');
+            alert(formatApiErrors(err));
         } finally {
             setDeleting(false);
             setShowDelete(false);
@@ -93,7 +107,7 @@ export default function AdminQuestionEditPage() {
     if (loading) {
         return (
             <AdminLayout title="Edit Question">
-                <p className="text-on-surface-variant">Loading…</p>
+                <FormSkeleton fields={6} />
             </AdminLayout>
         );
     }
@@ -102,7 +116,7 @@ export default function AdminQuestionEditPage() {
         <AdminLayout title="Edit Question">
             <button
                 type="button"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate('/admin/questions')}
                 className="mb-lg text-sm text-secondary-container font-bold hover:underline flex items-center gap-xs"
             >
                 <Icon name="arrow_back" style={{ fontSize: 18 }} />
@@ -115,6 +129,18 @@ export default function AdminQuestionEditPage() {
 
             <form onSubmit={handleSave} className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg max-w-2xl space-y-md">
                 <p className="text-xs text-on-surface-variant font-mono">ID: {questionId}</p>
+                {(domainMeta.domainTitle || domainMeta.examTitle) && (
+                    <div className="text-sm text-on-surface-variant bg-surface-container-low rounded-lg p-md">
+                        <p>
+                            <span className="font-bold">Domain:</span> {domainMeta.domainTitle || '—'}
+                        </p>
+                        {domainMeta.examTitle && (
+                            <p className="mt-xs">
+                                <span className="font-bold">Exam context:</span> {domainMeta.examTitle}
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 <div>
                     <label className="block text-sm font-bold mb-sm">Question text</label>
@@ -152,30 +178,58 @@ export default function AdminQuestionEditPage() {
                     </select>
                 </div>
 
-                {form.answerOptions.length > 0 && (
-                    <div>
-                        <label className="block text-sm font-bold mb-sm">Answer options (read-only)</label>
-                        <ul className="space-y-sm">
-                            {form.answerOptions.map((opt, i) => (
-                                <li
-                                    key={opt.id || i}
-                                    className="text-sm border border-outline-variant rounded-lg px-md py-sm text-on-surface-variant"
-                                >
-                                    {opt.text}
-                                </li>
-                            ))}
-                        </ul>
+                <div>
+                    <div className="flex justify-between items-center mb-sm">
+                        <label className="block text-sm font-bold">Answer options</label>
+                        <button
+                            type="button"
+                            onClick={addOption}
+                            className="text-sm font-bold text-secondary-container hover:underline"
+                        >
+                            + Add option
+                        </button>
                     </div>
-                )}
+                    <div className="space-y-sm">
+                        {form.answerOptions.map((opt, index) => (
+                            <div
+                                key={opt.id || `new-${index}`}
+                                className="flex flex-col sm:flex-row gap-sm border border-outline-variant rounded-lg p-md"
+                            >
+                                <input
+                                    value={opt.text}
+                                    onChange={(e) => updateOption(index, 'text', e.target.value)}
+                                    placeholder="Answer text"
+                                    className="flex-1 border border-outline-variant rounded-lg px-md py-sm text-sm"
+                                />
+                                <label className="flex items-center gap-sm text-sm shrink-0">
+                                    <input
+                                        type="checkbox"
+                                        checked={opt.isCorrect}
+                                        onChange={(e) => updateOption(index, 'isCorrect', e.target.checked)}
+                                    />
+                                    Correct
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={() => removeOption(index)}
+                                    className="text-xs font-bold text-red-600"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
                 <div className="flex gap-md pt-md border-t border-outline-variant">
-                    <button
+                    <LoadingButton
                         type="submit"
-                        disabled={saving}
+                        loading={saving}
+                        loadingText="Saving…"
                         className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold disabled:opacity-50"
                     >
-                        {saving ? 'Saving…' : 'Save Question'}
-                    </button>
+                        Save Question
+                    </LoadingButton>
                     <button
                         type="button"
                         onClick={() => setShowDelete(true)}

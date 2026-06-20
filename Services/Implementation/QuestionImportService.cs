@@ -1,5 +1,4 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using FluentValidation;
 using TestAPI.DTO.ImportService;
 using TestAPI.Entities;
@@ -7,26 +6,23 @@ using TestAPI.Models;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.ResultPattern;
 using TestAPI.Services.Interfaces;
-using static System.Net.WebRequestMethods;
 
 namespace TestAPI.Services.Implementation
 {
   public class QuestionImportService : IQuestionImportService
   {
     private readonly ILogger<IQuestionImportService> _logger;
-    private readonly IExamRepository _examRepository;
     private readonly IQuestionRepository _questionRepository;
     private readonly IDomainRepository _domainRepository;
     private readonly IValidator<QuestionImportRowDto> _questionImportRowValidator;
+
     public QuestionImportService(
         ILogger<IQuestionImportService> logger,
-        IExamRepository examRepository,
         IQuestionRepository questionRepository,
         IDomainRepository domainRepository,
         IValidator<QuestionImportRowDto> questionImportRowValidator)
     {
       _logger = logger;
-      _examRepository = examRepository;
       _questionRepository = questionRepository;
       _domainRepository = domainRepository;
       _questionImportRowValidator = questionImportRowValidator;
@@ -34,53 +30,44 @@ namespace TestAPI.Services.Implementation
 
     private const int ColTitle = 1;
     private const int ColExplanation = 2;
-    private const int ColDomainName = 3;
+    private const int ColDomainId = 3;
     private const int ColQuestionType = 4;
 
-    public async Task<Result<QuestionImportResultDto>> ImportFromExcelAsync(Guid examId, IFormFile file, CancellationToken ct)
+    public async Task<Result<QuestionImportResultDto>> ImportFromExcelAsync(IFormFile file, CancellationToken ct)
     {
       var errors = new List<ImportRowErrorDto>();
-
-      List<QuestionImportRowDto> rows;
-
       var stream = file.OpenReadStream();
+      var rows = ParseRows(stream, errors, _questionImportRowValidator);
 
-      rows = ParseRows(stream, errors, _questionImportRowValidator);
+      if (errors.Count > 0)
+      {
+        return Result<QuestionImportResultDto>.Success(new QuestionImportResultDto
+        {
+          Success = false,
+          ImportedCount = 0,
+          Errors = errors
+        });
+      }
 
       var questions = new List<Question>();
-      var domainIdsWithTitles = await _domainRepository.GetDomainIdsWithTitlesByExamId(examId);
-
-      if(!domainIdsWithTitles.Any()) {
-        _logger.LogInformation("{domainIdsWithTitles} is empty", nameof(domainIdsWithTitles));
-      }
-
-      foreach (var (domainId, title) in domainIdsWithTitles)
-      {
-        _logger.LogInformation("DomainId: {DomainId}, Title: {Title}", domainId, title);
-
-        Console.WriteLine($"DomainId: {domainId}, Title: {title}");
-      }
 
       foreach (var questionRow in rows)
       {
-        var match = domainIdsWithTitles.FirstOrDefault(d => string.Equals(d.Value, questionRow.DomainName, StringComparison.OrdinalIgnoreCase));
-
-        if (match.Key == Guid.Empty)
+        var domain = await _domainRepository.GetByIdAsync(questionRow.DomainId);
+        if (domain == null)
         {
-          _logger.LogInformation("No matching domainId found for {domainName}", questionRow.DomainName);
           errors.Add(new ImportRowErrorDto
           {
-            Row = 1,
-            Reason = $"No matching domainId found for {questionRow.DomainName}"
+            Row = questionRow.RowNumber,
+            Reason = $"Domain not found for DomainId {questionRow.DomainId}"
           });
+          continue;
         }
 
-
-        var domainId = domainIdsWithTitles.FirstOrDefault(d => d.Value == questionRow.DomainName!).Key;
         var question = new Question(
             title: questionRow.Title,
             explanation: questionRow.Explanation!,
-            domainId: domainId,
+            domainId: questionRow.DomainId,
             questionType: questionRow.QuestionType switch
             {
               "SingleChoice" => QuestionType.SingleChoice,
@@ -90,32 +77,43 @@ namespace TestAPI.Services.Implementation
             })
         {
           AnswerOptions = [.. questionRow.AnswerOptions.Select(o => new AnswerOption(
-                          text: o.Text,
-                          isCorrect: o.IsCorrect == "TRUE",
-                          domainId: domainId)
-                    {
-                    })]
+              text: o.Text,
+              isCorrect: o.IsCorrect == "TRUE",
+              domainId: questionRow.DomainId))]
         };
 
         questions.Add(question);
-
       }
+
+      if (errors.Count > 0)
+      {
+        return Result<QuestionImportResultDto>.Success(new QuestionImportResultDto
+        {
+          Success = false,
+          ImportedCount = 0,
+          Errors = errors
+        });
+      }
+
       await _questionRepository.AddRangeAsync(questions);
 
-      var result = new QuestionImportResultDto
+      if (_logger.IsEnabled(LogLevel.Information))
+      {
+        _logger.LogInformation("Imported {Count} questions from Excel", questions.Count);
+      }
+
+      return Result<QuestionImportResultDto>.Success(new QuestionImportResultDto
       {
         Success = true,
         ImportedCount = questions.Count,
         Errors = errors
-      };
-
-      return Result<QuestionImportResultDto>.Success(result);
-
-
+      });
     }
 
-
-    private static List<QuestionImportRowDto> ParseRows(Stream stream, List<ImportRowErrorDto> errors, IValidator<QuestionImportRowDto> validator)
+    private static List<QuestionImportRowDto> ParseRows(
+        Stream stream,
+        List<ImportRowErrorDto> errors,
+        IValidator<QuestionImportRowDto> validator)
     {
       using var workbook = new XLWorkbook(stream);
 
@@ -126,6 +124,7 @@ namespace TestAPI.Services.Implementation
         errors.Add(new ImportRowErrorDto { Row = 0, Reason = "Sheet named 'Questions' not found." });
         return [];
       }
+
       var startRow = 3;
       var lastRowUsed = worksheet.LastRowUsed();
       if (lastRowUsed == null)
@@ -150,11 +149,23 @@ namespace TestAPI.Services.Implementation
           }
         }
 
+        var domainIdRaw = worksheet.Cell(rowNum, ColDomainId).GetString().Trim();
+        if (!Guid.TryParse(domainIdRaw, out var domainId))
+        {
+          errors.Add(new ImportRowErrorDto
+          {
+            Row = rowNum,
+            Reason = $"Invalid DomainId at column {ColDomainId}: '{domainIdRaw}'"
+          });
+          continue;
+        }
+
         var question = new QuestionImportRowDto
         {
+          RowNumber = rowNum,
           Title = worksheet.Cell(rowNum, ColTitle).GetString().Trim(),
           Explanation = worksheet.Cell(rowNum, ColExplanation).GetString().Trim(),
-          DomainName = worksheet.Cell(rowNum, ColDomainName).GetString().Trim(),
+          DomainId = domainId,
           QuestionType = worksheet.Cell(rowNum, ColQuestionType).GetString().Trim(),
           AnswerOptions = answerOptions
         };
@@ -164,22 +175,28 @@ namespace TestAPI.Services.Implementation
             rowNum,
             ColTitle,
             ColExplanation,
-            ColDomainName,
+            ColDomainId,
             ColQuestionType);
 
         var result = validator.Validate(context);
 
         if (!result.IsValid)
         {
-          throw new ValidationException(result.Errors);
+          foreach (var failure in result.Errors)
+          {
+            errors.Add(new ImportRowErrorDto
+            {
+              Row = rowNum,
+              Reason = failure.ErrorMessage
+            });
+          }
+          continue;
         }
 
         questions.Add(question);
-
       }
+
       return questions;
     }
-
-
   }
 }

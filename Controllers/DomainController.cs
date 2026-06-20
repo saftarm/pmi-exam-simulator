@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
 using TestAPI.DTO.Category;
@@ -42,6 +43,7 @@ namespace TestAPI.Controllers
       return Ok(await _domainService.GetAllAsync());
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("api/domains")]
 
     public async Task<ActionResult<CategoryDto>> Create(CreateDomainDto dto)
@@ -51,6 +53,7 @@ namespace TestAPI.Controllers
     }
 
     // Update Domain
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("api/domains/{id}")]
 
     public async Task<IActionResult> Update(Guid id, UpdateDomainDto dto)
@@ -60,6 +63,7 @@ namespace TestAPI.Controllers
     }
 
     // Delete Domain
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("/api/domains/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {

@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
 using TestAPI.DTO.Auth.Requests;
+using TestAPI.Extensions;
 using TestAPI.Models;
 using TestAPI.Services.Interfaces;
 using TestAPI.Validation;
@@ -66,11 +68,21 @@ namespace TestAPI.Controllers
         [HttpPost("api/auth/refresh")]
         public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request)
         {
-            // validation
             return await _jwtService.RefreshToken(request);
         }
 
+        [Authorize]
+        [HttpGet("/api/auth/me")]
+        public async Task<IActionResult> GetCurrentUser(CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
 
-
+            var result = await _userService.GetByIdAsync(userId.Value, ct);
+            return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
+        }
     }
 }

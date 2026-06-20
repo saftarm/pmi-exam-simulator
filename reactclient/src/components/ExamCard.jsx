@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import Icon from './Icon';
+import LoadingButton from './loading/LoadingButton';
 
 const EXAM_IMAGES = [
     'https://lh3.googleusercontent.com/aida-public/AB6AXuDUVgGY-vKI_8p4s3pQx9r4UwKXE8lMkqOtTDYTGhAoKKQL3V5e8g4n1QEXhbdlvO-7UB1xDnApSFSHwWAYQO87q8CKmhYv_1jW07Wqjb9J0QVanvcG7mXOy8hjvuEW9F6uN-oYDFlsA2RyPtxGgAjBRg_irfrHJvAmJqjeRR83adZrUrTqXb3c0gqwl9BkZZ93GwFRMdYdZXDhwiMvNDy4sSIMaZmF2dRHpLDKu48Imm_fOs0KPK5zvR-M9Bl529udaNpTwvSWSZw',
@@ -67,16 +69,22 @@ export default function ExamCard({ exam, index = 0, onStart, starting }) {
                         </div>
                     ))}
                 </div>
-                <div className="mt-auto pt-lg border-t border-outline-variant">
-                    <button
-                        type="button"
-                        onClick={() => onStart(exam.id)}
-                        disabled={starting}
-                        className="w-full bg-secondary-container hover:brightness-110 active:scale-[0.98] transition-all text-on-secondary font-label-lg text-label-lg py-md rounded-lg flex items-center justify-center gap-sm disabled:opacity-60"
+                <div className="mt-auto pt-lg border-t border-outline-variant space-y-sm">
+                    <Link
+                        to={`/exams/${exam.id}`}
+                        className="w-full block text-center py-sm rounded-lg border border-outline-variant font-label-lg text-label-lg text-primary hover:bg-surface-container-low transition-colors"
                     >
-                        {starting ? 'Launching...' : 'Launch Simulator'}
-                        <Icon name="play_arrow" style={{ fontSize: 20 }} />
-                    </button>
+                        View details
+                    </Link>
+                    <LoadingButton
+                        onClick={() => onStart(exam.id)}
+                        loading={starting}
+                        loadingText="Launching…"
+                        className="w-full bg-secondary-container hover:brightness-110 active:scale-[0.98] transition-all text-on-secondary font-label-lg text-label-lg py-md rounded-lg disabled:opacity-60"
+                    >
+                        Launch Simulator
+                        {!starting && <Icon name="play_arrow" style={{ fontSize: 20 }} />}
+                    </LoadingButton>
                 </div>
             </div>
         </div>

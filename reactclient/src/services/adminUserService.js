@@ -10,6 +10,11 @@ export async function getUserCount() {
     return data.count;
 }
 
+export async function getUserStats() {
+    const { data } = await api.get('/api/admin/users/stats');
+    return data;
+}
+
 export async function getUser(id) {
     const { data } = await api.get(`/api/admin/users/${id}`);
     return data;

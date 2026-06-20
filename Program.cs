@@ -1,13 +1,18 @@
 using Scalar.AspNetCore;
 using TestAPI.Extensions;
 
+await AdminSeedExtensions.RunDatabaseSeedAsync(args);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(
-    o => o.JsonSerializerOptions
-    .ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+    o =>
+    {
+        o.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -49,5 +54,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    await app.SeedAdminUserAsync();
+    await app.EnsureSaftarAdminAsync();
+}
 
 app.Run();

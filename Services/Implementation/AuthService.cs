@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using TestAPI.DTO.Auth.Requests;
 using TestAPI.Entities;
+using TestAPI.Enums;
 using TestAPI.Exceptions;
 using TestAPI.Models;
 using TestAPI.Persistence.Interfaces;
@@ -53,7 +54,9 @@ namespace TestAPI.Services.Implementation
                 UserName = registerUserRequest.UserName,
                 FirstName = registerUserRequest.FirstName,
                 Email = registerUserRequest.Email,
-                DisplayName = registerUserRequest.UserName
+                DisplayName = registerUserRequest.UserName,
+                Role = UserRole.Learner,
+                Status = AccountStatus.Active
 
             };
             var hashedPassword = new PasswordHasher<User>().HashPassword(newUser, registerUserRequest.Password);
@@ -70,6 +73,11 @@ namespace TestAPI.Services.Implementation
             if (userInDb == null)
             {
                 throw new RecordNotFoundException("User not found");
+            }
+
+            if (userInDb.Status != AccountStatus.Active)
+            {
+                throw new UnauthorizedAccessException("Account is not active");
             }
 
             var result = _passwordHasher.VerifyHashedPassword(userInDb, userInDb.PasswordHash, loginUserRequest.Password!);

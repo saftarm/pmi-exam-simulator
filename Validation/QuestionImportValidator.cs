@@ -34,13 +34,13 @@ namespace TestAPI.Validation
                 }
             });
 
-            RuleFor(q => q.DomainName).Custom((domain, context) =>
+            RuleFor(q => q.DomainId).Custom((domainId, context) =>
             {
-                if (string.IsNullOrEmpty(domain))
+                if (domainId == Guid.Empty)
                 {
                     if (context.RootContextData.TryGetValue(ExcelMetadata, out var raw) && raw is ExcelRowContext metadata)
                     {
-                        context.AddFailure("Domain", $"Dpmain must not be empty, Row: {metadata.RowNum}, Column:{metadata.ColDomain}");
+                        context.AddFailure("DomainId", $"DomainId must not be empty, Row: {metadata.RowNum}, Column:{metadata.ColDomain}");
                     }
 
                 }

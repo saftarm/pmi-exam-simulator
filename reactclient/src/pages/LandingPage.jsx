@@ -24,7 +24,7 @@ const FEATURES = [
         color: 'text-tertiary-fixed',
         bg: 'bg-tertiary-container/10',
         title: 'Performance Analytics',
-        text: 'Detailed breakdown of your strengths and weaknesses across the People, Process, and Business Environment domains.',
+        text: 'Track domain-level scores after each session on your Progress dashboard — strengths and weaknesses across exam domains.',
     },
 ];
 

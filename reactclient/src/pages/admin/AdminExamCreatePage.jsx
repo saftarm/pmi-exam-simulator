@@ -4,7 +4,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import Icon from '../../components/Icon';
 import { createExam } from '../../services/adminExamService';
 import { getCategories } from '../../services/adminCategoryService';
-import { logActivity } from '../../services/adminMockStore';
+import LoadingButton from '../../components/loading/LoadingButton';
 
 const EMPTY_DOMAIN = { title: '', description: '', weight: 1 };
 
@@ -70,13 +70,6 @@ export default function AdminExamCreatePage() {
                 })),
             };
             await createExam(payload);
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Created exam "${form.title}"`,
-                status: 'Draft',
-                statusType: 'info',
-            });
             navigate('/admin/exams');
         } catch (err) {
             setError(err.response?.data?.title || err.message || 'Failed to create exam');
@@ -216,13 +209,15 @@ export default function AdminExamCreatePage() {
                 </div>
 
                 <div className="flex gap-md pt-md border-t border-outline-variant">
-                    <button
+                    <LoadingButton
                         type="submit"
-                        disabled={loading || categories.length === 0}
+                        loading={loading}
+                        loadingText="Creating…"
+                        disabled={categories.length === 0}
                         className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold disabled:opacity-50"
                     >
-                        {loading ? 'Creating…' : 'Create Exam'}
-                    </button>
+                        Create Exam
+                    </LoadingButton>
                     <button
                         type="button"
                         onClick={() => navigate('/admin/exams')}

@@ -5,6 +5,6 @@ namespace TestAPI.Services.Interfaces
 {
   public interface IQuestionImportService
   { 
-    public Task<Result<QuestionImportResultDto>> ImportFromExcelAsync(Guid examId, IFormFile file, CancellationToken ct);
+    public Task<Result<QuestionImportResultDto>> ImportFromExcelAsync(IFormFile file, CancellationToken ct);
   }
 }

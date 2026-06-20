@@ -16,6 +16,7 @@ namespace TestAPI.Controllers
       _categoryService = categoryService;
     }
     // Create Category
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("api/categories")]
     public async Task<IActionResult> Create(CreateCategoryDto dto, CancellationToken ct)
     {
@@ -40,6 +41,7 @@ namespace TestAPI.Controllers
     }
 
     // Update Category
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("api/categories/{id}")]
     public async Task<IActionResult> Update([FromBody] UpdateCategoryRequest request, CancellationToken ct)
     {
@@ -48,6 +50,7 @@ namespace TestAPI.Controllers
     }
 
     // Delete Category
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("/api/categories/{id:Guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {

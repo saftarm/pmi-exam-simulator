@@ -1,21 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import {
-    getSessionQuestions,
-    getSessionQuestionCount,
-    finishSession,
-} from '../services/examService';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { finishSession } from '../services/examService';
+import { getDomainPerformances } from '../services/progressService';
+import { loadSessionQuestions, clearSessionQuestions } from '../utils/sessionStorage';
 import { SessionHeader } from '../components/SessionTimer';
 import QuestionMap from '../components/QuestionMap';
 import AppFooter from '../components/AppFooter';
 import Icon from '../components/Icon';
+import { normalizeQuestionType } from '../utils/questionTypes';
+import { ExamSessionSkeleton, LoadingButton } from '../components/loading';
 
 const OPTION_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export default function ExamSessionPage() {
-    const { sessionId } = useParams();
+    const { sessionId, examId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useAuth();
 
     const examMeta = location.state?.exam;
 
@@ -28,27 +30,19 @@ export default function ExamSessionPage() {
     const [submitting, setSubmitting] = useState(false);
     const [finished, setFinished] = useState(false);
     const [result, setResult] = useState(null);
+    const [domainResults, setDomainResults] = useState([]);
 
     const durationMinutes = examMeta?.durationInMinutes ?? 230;
 
     useEffect(() => {
-        let cancelled = false;
-
-        async function loadQuestions() {
-            try {
-                const count = await getSessionQuestionCount(sessionId);
-                const pageSize = count || 200;
-                const data = await getSessionQuestions(sessionId, 1, pageSize);
-                if (!cancelled) setQuestions(data);
-            } catch (err) {
-                if (!cancelled) setError(err.message || 'Failed to load questions');
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
+        const stored = loadSessionQuestions(sessionId);
+        if (stored && stored.length > 0) {
+            setQuestions(stored);
+            setLoading(false);
+            return;
         }
-
-        loadQuestions();
-        return () => { cancelled = true; };
+        setError('Session questions not found. Please start the exam again.');
+        setLoading(false);
     }, [sessionId]);
 
     const currentQuestion = questions[currentIndex];
@@ -83,25 +77,35 @@ export default function ExamSessionPage() {
                 selectedOptionId,
             }));
             const res = await finishSession(sessionId, sessionResponses);
+            clearSessionQuestions(sessionId);
             setResult(res);
+            if (user?.userId) {
+                try {
+                    const progress = await getDomainPerformances(user.userId);
+                    const targetExamId = examMeta?.id || examId;
+                    setDomainResults(
+                        (progress || []).filter(
+                            (row) => String(row.examId) === String(targetExamId),
+                        ),
+                    );
+                } catch {
+                    setDomainResults([]);
+                }
+            }
             setFinished(true);
         } catch (err) {
             alert(err.message || 'Failed to submit exam');
         } finally {
             setSubmitting(false);
         }
-    }, [answers, questions, sessionId, submitting, total]);
+    }, [answers, questions, sessionId, submitting, total, user?.userId, examMeta?.id, examId]);
 
     const handleExpire = useCallback(() => {
         handleSubmit();
     }, [handleSubmit]);
 
     if (loading) {
-        return (
-            <div className="h-screen flex items-center justify-center bg-background text-on-surface-variant font-body-lg">
-                Loading exam session...
-            </div>
-        );
+        return <ExamSessionSkeleton />;
     }
 
     if (error) {
@@ -136,13 +140,41 @@ export default function ExamSessionPage() {
                                 <p className="font-label-sm text-on-surface-variant">Score</p>
                             </div>
                         </div>
-                        <button
-                            type="button"
-                            onClick={() => navigate('/exams')}
-                            className="w-full bg-secondary-container text-on-secondary font-label-lg py-md rounded-lg hover:brightness-110 transition-all"
-                        >
-                            Back to Exams
-                        </button>
+
+                        {domainResults.length > 0 && (
+                            <div className="mb-xl text-left">
+                                <h2 className="font-headline-sm text-headline-sm font-bold mb-md text-center">Performance by domain</h2>
+                                <ul className="space-y-sm text-sm">
+                                    {domainResults.map((row) => (
+                                        <li
+                                            key={row.domainId}
+                                            className="flex justify-between items-center border border-outline-variant rounded-lg px-md py-sm"
+                                        >
+                                            <span className="font-medium">{row.domainTitle}</span>
+                                            <span className="font-bold text-primary">
+                                                {Number(row.percentageScore).toFixed(1)}%
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        <div className="space-y-sm">
+                            <button
+                                type="button"
+                                onClick={() => navigate('/exams')}
+                                className="w-full bg-secondary-container text-on-secondary font-label-lg py-md rounded-lg hover:brightness-110 transition-all"
+                            >
+                                Back to Exams
+                            </button>
+                            <Link
+                                to="/progress"
+                                className="block w-full border border-outline-variant text-primary font-label-lg py-md rounded-lg hover:bg-surface-container-low transition-all"
+                            >
+                                View full progress
+                            </Link>
+                        </div>
                     </div>
                 </main>
                 <AppFooter compact />
@@ -159,6 +191,7 @@ export default function ExamSessionPage() {
     }
 
     const options = currentQuestion.answerOptions ?? currentQuestion.answerOptionsDtos ?? [];
+    const isMultipleChoice = normalizeQuestionType(currentQuestion.questionType) === 'MultipleChoice';
 
     return (
         <div className="bg-background text-on-surface h-screen overflow-hidden flex flex-col">
@@ -206,6 +239,11 @@ export default function ExamSessionPage() {
                         </div>
 
                         <div className="bg-white border border-outline-variant rounded-xl p-xl shadow-sm">
+                            {isMultipleChoice && (
+                                <div className="mb-md p-md bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+                                    Multiple selection is not yet supported — select the best single answer.
+                                </div>
+                            )}
                             <p className="font-body-lg text-body-lg text-on-surface leading-relaxed">
                                 {currentQuestion.questionTitle}
                             </p>
@@ -267,15 +305,15 @@ export default function ExamSessionPage() {
                                         <Icon name="arrow_forward" />
                                     </button>
                                 ) : (
-                                    <button
-                                        type="button"
+                                    <LoadingButton
                                         onClick={handleSubmit}
-                                        disabled={submitting}
-                                        className="px-xl py-md bg-secondary-container text-on-secondary-container font-label-lg rounded-lg hover:brightness-110 shadow-lg flex items-center gap-sm transition-all active:scale-95 disabled:opacity-60"
+                                        loading={submitting}
+                                        loadingText="Submitting…"
+                                        className="px-xl py-md bg-secondary-container text-on-secondary-container font-label-lg rounded-lg hover:brightness-110 shadow-lg transition-all active:scale-95 disabled:opacity-60"
                                     >
                                         Submit Exam
-                                        <Icon name="check" />
-                                    </button>
+                                        {!submitting && <Icon name="check" />}
+                                    </LoadingButton>
                                 )}
                             </div>
                         </div>

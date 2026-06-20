@@ -7,6 +7,7 @@ namespace TestAPI.Persistence.Interfaces
         public Task<RefreshToken?> GetRefreshTokenByUserIdAsync(Guid userId);
         public Task SaveRefreshToken(RefreshToken newRefreshToken);
         public Task RevokeRefreshToken(RefreshToken refreshToken);
+        public Task RevokeAllForUserAsync(Guid userId, CancellationToken ct);
 
     }
 }

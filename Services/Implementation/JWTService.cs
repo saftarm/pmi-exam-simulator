@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using TestAPI.Data;
 using TestAPI.Entities;
+using TestAPI.Enums;
 using TestAPI.Models;
 using TestAPI.Services.Interfaces;
 using TestAPI.DTO;
@@ -50,7 +51,8 @@ namespace TestAPI.Services.Implementation
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName!)
+                new Claim(ClaimTypes.Name, user.UserName!),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var jwtToken = new JwtSecurityToken(
@@ -105,7 +107,7 @@ namespace TestAPI.Services.Implementation
             if(savedRefreshToken == null) {
                 throw new SecurityTokenException("Refresh token not found");
             }
-            if(!BCrypt.Net.BCrypt.Verify(request.RefreshToken, savedRefreshToken.TokenHash) || 
+            if(!VerifyRefreshTokenHash(request.RefreshToken!, savedRefreshToken.TokenHash) || 
              savedRefreshToken.Revoked || savedRefreshToken.ExpiresAt < DateTime.UtcNow) {
                 throw new SecurityTokenException("Refresh token expired");
             }
@@ -135,16 +137,28 @@ namespace TestAPI.Services.Implementation
 
         }
 
+        private static string HashRefreshToken(string rawToken)
+        {
+            using var sha256 = SHA256.Create();
+            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawToken));
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        private static bool VerifyRefreshTokenHash(string rawToken, string storedHash)
+        {
+            var computed = HashRefreshToken(rawToken);
+            return CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(computed),
+                Encoding.UTF8.GetBytes(storedHash));
+        }
+
         private RefreshTokenDto GenerateRefreshToken()
         {
             var randomNumber = new byte[64];
             using var randomNumGenerator = RandomNumberGenerator.Create();
             randomNumGenerator.GetBytes(randomNumber);
             string rawToken = Convert.ToBase64String(randomNumber);
-
-            using var sha256 = SHA256.Create();
-            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawToken));
-            string hashedToken = Convert.ToBase64String(hashBytes);
+            string hashedToken = HashRefreshToken(rawToken);
         
             return new RefreshTokenDto {
                 RawToken = rawToken,

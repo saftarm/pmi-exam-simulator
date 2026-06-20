@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { formatApiErrors } from '../services/authService';
 import { AuthFooter } from '../components/AppFooter';
 import Icon from '../components/Icon';
+import LoadingButton from '../components/loading/LoadingButton';
 
 export default function AuthPage() {
     const navigate = useNavigate();
@@ -42,7 +43,12 @@ export default function AuthPage() {
             const from = location.state?.from?.pathname || '/exams';
             navigate(from, { replace: true });
         } catch (err) {
-            setError(formatApiErrors(err));
+            const status = err.response?.status;
+            if (status === 403) {
+                setError('Your account is suspended or inactive. Contact an administrator.');
+            } else {
+                setError(formatApiErrors(err));
+            }
         } finally {
             setLoading(false);
         }
@@ -172,9 +178,14 @@ export default function AuthPage() {
                                     </button>
                                 </div>
                             </div>
-                            <button type="submit" disabled={loading} className="w-full bg-secondary-container hover:bg-secondary text-on-secondary font-label-lg text-label-lg py-md rounded-lg shadow-sm transition-all duration-200 active:scale-[0.98] mt-md disabled:opacity-60">
-                                {loading ? 'Signing in...' : 'Sign In to Simulator'}
-                            </button>
+                            <LoadingButton
+                                type="submit"
+                                loading={loading}
+                                loadingText="Signing in…"
+                                className="w-full bg-secondary-container hover:bg-secondary text-on-secondary font-label-lg text-label-lg py-md rounded-lg shadow-sm transition-all duration-200 active:scale-[0.98] mt-md disabled:opacity-60"
+                            >
+                                Sign In to Simulator
+                            </LoadingButton>
                         </form>
                     ) : (
                         <form className="flex flex-col gap-lg" onSubmit={handleSignup}>
@@ -213,9 +224,14 @@ export default function AuthPage() {
                                     <input id="su-confirm" type="password" className="w-full pl-[48px] pr-md py-md bg-white border border-outline-variant rounded-lg font-body-md focus:border-primary outline-none" value={signupForm.confirm} onChange={(e) => setSignupForm({ ...signupForm, confirm: e.target.value })} required />
                                 </div>
                             </div>
-                            <button type="submit" disabled={loading} className="w-full bg-secondary-container hover:bg-secondary text-on-secondary font-label-lg text-label-lg py-md rounded-lg shadow-sm transition-all duration-200 active:scale-[0.98] mt-md disabled:opacity-60">
-                                {loading ? 'Creating account...' : 'Create Free Account'}
-                            </button>
+                            <LoadingButton
+                                type="submit"
+                                loading={loading}
+                                loadingText="Creating account…"
+                                className="w-full bg-secondary-container hover:bg-secondary text-on-secondary font-label-lg text-label-lg py-md rounded-lg shadow-sm transition-all duration-200 active:scale-[0.98] mt-md disabled:opacity-60"
+                            >
+                                Create Free Account
+                            </LoadingButton>
                         </form>
                     )}
                 </div>

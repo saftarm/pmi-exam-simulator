@@ -1,11 +1,19 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getPublishedExams, startSession } from '../services/examService';
 import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
 import ExamCard from '../components/ExamCard';
 import Icon from '../components/Icon';
+import { ExamCardSkeleton, ContentReveal } from '../components/loading';
+
+const SORT_OPTIONS = [
+    { value: 'title-asc', label: 'Title (A–Z)' },
+    { value: 'title-desc', label: 'Title (Z–A)' },
+    { value: 'duration', label: 'Duration (shortest)' },
+    { value: 'questions', label: 'Questions (most)' },
+];
 
 export default function ExamsDashboardPage() {
     const navigate = useNavigate();
@@ -15,6 +23,9 @@ export default function ExamsDashboardPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [startingId, setStartingId] = useState(null);
+    const [searchFilter, setSearchFilter] = useState('');
+    const [sortBy, setSortBy] = useState('title-asc');
+    const [showFilters, setShowFilters] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -22,7 +33,7 @@ export default function ExamsDashboardPage() {
         async function fetchExams() {
             try {
                 const data = await getPublishedExams();
-                if (!cancelled) setExams(data);
+                if (!cancelled) setExams(Array.isArray(data) ? data : data?.items || []);
             } catch (err) {
                 if (!cancelled) setError(err.message || 'Failed to load exams');
             } finally {
@@ -34,13 +45,39 @@ export default function ExamsDashboardPage() {
         return () => { cancelled = true; };
     }, []);
 
+    const displayedExams = useMemo(() => {
+        let list = [...exams];
+        const query = searchFilter.trim().toLowerCase();
+        if (query) {
+            list = list.filter(
+                (e) =>
+                    (e.title || '').toLowerCase().includes(query) ||
+                    (e.context || '').toLowerCase().includes(query),
+            );
+        }
+        list.sort((a, b) => {
+            switch (sortBy) {
+                case 'title-desc':
+                    return (b.title || '').localeCompare(a.title || '');
+                case 'duration':
+                    return (a.durationInMinutes || 0) - (b.durationInMinutes || 0);
+                case 'questions':
+                    return (b.numberOfQuestions || 0) - (a.numberOfQuestions || 0);
+                default:
+                    return (a.title || '').localeCompare(b.title || '');
+            }
+        });
+        return list;
+    }, [exams, searchFilter, sortBy]);
+
     const handleStart = async (examId) => {
         if (!user?.userId) return;
         setStartingId(examId);
         try {
             const session = await startSession(user.userId, examId);
+            const exam = exams.find((e) => e.id === examId);
             navigate(`/exams/${examId}/session/${session.sessionId}`, {
-                state: { questions: session.questions, exam: exams.find((e) => e.id === examId) },
+                state: { exam },
             });
         } catch (err) {
             console.error('Failed to start session:', err);
@@ -65,28 +102,52 @@ export default function ExamsDashboardPage() {
                         </p>
                     </div>
                     <div className="flex gap-sm">
-                        <div className="bg-surface border border-outline-variant px-md py-sm rounded flex items-center gap-xs">
+                        <button
+                            type="button"
+                            onClick={() => setShowFilters((v) => !v)}
+                            className={`bg-surface border px-md py-sm rounded flex items-center gap-xs transition-colors ${
+                                showFilters || searchFilter ? 'border-primary' : 'border-outline-variant'
+                            }`}
+                        >
                             <Icon name="filter_list" className="text-primary" style={{ fontSize: 20 }} />
                             <span className="font-label-lg text-label-lg">Filter</span>
-                        </div>
-                        <div className="bg-surface border border-outline-variant px-md py-sm rounded flex items-center gap-xs">
-                            <Icon name="sort" className="text-primary" style={{ fontSize: 20 }} />
-                            <span className="font-label-lg text-label-lg">Sort</span>
-                        </div>
+                        </button>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="bg-surface border border-outline-variant px-md py-sm rounded flex items-center gap-xs font-label-lg text-label-lg"
+                            aria-label="Sort exams"
+                        >
+                            {SORT_OPTIONS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                    Sort: {opt.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
-                {loading && (
-                    <div className="text-center py-xl font-body-lg text-on-surface-variant">Loading exams...</div>
+                {showFilters && (
+                    <div className="mb-lg">
+                        <input
+                            type="search"
+                            placeholder="Filter by title or description…"
+                            value={searchFilter}
+                            onChange={(e) => setSearchFilter(e.target.value)}
+                            className="w-full max-w-md border border-outline-variant rounded-lg px-md py-sm bg-white"
+                        />
+                    </div>
                 )}
+
+                {loading && <ExamCardSkeleton count={3} />}
 
                 {error && (
-                    <div className="bg-error-container text-on-error-container px-lg py-md rounded-lg">{error}</div>
+                    <div className="bg-error-container text-on-error-container px-lg py-md rounded-lg loading-enter">{error}</div>
                 )}
 
-                {!loading && !error && (
+                <ContentReveal show={!loading && !error}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-xl">
-                        {exams.map((exam, index) => (
+                        {displayedExams.map((exam, index) => (
                             <ExamCard
                                 key={exam.id}
                                 exam={exam}
@@ -96,56 +157,34 @@ export default function ExamsDashboardPage() {
                             />
                         ))}
                     </div>
-                )}
+                </ContentReveal>
 
-                {!loading && !error && exams.length === 0 && (
-                    <div className="text-center py-xl text-on-surface-variant">No published exams available yet.</div>
-                )}
+                <ContentReveal show={!loading && !error && displayedExams.length === 0}>
+                    <div className="text-center py-xl text-on-surface-variant">
+                        {exams.length === 0
+                            ? 'No published exams available yet.'
+                            : 'No exams match your filter.'}
+                    </div>
+                </ContentReveal>
 
                 <section className="mt-xl">
-                    <h2 className="font-headline-lg text-headline-lg text-primary mb-lg">Your Performance Trends</h2>
-                    <div className="bg-white rounded-xl border border-outline-variant p-xl">
-                        <div className="flex flex-col md:flex-row gap-xl items-center">
-                            <div className="flex-grow w-full md:w-auto">
-                                <div className="flex justify-between items-center mb-md">
-                                    <span className="font-label-lg text-label-lg text-primary">Target Performance (80%)</span>
-                                    <span className="font-label-lg text-label-lg text-secondary">Current: 74%</span>
-                                </div>
-                                <div className="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
-                                    <div className="bg-secondary-container h-full rounded-full" style={{ width: '74%' }} />
-                                </div>
-                                <div className="mt-md flex gap-xl">
-                                    <div className="flex flex-col">
-                                        <span className="text-[24px] font-bold text-primary">{exams.length}</span>
-                                        <span className="font-label-sm text-label-sm text-on-surface-variant">Exams Available</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-[24px] font-bold text-primary">{totalQuestions}</span>
-                                        <span className="font-label-sm text-label-sm text-on-surface-variant">Questions Answered</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-[24px] font-bold text-primary">—</span>
-                                        <span className="font-label-sm text-label-sm text-on-surface-variant">Study Time</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-full md:w-64 bg-surface-container-low p-lg rounded-lg border border-outline-variant">
-                                <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-sm">Next Suggested Session</p>
-                                <p className="font-headline-md text-headline-md text-primary mb-lg">
-                                    {exams[0]?.title ?? 'PMP® Domain II: Process'}
-                                </p>
-                                {exams[0] && (
-                                    <button
-                                        type="button"
-                                        onClick={() => handleStart(exams[0].id)}
-                                        className="text-secondary font-label-lg text-label-lg flex items-center gap-xs hover:underline"
-                                    >
-                                        Start Review
-                                        <Icon name="arrow_forward" style={{ fontSize: 16 }} />
-                                    </button>
-                                )}
-                            </div>
+                    <h2 className="font-headline-lg text-headline-lg text-primary mb-lg">Your Performance</h2>
+                    <div className="bg-white rounded-xl border border-outline-variant p-xl flex flex-col md:flex-row justify-between items-center gap-lg">
+                        <div>
+                            <p className="text-on-surface-variant mb-sm">
+                                {exams.length} exam{exams.length !== 1 ? 's' : ''} available · {totalQuestions} total questions in catalog
+                            </p>
+                            <p className="text-sm text-on-surface-variant">
+                                Domain scores appear after you complete a session.
+                            </p>
                         </div>
+                        <Link
+                            to="/progress"
+                            className="bg-secondary-container text-white px-lg py-md rounded-lg font-bold flex items-center gap-sm hover:brightness-110"
+                        >
+                            View progress
+                            <Icon name="arrow_forward" style={{ fontSize: 18 }} />
+                        </Link>
                     </div>
                 </section>
             </main>

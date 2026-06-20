@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { getSettings, saveSettings, logActivity } from '../../services/adminMockStore';
+import { getSettings, saveSettings } from '../../services/adminLocalSettings';
 
 export default function AdminSettingsPage() {
     const [settings, setSettings] = useState(() => getSettings());
@@ -14,25 +14,27 @@ export default function AdminSettingsPage() {
     const handleSubmit = (e) => {
         e.preventDefault();
         saveSettings(settings);
-        logActivity({
-            user: 'Admin',
-            initials: 'AD',
-            action: 'Updated platform settings',
-            status: 'Saved',
-            statusType: 'info',
-        });
         setSaved(true);
     };
 
     return (
         <AdminLayout title="Settings">
             <div className="mb-lg p-md bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-                Settings are saved locally in your browser until a backend settings API is available.
+                Local preferences are stored in your browser only and are not synced to the server.
+            </div>
+
+            <div className="mb-lg p-md bg-surface-container-low border border-outline-variant rounded-lg text-sm text-on-surface-variant">
+                <p className="font-bold mb-sm">Planned — needs API</p>
+                <ul className="list-disc list-inside space-y-xs">
+                    <li>Persisted platform settings (site name, registration toggle, maintenance mode)</li>
+                    <li>Server-enforced exam defaults and pass threshold</li>
+                    <li>Email notification delivery</li>
+                </ul>
             </div>
 
             <form onSubmit={handleSubmit} className="max-w-2xl space-y-lg">
                 <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">General</h2>
+                    <h2 className="font-headline-sm text-headline-sm font-bold">Local preferences (not synced to server)</h2>
                     <div>
                         <label className="block text-sm font-bold mb-sm">Site name</label>
                         <input
@@ -57,7 +59,7 @@ export default function AdminSettingsPage() {
                             onChange={(e) => update('allowRegistration', e.target.checked)}
                             className="rounded border-outline-variant"
                         />
-                        <span className="text-sm font-medium">Allow new user registration</span>
+                        <span className="text-sm font-medium">Allow new user registration (UI preference only)</span>
                     </label>
                     <label className="flex items-center gap-md cursor-pointer">
                         <input
@@ -66,12 +68,12 @@ export default function AdminSettingsPage() {
                             onChange={(e) => update('maintenanceMode', e.target.checked)}
                             className="rounded border-outline-variant"
                         />
-                        <span className="text-sm font-medium">Maintenance mode</span>
+                        <span className="text-sm font-medium">Maintenance mode (UI preference only)</span>
                     </label>
                 </section>
 
                 <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">Exam defaults</h2>
+                    <h2 className="font-headline-sm text-headline-sm font-bold">Exam defaults (local)</h2>
                     <div>
                         <label className="block text-sm font-bold mb-sm">Default exam duration (minutes)</label>
                         <input
@@ -96,7 +98,7 @@ export default function AdminSettingsPage() {
                 </section>
 
                 <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">Notifications</h2>
+                    <h2 className="font-headline-sm text-headline-sm font-bold">Notifications (local)</h2>
                     <label className="flex items-center gap-md cursor-pointer">
                         <input
                             type="checkbox"
@@ -122,9 +124,11 @@ export default function AdminSettingsPage() {
                         type="submit"
                         className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold"
                     >
-                        Save Settings
+                        Save local preferences
                     </button>
-                    {saved && <span className="text-sm text-green-600 font-medium">Settings saved.</span>}
+                    {saved && (
+                        <span className="text-sm text-green-600 font-medium">Saved in this browser.</span>
+                    )}
                 </div>
             </form>
         </AdminLayout>

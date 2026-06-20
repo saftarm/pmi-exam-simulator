@@ -4,7 +4,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import Icon from '../../components/Icon';
 import { getExamDetails, updateExam } from '../../services/adminExamService';
 import { getDomainsByExam, updateDomain, deleteDomain } from '../../services/adminDomainService';
-import { logActivity } from '../../services/adminMockStore';
+import { FormSkeleton, LoadingButton } from '../../components/loading';
 
 export default function AdminExamEditPage() {
     const { examId } = useParams();
@@ -36,13 +36,6 @@ export default function AdminExamEditPage() {
         setError(null);
         try {
             await updateExam(examId, form);
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Updated exam "${exam?.title}"`,
-                status: 'Updated',
-                statusType: 'info',
-            });
             navigate(`/admin/exams/${examId}`);
         } catch (err) {
             setError(err.message || 'Update failed');
@@ -57,13 +50,6 @@ export default function AdminExamEditPage() {
                 title: domain.title,
                 description: domain.description,
                 weight: Number(domain.weight) || 1,
-            });
-            logActivity({
-                user: 'Admin',
-                initials: 'AD',
-                action: `Updated domain "${domain.title}"`,
-                status: 'Updated',
-                statusType: 'info',
             });
         } catch (err) {
             alert(err.message || 'Domain update failed');
@@ -89,7 +75,7 @@ export default function AdminExamEditPage() {
     if (loading) {
         return (
             <AdminLayout title="Edit Exam">
-                <p className="text-on-surface-variant">Loading…</p>
+                <FormSkeleton fields={5} />
             </AdminLayout>
         );
     }
@@ -136,17 +122,31 @@ export default function AdminExamEditPage() {
                         className="w-full border border-outline-variant rounded-lg px-md py-sm"
                     />
                 </div>
-                <button
+                <LoadingButton
                     type="submit"
-                    disabled={saving}
+                    loading={saving}
+                    loadingText="Saving…"
                     className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold disabled:opacity-50"
                 >
-                    {saving ? 'Saving…' : 'Save Exam Settings'}
-                </button>
+                    Save Exam Settings
+                </LoadingButton>
             </form>
 
             <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg">
-                <h2 className="font-headline-sm text-headline-sm font-bold mb-md">Domains</h2>
+                <div className="flex justify-between items-center mb-md">
+                    <h2 className="font-headline-sm text-headline-sm font-bold">Domains</h2>
+                    <button
+                        type="button"
+                        disabled
+                        title="Requires backend: examId on POST /api/domains"
+                        className="text-sm font-bold text-on-surface-variant opacity-50 cursor-not-allowed"
+                    >
+                        + Add domain
+                    </button>
+                </div>
+                <p className="text-xs text-on-surface-variant mb-md">
+                    Adding domains to an existing exam requires a backend update (examId on POST /api/domains).
+                </p>
                 {domains.length === 0 ? (
                     <p className="text-on-surface-variant text-sm">No domains.</p>
                 ) : (
