@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PMI Exam Simulator - Testing Environment</title>
+<!-- Google Fonts: Inter for professional typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols for precise iconography -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#e1e2e4",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#121516",
+                    "inverse-on-surface": "#f0f0f3",
+                    "secondary-fixed-dim": "#ffb599",
+                    "surface-container-high": "#e8e8ea",
+                    "primary": "#001430",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#8e9092",
+                    "tertiary-container": "#26292b",
+                    "tertiary-fixed-dim": "#c5c6c8",
+                    "surface-tint": "#415f8f",
+                    "secondary": "#a63b00",
+                    "primary-fixed": "#d6e3ff",
+                    "surface-bright": "#f9f9fc",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#002855",
+                    "on-background": "#1a1c1e",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dadadc",
+                    "secondary-container": "#fe5f00",
+                    "on-surface": "#1a1c1e",
+                    "outline-variant": "#c4c6d0",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-tertiary-fixed": "#191c1e",
+                    "on-primary-container": "#7490c3",
+                    "primary-fixed-dim": "#aac7fd",
+                    "surface-container-highest": "#e2e2e5",
+                    "outline": "#747780",
+                    "surface-container-low": "#f3f3f6",
+                    "inverse-primary": "#aac7fd",
+                    "secondary-fixed": "#ffdbce",
+                    "on-secondary-container": "#521900",
+                    "background": "#f4f5f7",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#7f2b00",
+                    "surface-variant": "#e2e2e5",
+                    "on-primary-fixed-variant": "#284775",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#001b3d",
+                    "surface": "#f9f9fc",
+                    "on-surface-variant": "#43474f",
+                    "inverse-surface": "#2f3133",
+                    "on-secondary-fixed": "#370e00",
+                    "surface-container": "#eeeef0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "sm": "8px",
+                    "container-max": "1440px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "unit": "4px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Focused Question Transition */
+        .fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface h-screen overflow-hidden flex flex-col">
+<!-- Top Navigation Bar: Implementation of TopNavBar from JSON -->
+<header class="bg-primary-container text-white h-16 flex items-center justify-between px-margin-desktop shrink-0 z-50">
+<div class="flex items-center gap-lg">
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-white">PMI Exam Simulator</span>
+<div class="h-6 w-px bg-on-primary-container/30"></div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary-container">timer</span>
+<span class="font-mono text-headline-md font-semibold text-secondary-container" id="timer">230:45</span>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex flex-col items-end">
+<span class="font-label-sm text-on-primary-container uppercase tracking-widest">Progress</span>
+<div class="flex items-center gap-sm">
+<div class="w-48 h-2 bg-on-primary-container/20 rounded-full overflow-hidden">
+<div class="w-[42%] h-full bg-secondary-container"></div>
+</div>
+<span class="font-label-lg text-label-lg">76 / 180</span>
+</div>
+</div>
+<button class="bg-secondary-container text-on-secondary-container px-lg py-sm rounded font-label-lg hover:brightness-110 transition-all active:scale-95 shadow-md">
+                Submit Exam
+            </button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex flex-1 overflow-hidden">
+<!-- Question Navigation Sidebar (Left) -->
+<aside class="w-80 bg-white border-r border-outline-variant flex flex-col shrink-0">
+<div class="p-md border-b border-outline-variant">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant flex items-center gap-sm">
+<span class="material-symbols-outlined text-md">grid_view</span>
+                    QUESTION MAP
+                </h3>
+</div>
+<div class="flex-1 overflow-y-auto p-md custom-scrollbar">
+<div class="grid grid-cols-5 gap-sm">
+<!-- Nav grid generator simulation -->
+<script>
+                        const gridContainer = document.currentScript.parentElement;
+                        for(let i=1; i<=180; i++) {
+                            let statusClass = "bg-surface-container-low text-on-surface-variant border-transparent";
+                            if(i === 77) statusClass = "bg-primary text-white border-primary shadow-lg ring-2 ring-primary/20";
+                            else if(i < 77) statusClass = "bg-primary-fixed text-primary border-primary-fixed";
+                            else if(i === 24 || i === 45) statusClass = "bg-white border-primary text-primary border-dashed border-2"; // Flagged
+
+                            const btn = document.createElement('button');
+                            btn.className = `h-10 w-10 flex items-center justify-center font-label-sm rounded-lg border transition-all hover:border-primary ${statusClass}`;
+                            btn.innerHTML = i;
+                            gridContainer.appendChild(btn);
+                        }
+                    </script>
+</div>
+</div>
+<div class="p-md border-t border-outline-variant bg-surface-container-low">
+<div class="flex flex-col gap-sm">
+<div class="flex items-center justify-between font-label-sm text-on-surface-variant">
+<span class="flex items-center gap-xs"><span class="w-3 h-3 bg-primary-fixed rounded-full"></span> Completed</span>
+<span class="flex items-center gap-xs"><span class="w-3 h-3 bg-white border-2 border-primary border-dashed rounded-full"></span> Flagged</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Question Viewport (Center) -->
+<section class="flex-1 overflow-y-auto bg-background p-xl flex flex-col items-center custom-scrollbar">
+<div class="max-w-[800px] w-full space-y-lg fade-in-up">
+<!-- Question Header -->
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-lg text-secondary uppercase tracking-widest">Question 77 of 180</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-xs">Domain: Process</h2>
+</div>
+<button class="flex items-center gap-sm px-md py-sm rounded-full border border-primary text-primary font-label-lg hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">flag</span>
+                        Flag for Review
+                    </button>
+</div>
+<!-- The Question Card -->
+<div class="bg-white border border-outline-variant rounded-xl p-xl shadow-sm">
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
+                        A project manager is leading a hybrid project. During a sprint review, the product owner notices that a critical regulatory requirement has not been addressed in the current increment. The product owner is concerned about the potential impact on the upcoming release. What should the project manager do first?
+                    </p>
+<div class="mt-xl space-y-md">
+<!-- Option A (Active State) -->
+<div class="group cursor-pointer flex items-start gap-md p-md border-2 border-primary rounded-xl bg-primary-fixed/30 transition-all">
+<div class="mt-1 flex-shrink-0 h-6 w-6 rounded-full border-2 border-primary flex items-center justify-center bg-primary text-white font-label-lg">A</div>
+<p class="font-body-md text-body-md text-on-surface">Update the risk register and escalate the issue to the project sponsor immediately.</p>
+</div>
+<!-- Option B -->
+<div class="group cursor-pointer flex items-start gap-md p-md border border-outline-variant rounded-xl hover:border-primary-fixed hover:bg-surface-container-lowest transition-all">
+<div class="mt-1 flex-shrink-0 h-6 w-6 rounded-full border-2 border-outline-variant group-hover:border-primary-fixed flex items-center justify-center text-on-surface-variant font-label-lg">B</div>
+<p class="font-body-md text-body-md text-on-surface">Review the project management plan and the regulatory requirements documentation.</p>
+</div>
+<!-- Option C -->
+<div class="group cursor-pointer flex items-start gap-md p-md border border-outline-variant rounded-xl hover:border-primary-fixed hover:bg-surface-container-lowest transition-all">
+<div class="mt-1 flex-shrink-0 h-6 w-6 rounded-full border-2 border-outline-variant group-hover:border-primary-fixed flex items-center justify-center text-on-surface-variant font-label-lg">C</div>
+<p class="font-body-md text-body-md text-on-surface">Discuss the issue with the team to identify the root cause and update the product backlog.</p>
+</div>
+<!-- Option D -->
+<div class="group cursor-pointer flex items-start gap-md p-md border border-outline-variant rounded-xl hover:border-primary-fixed hover:bg-surface-container-lowest transition-all">
+<div class="mt-1 flex-shrink-0 h-6 w-6 rounded-full border-2 border-outline-variant group-hover:border-primary-fixed flex items-center justify-center text-on-surface-variant font-label-lg">D</div>
+<p class="font-body-md text-body-md text-on-surface">Request an emergency change control board (CCB) meeting to modify the project scope.</p>
+</div>
+</div>
+</div>
+<!-- Footer Navigation -->
+<div class="flex items-center justify-between pt-lg">
+<button class="flex items-center gap-sm px-xl py-md text-primary font-label-lg hover:bg-primary-fixed rounded-lg transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+                        Previous
+                    </button>
+<div class="flex items-center gap-md">
+<button class="px-xl py-md bg-white border border-outline-variant text-on-surface-variant font-label-lg rounded-lg hover:bg-surface-container-lowest transition-all">
+                            Save for later
+                        </button>
+<button class="px-xl py-md bg-secondary-container text-on-secondary-container font-label-lg rounded-lg hover:brightness-110 shadow-lg flex items-center gap-sm transition-all active:scale-95">
+                            Next Question
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Panel (Right - Desktop only) -->
+<aside class="hidden xl:flex w-64 bg-white border-l border-outline-variant p-lg flex-col gap-xl shrink-0">
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface-variant mb-md uppercase tracking-wider">Exam Stats</h4>
+<div class="space-y-lg">
+<div class="bg-surface-container-low p-md rounded-lg">
+<div class="flex items-center justify-between mb-xs">
+<span class="text-on-surface-variant font-label-sm">AVG TIME / Q</span>
+<span class="font-headline-md text-primary">1m 12s</span>
+</div>
+<div class="w-full h-1 bg-outline-variant rounded-full">
+<div class="w-[65%] h-full bg-primary rounded-full"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-sm">CONFIDENCE</span>
+<span class="font-headline-md text-secondary">High</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col">
+<h4 class="font-label-lg text-label-lg text-on-surface-variant mb-md uppercase tracking-wider">Tools</h4>
+<div class="grid grid-cols-2 gap-sm">
+<button class="flex flex-col items-center justify-center p-md border border-outline-variant rounded hover:bg-surface-container-low transition-colors group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">calculate</span>
+<span class="font-label-sm mt-xs">Calculator</span>
+</button>
+<button class="flex flex-col items-center justify-center p-md border border-outline-variant rounded hover:bg-surface-container-low transition-colors group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">draw</span>
+<span class="font-label-sm mt-xs">Whiteboard</span>
+</button>
+<button class="flex flex-col items-center justify-center p-md border border-outline-variant rounded hover:bg-surface-container-low transition-colors group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">translate</span>
+<span class="font-label-sm mt-xs">Translate</span>
+</button>
+<button class="flex flex-col items-center justify-center p-md border border-outline-variant rounded hover:bg-surface-container-low transition-colors group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">help_center</span>
+<span class="font-label-sm mt-xs">Help</span>
+</button>
+</div>
+</div>
+<!-- Pro Tip / Reminder -->
+<div class="p-md bg-secondary-fixed text-on-secondary-fixed rounded-lg border border-secondary-fixed-dim">
+<p class="font-label-sm flex items-start gap-xs">
+<span class="material-symbols-outlined text-sm mt-0.5">lightbulb</span>
+<span>Remember to use the <strong>Strikeout</strong> feature by right-clicking options you want to eliminate.</span>
+</p>
+</div>
+</aside>
+</main>
+<!-- Footer Component: Global Footer Reference -->
+<footer class="bg-primary dark:bg-primary-container h-12 flex items-center shrink-0 z-50">
+<div class="flex w-full justify-between items-center px-margin-desktop max-w-container-max mx-auto">
+<span class="text-primary-fixed-dim opacity-80 font-label-lg text-label-lg">© 2024 PMI Exam Simulator. Professional PMP Certification Prep.</span>
+<div class="flex gap-lg">
+<a class="text-primary-fixed-dim opacity-80 hover:opacity-100 font-label-lg text-label-lg hover:underline transition-opacity" href="#">Support</a>
+<a class="text-primary-fixed-dim opacity-80 hover:opacity-100 font-label-lg text-label-lg hover:underline transition-opacity" href="#">Terms</a>
+</div>
+</div>
+</footer>
+<!-- Interactive Layer: Simple Timer Script -->
+<script>
+        let seconds = 230 * 60 + 45;
+        const timerEl = document.getElementById('timer');
+        
+        setInterval(() => {
+            seconds--;
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            
+            if(seconds < 600) { // Under 10 mins warning
+                timerEl.classList.remove('text-secondary-container');
+                timerEl.classList.add('text-error', 'animate-pulse');
+            }
+        }, 1000);
+
+        // Micro-interaction for Options
+        document.querySelectorAll('.group.cursor-pointer').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.group.cursor-pointer').forEach(o => {
+                    o.classList.remove('border-primary', 'bg-primary-fixed/30');
+                    o.classList.add('border-outline-variant');
+                    o.querySelector('div').classList.remove('bg-primary', 'text-white', 'border-primary');
+                    o.querySelector('div').classList.add('border-outline-variant', 'text-on-surface-variant');
+                });
+                option.classList.add('border-primary', 'bg-primary-fixed/30');
+                option.classList.remove('border-outline-variant');
+                const dot = option.querySelector('div');
+                dot.classList.add('bg-primary', 'text-white', 'border-primary');
+                dot.classList.remove('border-outline-variant', 'text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PMI Exam Simulator - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#e1e2e4",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#121516",
+                    "inverse-on-surface": "#f0f0f3",
+                    "secondary-fixed-dim": "#ffb599",
+                    "surface-container-high": "#e8e8ea",
+                    "primary": "#001430",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#8e9092",
+                    "tertiary-container": "#26292b",
+                    "tertiary-fixed-dim": "#c5c6c8",
+                    "surface-tint": "#415f8f",
+                    "secondary": "#a63b00",
+                    "primary-fixed": "#d6e3ff",
+                    "surface-bright": "#f9f9fc",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#002855",
+                    "on-background": "#1a1c1e",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dadadc",
+                    "secondary-container": "#fe5f00",
+                    "on-surface": "#1a1c1e",
+                    "outline-variant": "#c4c6d0",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-tertiary-fixed": "#191c1e",
+                    "on-primary-container": "#7490c3",
+                    "primary-fixed-dim": "#aac7fd",
+                    "surface-container-highest": "#e2e2e5",
+                    "outline": "#747780",
+                    "surface-container-low": "#f3f3f6",
+                    "inverse-primary": "#aac7fd",
+                    "secondary-fixed": "#ffdbce",
+                    "on-secondary-container": "#521900",
+                    "background": "#f9f9fc",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#7f2b00",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#001b3d",
+                    "surface": "#f9f9fc",
+                    "on-surface-variant": "#43474f",
+                    "inverse-surface": "#2f3133",
+                    "on-secondary-fixed": "#370e00",
+                    "surface-container": "#eeeef0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "sm": "8px",
+                    "container-max": "1440px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "unit": "4px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-hover:hover {
+            box-shadow: 0 4px 12px rgba(0, 40, 85, 0.08);
+            transform: translateY(-2px);
+        }
+        body {
+            background-color: #F4F5F7;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased">
+<!-- TopNavBar -->
+<header class="w-full h-16 bg-surface dark:bg-surface-container-low border-b border-outline-variant dark:border-outline sticky top-0 z-50">
+<div class="flex justify-between items-center px-margin-desktop max-w-container-max mx-auto h-full">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
+                PMI Exam Simulator
+            </div>
+<nav class="hidden md:flex items-center gap-xl h-full">
+<a class="h-full flex items-center transition-all duration-200 active:scale-95 text-secondary dark:text-secondary-fixed-dim font-bold border-b-2 border-secondary font-body-md text-body-md" href="#">Home</a>
+<a class="h-full flex items-center transition-all duration-200 active:scale-95 text-on-surface-variant dark:text-surface-variant hover:text-primary font-body-md text-body-md" href="#">Exams</a>
+<a class="h-full flex items-center transition-all duration-200 active:scale-95 text-on-surface-variant dark:text-surface-variant hover:text-primary font-body-md text-body-md" href="#">About</a>
+</nav>
+<div class="flex items-center gap-md">
+<button class="hidden md:block font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-md py-sm rounded">Log In</button>
+<button class="bg-secondary-container text-on-secondary px-lg py-sm rounded-lg font-label-lg text-label-lg transition-all duration-200 active:scale-95 hover:brightness-110">Get Started</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-desktop py-xl">
+<!-- Dashboard Header -->
+<div class="mb-xl flex flex-col md:flex-row justify-between items-end gap-md">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-xs">Available Exams</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Select a certification exam to launch the simulation. These exams are meticulously crafted to match the current PMI performance domains.</p>
+</div>
+<div class="flex gap-sm">
+<div class="bg-surface border border-outline-variant px-md py-sm rounded flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">filter_list</span>
+<span class="font-label-lg text-label-lg">Filter</span>
+</div>
+<div class="bg-surface border border-outline-variant px-md py-sm rounded flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">sort</span>
+<span class="font-label-lg text-label-lg">Sort</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid / Cards Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-xl">
+<!-- Exam Card 1: PMP -->
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden flex flex-col card-hover transition-all duration-300">
+<div class="h-48 relative overflow-hidden bg-primary-container">
+<img class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" data-alt="A professional, minimalist overhead workspace with a high-end digital tablet showing project management charts, a sleek black pen, and a cup of black coffee. The lighting is bright and architectural, featuring clean lines and a corporate color palette of navy blue and white, reflecting a high-stakes professional certification environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUVgGY-vKI_8p4s3pQx9r4UwKXE8lMkqOtTDYTGhAoKKQL3V5e8g4n1QEXhbdlvO-7UB1xDnApSFSHwWAYQO87q8CKmhYv_1jW07Wqjb9J0QVanvcG7mXOy8hjvuEW9F6uN-oYDFlsA2RyPtxGgAjBRg_irfrHJvAmJqjeRR83adZrUrTqXb3c0gqwl9BkZZ93GwFRMdYdZXDhwiMvNDy4sSIMaZmF2dRHpLDKu48Imm_fOs0KPK5zvR-M9Bl529udaNpTwvSWSZw"/>
+<div class="absolute top-md left-md">
+<span class="bg-secondary-container text-on-secondary text-label-sm font-label-sm px-md py-xs rounded-full">MOST POPULAR</span>
+</div>
+</div>
+<div class="p-lg flex flex-col flex-grow">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-xs">PMP®</h2>
+<p class="font-label-lg text-label-lg text-on-surface-variant mb-lg">Project Management Professional</p>
+<div class="grid grid-cols-2 gap-md mb-xl">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">quiz</span>
+<span class="font-label-sm text-label-sm">180 Questions</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">schedule</span>
+<span class="font-label-sm text-label-sm">230 Mins</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">trending_up</span>
+<span class="font-label-sm text-label-sm">Expert Level</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">language</span>
+<span class="font-label-sm text-label-sm">Global Standards</span>
+</div>
+</div>
+<div class="mt-auto pt-lg border-t border-outline-variant">
+<button class="w-full bg-secondary-container hover:brightness-110 active:scale-[0.98] transition-all text-on-secondary font-label-lg text-label-lg py-md rounded-lg flex items-center justify-center gap-sm">
+                            Launch Simulator
+                            <span class="material-symbols-outlined" style="font-size: 20px;">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Exam Card 2: CAPM -->
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden flex flex-col card-hover transition-all duration-300">
+<div class="h-48 relative overflow-hidden bg-primary-container">
+<img class="w-full h-full object-cover opacity-80" data-alt="A close-up of a modern laptop screen showing structured organizational workflows and process diagrams. The surrounding environment is a clean, bright, minimalist office with soft focus on a glass whiteboard in the background. The lighting is airy and natural, emphasizing a crisp professional atmosphere in navy and white tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM9iqioZvO7V91NCzGS0iy6EAE8iao6fXUnp2YsPlB5BJZKsc-f-ffq14eCtg0ctNQ1kIFp8qcuyiBK_Ns9rEioM30zv81AU9y3j5sU5bJDc6PSt61Na7SfM49MqK6MaTCwPohFP9PaqMb1a9zGo2SnzK4QJdxi0Y26Ns3EnQfKmLJ7ZMSyTnyiCfqT0NELcee-NaQYbjTHyYxo4MP0wf7LKPryWcIgz3KEArCn8DiZVHmYOb3RPCFgD9gzWFwWn3PtPtXZMVNf2o"/>
+<div class="absolute top-md left-md">
+<span class="bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm px-md py-xs rounded-full">FOUNDATIONAL</span>
+</div>
+</div>
+<div class="p-lg flex flex-col flex-grow">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-xs">CAPM®</h2>
+<p class="font-label-lg text-label-lg text-on-surface-variant mb-lg">Certified Associate in Project Management</p>
+<div class="grid grid-cols-2 gap-md mb-xl">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">quiz</span>
+<span class="font-label-sm text-label-sm">150 Questions</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">schedule</span>
+<span class="font-label-sm text-label-sm">180 Mins</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">bar_chart</span>
+<span class="font-label-sm text-label-sm">Associate Level</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">book</span>
+<span class="font-label-sm text-label-sm">PMBOK Guide</span>
+</div>
+</div>
+<div class="mt-auto pt-lg border-t border-outline-variant">
+<button class="w-full bg-secondary-container hover:brightness-110 active:scale-[0.98] transition-all text-on-secondary font-label-lg text-label-lg py-md rounded-lg flex items-center justify-center gap-sm">
+                            Launch Simulator
+                            <span class="material-symbols-outlined" style="font-size: 20px;">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Exam Card 3: PMI-ACP -->
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden flex flex-col card-hover transition-all duration-300">
+<div class="h-48 relative overflow-hidden bg-primary-container">
+<img class="w-full h-full object-cover opacity-80" data-alt="A dynamic, blurred shot of a creative studio wall covered in colorful post-it notes and agile kanban boards. The aesthetic is modern and fast-paced, using a sophisticated color palette of deep blues and whites with vibrant orange accents. The lighting is focused and professional, capturing a high-energy collaborative agile work environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpzjAgpgj7TAY_u9NOrdL-efzKchc3KDU2nlho4Tl-kiSiqYkCtO0J-HmUNKFHFXdlyFOUAK6SqAKawxWF8Cjm9puC4p2RwmG2AKdzWZMFDr40RlUqUVGZDJSuXbSjXmkMD8y6JqW_LFk4m9lJ6T66v713XaxVeKJDlIPvvkGM4h9YMLYrlmaD-ppDTjdkYSX7vtqthAyQM3Q0VAbm-ChDwNvGu7hHJIfSsScMnA1p220XS0qP3H5a-1zCw9fIGF60rSEqUgjc780"/>
+<div class="absolute top-md left-md">
+<span class="bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm px-md py-xs rounded-full">AGILE SPECIALIST</span>
+</div>
+</div>
+<div class="p-lg flex flex-col flex-grow">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-xs">PMI-ACP®</h2>
+<p class="font-label-lg text-label-lg text-on-surface-variant mb-lg">Agile Certified Practitioner</p>
+<div class="grid grid-cols-2 gap-md mb-xl">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">quiz</span>
+<span class="font-label-sm text-label-sm">120 Questions</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">schedule</span>
+<span class="font-label-sm text-label-sm">180 Mins</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">sync</span>
+<span class="font-label-sm text-label-sm">Agile/Scrum</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">verified_user</span>
+<span class="font-label-sm text-label-sm">Elite Spec</span>
+</div>
+</div>
+<div class="mt-auto pt-lg border-t border-outline-variant">
+<button class="w-full bg-secondary-container hover:brightness-110 active:scale-[0.98] transition-all text-on-secondary font-label-lg text-label-lg py-md rounded-lg flex items-center justify-center gap-sm">
+                            Launch Simulator
+                            <span class="material-symbols-outlined" style="font-size: 20px;">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Section -->
+<section class="mt-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-lg">Your Performance Trends</h2>
+<div class="bg-white rounded-xl border border-outline-variant p-xl">
+<div class="flex flex-col md:flex-row gap-xl items-center">
+<div class="flex-grow w-full md:w-auto">
+<div class="flex justify-between items-center mb-md">
+<span class="font-label-lg text-label-lg text-primary">Target Performance (80%)</span>
+<span class="font-label-lg text-label-lg text-secondary">Current: 74%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden">
+<div class="bg-secondary-container h-full rounded-full" style="width: 74%;"></div>
+</div>
+<div class="mt-md flex gap-xl">
+<div class="flex flex-col">
+<span class="text-[24px] font-bold text-primary">12</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Exams Taken</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[24px] font-bold text-primary">2,160</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Questions Answered</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[24px] font-bold text-primary">48h</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Study Time</span>
+</div>
+</div>
+</div>
+<div class="w-full md:w-64 bg-surface-container-low p-lg rounded-lg border border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-sm">Next Suggested Session</p>
+<p class="font-headline-md text-headline-md text-primary mb-lg">PMP® Domain II: Process</p>
+<button class="text-secondary font-label-lg text-label-lg flex items-center gap-xs hover:underline">
+                            Start Review
+                            <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl bg-primary dark:bg-primary-container mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-lg">
+<div class="flex flex-col items-center md:items-start">
+<div class="font-headline-md text-headline-md text-on-primary mb-xs">PMI Exam Simulator</div>
+<p class="text-primary-fixed-dim opacity-80 font-label-lg text-label-lg text-center md:text-left">
+                    © 2024 PMI Exam Simulator. All rights reserved. Professional PMP Certification Prep.
+                </p>
+</div>
+<div class="flex flex-wrap justify-center gap-xl">
+<a class="text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity font-label-lg text-label-lg" href="#">Privacy Policy</a>
+<a class="text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity font-label-lg text-label-lg" href="#">Terms of Service</a>
+<a class="text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity font-label-lg text-label-lg" href="#">Cookie Policy</a>
+<a class="text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity font-label-lg text-label-lg" href="#">Support</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,30 @@
+{
+  "projectId": "8257396718231302540",
+  "projectTitle": "PMI Exam Simulator Dashboard",
+  "screens": [
+    {
+      "id": "8b11342d803e4bcdadf197f195e914ea",
+      "title": "Landing Page - PMI Exam Simulator",
+      "route": "/",
+      "html": "landing.html"
+    },
+    {
+      "id": "d417925bd42e4ef6aa75a85e5d7aa37b",
+      "title": "Login / Sign Up - PMI Exam Simulator",
+      "route": "/login",
+      "html": "auth.html"
+    },
+    {
+      "id": "d46015823fdf4c14a8d10cc311139b12",
+      "title": "Exams Dashboard - PMI Exam Simulator",
+      "route": "/exams",
+      "html": "dashboard.html"
+    },
+    {
+      "id": "cf6758134a9b4238a7f1b95a2f5fb6fb",
+      "title": "Exam Simulator - PMI Exam Simulator",
+      "route": "/exams/:examId/session/:sessionId",
+      "html": "exam.html"
+    }
+  ]
+}

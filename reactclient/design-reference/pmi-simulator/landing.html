@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PMI Exam Simulator - Master Your PMP Certification</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        /* Custom scrollbar for professional feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #002855;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #001430;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #002855 0%, #001430 100%);
+        }
+        .bento-card-hover {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .bento-card-hover:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e1e2e4",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#121516",
+                        "inverse-on-surface": "#f0f0f3",
+                        "secondary-fixed-dim": "#ffb599",
+                        "surface-container-high": "#e8e8ea",
+                        "primary": "#001430",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#8e9092",
+                        "tertiary-container": "#26292b",
+                        "tertiary-fixed-dim": "#c5c6c8",
+                        "surface-tint": "#415f8f",
+                        "secondary": "#a63b00",
+                        "primary-fixed": "#d6e3ff",
+                        "surface-bright": "#f9f9fc",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#002855",
+                        "on-background": "#1a1c1e",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#dadadc",
+                        "secondary-container": "#fe5f00",
+                        "on-surface": "#1a1c1e",
+                        "outline-variant": "#c4c6d0",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-primary-container": "#7490c3",
+                        "primary-fixed-dim": "#aac7fd",
+                        "surface-container-highest": "#e2e2e5",
+                        "outline": "#747780",
+                        "surface-container-low": "#f3f3f6",
+                        "inverse-primary": "#aac7fd",
+                        "secondary-fixed": "#ffdbce",
+                        "on-secondary-container": "#521900",
+                        "background": "#f9f9fc",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#7f2b00",
+                        "surface-variant": "#e2e2e5",
+                        "on-primary-fixed-variant": "#284775",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#001b3d",
+                        "surface": "#f9f9fc",
+                        "on-surface-variant": "#43474f",
+                        "inverse-surface": "#2f3133",
+                        "on-secondary-fixed": "#370e00",
+                        "surface-container": "#eeeef0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "sm": "8px",
+                        "container-max": "1440px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-container">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-surface-container-low border-b border-outline-variant dark:border-outline w-full h-16 sticky top-0 z-50">
+<div class="flex justify-between items-center px-margin-desktop max-w-container-max mx-auto h-full">
+<div class="flex items-center gap-sm">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight">PMI Exam Simulator</span>
+</div>
+<div class="hidden md:flex items-center gap-xl h-full">
+<a class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim font-bold border-b-2 border-secondary h-full flex items-center px-xs transition-all duration-200 active:scale-95" href="#">Home</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors h-full flex items-center px-xs transition-all duration-200 active:scale-95" href="#">Exams</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors h-full flex items-center px-xs transition-all duration-200 active:scale-95" href="#">About</a>
+</div>
+<div class="flex items-center gap-md">
+<button class="hidden sm:block text-on-surface-variant font-label-lg px-lg py-sm hover:bg-surface-container-low transition-colors duration-200">Log In</button>
+<button class="bg-secondary-container text-on-secondary-container font-label-lg px-lg py-sm rounded transition-all duration-200 active:scale-95 shadow-md">Get Started</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="hero-gradient relative overflow-hidden py-32 md:py-48">
+
+<div class="relative z-10 max-w-container-max mx-auto px-margin-desktop">
+<div class="max-w-3xl">
+<div class="inline-flex items-center px-sm py-xs bg-primary-container/50 border border-primary-fixed/20 rounded-lg mb-lg">
+<span class="text-primary-fixed font-label-sm uppercase tracking-widest px-xs">New 2024 Exam Standards</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl md:text-[64px] md:leading-[1.1] text-white mb-lg animate-fade-in">
+                    Master Your <span class="text-secondary-fixed-dim">PMI Exams</span> with Confidence
+                </h1>
+<p class="font-body-lg text-body-lg text-primary-fixed-dim/80 mb-xl max-w-2xl">
+                    The industry's most precise PMP, CAPM, and ACP simulation platform. Developed by expert PMPs to mirror the actual exam environment and cognitive rigor.
+                </p>
+<div class="flex flex-col sm:flex-row gap-md">
+<button class="bg-[#FF5F00] text-white font-label-lg px-xl py-4 rounded-lg flex items-center justify-center gap-sm hover:brightness-110 transition-all shadow-xl active:scale-95">
+                        Start Free Practice Exam
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="border border-primary-fixed/30 text-white font-label-lg px-xl py-4 rounded-lg hover:bg-white/5 transition-all flex items-center justify-center gap-sm">
+                        View Study Plans
+                    </button>
+</div>
+</div>
+</div>
+<!-- Decorative Element -->
+<div class="absolute right-[-10%] top-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-primary-fixed/10 rounded-full hidden lg:block pointer-events-none"></div>
+<div class="absolute right-[-5%] top-1/2 -translate-y-1/2 w-[300px] h-[300px] border border-primary-fixed/5 rounded-full hidden lg:block pointer-events-none"></div>
+</header>
+<!-- Stat Counters -->
+<section class="bg-surface-container-lowest -mt-12 relative z-20 max-w-5xl mx-auto rounded-xl shadow-xl border border-outline-variant flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-outline-variant overflow-hidden">
+<div class="flex-1 px-xl py-lg text-center bento-card-hover">
+<h3 class="font-headline-xl text-headline-xl text-secondary">1500+</h3>
+<p class="font-label-lg text-on-surface-variant uppercase tracking-wider">Realistic Questions</p>
+</div>
+<div class="flex-1 px-xl py-lg text-center bento-card-hover">
+<h3 class="font-headline-xl text-headline-xl text-primary">100%</h3>
+<p class="font-label-lg text-on-surface-variant uppercase tracking-wider">Free To Start</p>
+</div>
+<div class="flex-1 px-xl py-lg text-center bento-card-hover">
+<h3 class="font-headline-xl text-headline-xl text-primary">50k+</h3>
+<p class="font-label-lg text-on-surface-variant uppercase tracking-wider">Active Users</p>
+</div>
+</section>
+<!-- Features Grid -->
+<section class="py-32 bg-[#F4F5F7]">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="text-center mb-24">
+<h2 class="font-headline-lg text-headline-lg md:text-[40px] text-primary mb-md">Engineered for Success</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Our simulation technology focuses on the three pillars of exam performance: content accuracy, endurance, and analytical feedback.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Feature 1 -->
+<div class="bg-white p-xl rounded-xl border border-outline-variant bento-card-hover shadow-sm">
+<div class="w-12 h-12 bg-primary-container/10 rounded flex items-center justify-center mb-xl">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">verified</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Expert Content</h3>
+<p class="text-on-surface-variant font-body-md leading-relaxed">
+                        Questions curated by certified project managers with decades of experience. Each question includes deep explanations and PMBOK® Guide cross-references.
+                    </p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-white p-xl rounded-xl border border-outline-variant bento-card-hover shadow-sm">
+<div class="w-12 h-12 bg-secondary-container/10 rounded flex items-center justify-center mb-xl">
+<span class="material-symbols-outlined text-secondary" style="font-size: 32px;">timer</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Timed Mode</h3>
+<p class="text-on-surface-variant font-body-md leading-relaxed">
+                        Build your mental stamina with full-length simulations that mirror the actual exam interface, constraints, and pressure environments.
+                    </p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-white p-xl rounded-xl border border-outline-variant bento-card-hover shadow-sm">
+<div class="w-12 h-12 bg-tertiary-container/10 rounded flex items-center justify-center mb-xl">
+<span class="material-symbols-outlined text-tertiary-fixed" style="font-size: 32px;">query_stats</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Performance Analytics</h3>
+<p class="text-on-surface-variant font-body-md leading-relaxed">
+                        Detailed breakdown of your strengths and weaknesses across the People, Process, and Business Environment domains.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Visual Breakdown Section (Bento Grid) -->
+<section class="py-32 bg-white">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg h-auto lg:h-[600px]">
+<!-- Main Visual -->
+<div class="lg:col-span-8 bg-primary overflow-hidden rounded-xl relative group">
+<img class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" data-alt="A professional workspace featuring a high-end laptop displaying complex project management charts and exam simulation software. The lighting is crisp and cool, emphasizing a focused, corporate atmosphere. The scene is shot from a slight overhead angle, showing a clean desk with a notebook and a luxury pen. Deep navy and sharp orange accents dominate the color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoO4RNobq8W9FSbTcnpIabQ-I-K8jaDuUW3_MnlEHW10y9rQ6Pqv34W5ioP3FXI4AZ8kjmRx7pNjDgvqvlktATOrOdZrCBdlCaJwsasKi4D8jofbUymgullj2LPsG1rPzJ1UIYz0t22F5o5utNpV9MXaycDIw8Jsb_05wq-dLlFERkqk20wZg2nLtXKPzqvU-OMTzZLZuFZtyv7LnbstXWQMp6nW_5qRzOKeb4fZNL1sj7ClUzVvJMiomnQ3a-y3b0aweMeE53Blg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent p-xl flex flex-col justify-end">
+<h4 class="text-white font-headline-lg text-headline-lg mb-sm">The Real Exam Experience</h4>
+<p class="text-primary-fixed-dim/80 max-w-lg font-body-md">Practice in an environment that looks, feels, and acts exactly like the Pearson VUE testing platform.</p>
+</div>
+</div>
+<!-- Sidebar Items -->
+<div class="lg:col-span-4 grid grid-rows-2 gap-lg">
+<div class="bg-surface-container p-lg rounded-xl flex flex-col justify-between border border-outline-variant">
+<div>
+<span class="material-symbols-outlined text-secondary mb-sm" data-weight="fill">workspace_premium</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-xs">Certified Feedback</h4>
+<p class="text-on-surface-variant text-body-md">Personalized insights based on your simulation results to target your study time.</p>
+</div>
+<a class="text-secondary font-label-lg flex items-center gap-xs hover:gap-sm transition-all" href="#">Learn More <span class="material-symbols-outlined">chevron_right</span></a>
+</div>
+<div class="bg-primary-container text-white p-lg rounded-xl flex flex-col justify-between overflow-hidden relative">
+
+<div class="relative z-10">
+<h4 class="font-headline-md text-headline-md mb-xs">Flashcards API</h4>
+<p class="text-primary-fixed-dim text-body-md">Access 2,000+ terms and definitions on the go with our adaptive mobile app.</p>
+</div>
+<button class="relative z-10 w-fit text-white font-label-lg border-b border-white hover:text-secondary-fixed-dim transition-colors">Download App</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonial Simple -->
+<section class="py-24 bg-[#F4F5F7] border-y border-outline-variant">
+<div class="max-w-container-max mx-auto px-margin-desktop text-center">
+<div class="flex justify-center mb-lg">
+<div class="flex gap-xs">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<blockquote class="font-headline-lg text-headline-lg text-primary italic max-w-4xl mx-auto mb-xl">
+                "The simulation accuracy was incredible. I recognized multiple logic patterns in the actual PMP exam that I had mastered through this simulator. It's the ultimate prep tool."
+            </blockquote>
+<div class="flex items-center justify-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a successful female project manager in her 30s. She is smiling confidently and wearing professional corporate attire. The background is a softly blurred modern office environment with warm natural lighting. The image conveys achievement, competence, and professional growth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACe-1xkMdBw9bw5g-yCIKmwGi91u_maEvG15hCwktRyIVckl5vYlDoMSmOuZHqKdm2yX-cQLkKC2PktRtYqjNgy97DDBQCqzbVEALum7DmxJN6ygLrKJHZ8tgrILfq0Ih1_t1IyjH-6N5AG-g8zl11ZOuMmqljIOsFkce6iqGKyCDKMGSqGP8aHO4I2IMJjtGKiKCHdefhtPGBgoyExpEPTueGoZGKylJ92IgGDMNzDHQpCpTHQoBJb_qa4v_1Si8FiWBARf5RNyU"/>
+</div>
+<div class="text-left">
+<p class="font-label-lg text-primary">Sarah Jenkins, PMP</p>
+<p class="text-label-sm text-on-surface-variant">Senior Project Lead at TechCorp</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-primary-container w-full py-xl">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-lg">
+<div class="flex flex-col items-center md:items-start gap-sm">
+<span class="font-headline-md text-headline-md text-on-primary">PMI Exam Simulator</span>
+<p class="font-label-lg text-label-lg text-primary-fixed-dim opacity-80 text-center md:text-left">© 2024 PMI Exam Simulator. All rights reserved. Professional PMP Certification Prep.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="font-label-lg text-label-lg text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity" href="#">Privacy Policy</a>
+<a class="font-label-lg text-label-lg text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity" href="#">Terms of Service</a>
+<a class="font-label-lg text-label-lg text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity" href="#">Cookie Policy</a>
+<a class="font-label-lg text-label-lg text-primary-fixed-dim opacity-80 hover:opacity-100 hover:underline transition-opacity" href="#">Support</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for stat counters
+        document.addEventListener('DOMContentLoaded', () => {
+            const counters = document.querySelectorAll('h3.font-headline-xl');
+            const options = {
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const finalVal = parseInt(target.innerText);
+                        let currentVal = 0;
+                        const duration = 2000;
+                        const increment = finalVal / (duration / 16);
+                        
+                        const update = () => {
+                            currentVal += increment;
+                            if (currentVal < finalVal) {
+                                target.innerText = Math.ceil(currentVal) + (target.innerText.includes('+') ? '+' : (target.innerText.includes('%') ? '%' : ''));
+                                requestAnimationFrame(update);
+                            } else {
+                                target.innerText = finalVal + (target.innerText.includes('+') ? '+' : (target.innerText.includes('%') ? '%' : ''));
+                            }
+                        };
+                        update();
+                        observer.unobserve(target);
+                    }
+                });
+            }, options);
+
+            counters.forEach(counter => observer.observe(counter));
+        });
+    </script>
+</body></html>
