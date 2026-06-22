@@ -15,7 +15,7 @@ export default function LearnerProgressDashboard({ showWelcome = true }) {
     useEffect(() => {
         if (!user?.userId) return;
         setLoading(true);
-        getDomainPerformances(user.userId)
+        getDomainPerformances()
             .then(setPerformances)
             .catch(() => setError('Failed to load progress data.'))
             .finally(() => setLoading(false));

@@ -9,7 +9,5 @@ public class UpdateSiteSettingsDtoValidator : AbstractValidator<UpdateSiteSettin
     {
         RuleFor(x => x.SiteName).NotEmpty().MaximumLength(100);
         RuleFor(x => x.SupportEmail).NotEmpty().EmailAddress().MaximumLength(100);
-        RuleFor(x => x.DefaultExamDuration).InclusiveBetween(1, 360);
-        RuleFor(x => x.PassThreshold).InclusiveBetween(0, 100);
     }
 }

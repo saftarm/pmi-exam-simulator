@@ -8,6 +8,7 @@
         Forbidden,
         Conflict,
         UnprocessableEntity,
-        Validation
+        Validation,
+        ServiceUnavailable
     }
 }

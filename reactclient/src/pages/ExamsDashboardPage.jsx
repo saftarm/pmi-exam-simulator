@@ -54,7 +54,7 @@ export default function ExamsDashboardPage() {
             return;
         }
         setPerfLoading(true);
-        getDomainPerformances(user.userId)
+        getDomainPerformances()
             .then(setPerformances)
             .catch(() => setPerformances([]))
             .finally(() => setPerfLoading(false));
@@ -100,7 +100,7 @@ export default function ExamsDashboardPage() {
         if (!user?.userId) return;
         setStartingId(examId);
         try {
-            const session = await startSession(user.userId, examId);
+            const session = await startSession(examId);
             const exam = exams.find((e) => e.id === examId);
             navigate(`/exams/${examId}/session/${session.sessionId}`, {
                 state: { exam },

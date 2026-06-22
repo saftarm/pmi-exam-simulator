@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
 using TestAPI.Extensions;
@@ -6,6 +7,7 @@ using TestAPI.Services.Interfaces;
 namespace TestAPI.Controllers
 {
   [ApiController]
+  [Authorize]
   public class ExamAttemptController : ControllerBase
   {
     private readonly IExamAttemptService _examAttemptService;
@@ -16,9 +18,15 @@ namespace TestAPI.Controllers
     }
 
     [HttpPost("/api/session/start")]
-    public async Task<IActionResult> StartSession(Guid userId, Guid examId)
+    public async Task<IActionResult> StartSession([FromQuery] Guid examId, CancellationToken ct)
     {
-      var compilationResult = await _examAttemptService.StartSession(userId: userId, examId: examId);
+      var userId = User.GetUserId();
+      if (userId == null)
+      {
+        return Unauthorized();
+      }
+
+      var compilationResult = await _examAttemptService.StartSession(userId.Value, examId, ct);
       return compilationResult.IsSuccess ? Ok(compilationResult.Value) : compilationResult.ToActionResult();
     }
 
@@ -27,15 +35,22 @@ namespace TestAPI.Controllers
         [FromBody] FinishSessionRequest request,
         CancellationToken ct)
     {
-      var result = await _examAttemptService.FinishSession(request, ct);
+      var userId = User.GetUserId();
+      if (userId == null)
+      {
+        return Unauthorized();
+      }
+
+      var result = await _examAttemptService.FinishSession(request, userId.Value, ct);
       return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("/api/attempts/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-      await _examAttemptService.DeleteAsync(id);
-      return Ok();
+      var result = await _examAttemptService.DeleteAsync(id);
+      return result.ToActionResult();
     }
   }
 }

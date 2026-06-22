@@ -40,7 +40,7 @@ export default function AdminSettingsPage() {
     if (loading) {
         return (
             <AdminLayout title="Settings">
-                <FormSkeleton fields={8} />
+                <FormSkeleton fields={4} />
             </AdminLayout>
         );
     }
@@ -100,54 +100,6 @@ export default function AdminSettingsPage() {
                             className="rounded border-outline-variant"
                         />
                         <span className="text-sm font-medium">Maintenance mode</span>
-                    </label>
-                </section>
-
-                <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">Exam defaults</h2>
-                    <div>
-                        <label className="block text-sm font-bold mb-sm">Default exam duration (minutes)</label>
-                        <input
-                            type="number"
-                            min={1}
-                            value={settings.defaultExamDuration}
-                            onChange={(e) => update('defaultExamDuration', Number(e.target.value))}
-                            className="w-full border border-outline-variant rounded-lg px-md py-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold mb-sm">Pass threshold (%)</label>
-                        <input
-                            type="number"
-                            min={0}
-                            max={100}
-                            value={settings.passThreshold}
-                            onChange={(e) => update('passThreshold', Number(e.target.value))}
-                            className="w-full border border-outline-variant rounded-lg px-md py-sm"
-                        />
-                    </div>
-                </section>
-
-                <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">Notifications</h2>
-                    <p className="text-xs text-on-surface-variant">Flags are stored for future email delivery integration.</p>
-                    <label className="flex items-center gap-md cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={settings.notifyOnNewUser}
-                            onChange={(e) => update('notifyOnNewUser', e.target.checked)}
-                            className="rounded border-outline-variant"
-                        />
-                        <span className="text-sm font-medium">Email on new user registration</span>
-                    </label>
-                    <label className="flex items-center gap-md cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={settings.notifyOnExamComplete}
-                            onChange={(e) => update('notifyOnExamComplete', e.target.checked)}
-                            className="rounded border-outline-variant"
-                        />
-                        <span className="text-sm font-medium">Email when exam is completed</span>
                     </label>
                 </section>
 

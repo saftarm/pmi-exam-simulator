@@ -1,15 +1,15 @@
 using TestAPI.DTO;
-using TestAPI.DTO.Category;
-using TestAPI.Entities;
+using TestAPI.ResultPattern;
 
 namespace TestAPI.Services.Interfaces
 {
   public interface IDomainService
   {
-    public Task<DomainDto> GetByIdAsync(Guid id);
-    public Task<IEnumerable<DomainDto>> GetAllAsync();
-    public Task CreateDomain(CreateDomainDto createDomainDto);
-    public Task UpdateDomain(Guid id, UpdateDomainDto updateDomainDto);
-    public Task DeleteAsync(Guid id);
+    Task<Result<DomainDto>> GetByIdAsync(Guid id);
+    Task<Result<IEnumerable<DomainDto>>> GetAllAsync();
+    Task<Result<Dictionary<Guid, string>>> GetDomainTitlesByExamIdAsync(Guid examId);
+    Task<Result> CreateDomainAsync(CreateDomainDto createDomainDto, CancellationToken ct = default);
+    Task<Result> UpdateDomainAsync(Guid id, UpdateDomainDto updateDomainDto, CancellationToken ct = default);
+    Task<Result> DeleteAsync(Guid id, CancellationToken ct = default);
   }
 }

@@ -5,6 +5,7 @@ import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
 import Icon from '../components/Icon';
 import { getPublicStats } from '../services/publicStatsService';
+import { resolveAuthenticatedHomePath } from '../utils/postLoginPath';
 import { Skeleton } from '../components/loading';
 
 const FEATURES = [
@@ -38,7 +39,7 @@ function formatCount(n) {
 
 export default function LandingPage() {
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const [stats, setStats] = useState(null);
     const [statsLoading, setStatsLoading] = useState(true);
 
@@ -50,12 +51,12 @@ export default function LandingPage() {
     }, []);
 
     const handleGetStarted = () => {
-        if (isAuthenticated) navigate('/exams');
+        if (isAuthenticated) navigate(resolveAuthenticatedHomePath(user));
         else navigate('/login', { state: { from: { pathname: '/exams' } } });
     };
 
     const handleExamsNav = () => {
-        if (isAuthenticated) navigate('/exams');
+        if (isAuthenticated) navigate(resolveAuthenticatedHomePath(user));
         else navigate('/login', { state: { from: { pathname: '/exams' } } });
     };
 

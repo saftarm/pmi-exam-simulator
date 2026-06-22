@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
 import Icon from '../components/Icon';
+import { resolveAuthenticatedHomePath } from '../utils/postLoginPath';
 
 const STEPS = [
     {
@@ -30,10 +31,10 @@ const AUDIENCE = [
 
 export default function AboutPage() {
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
 
     const handleCta = () => {
-        if (isAuthenticated) navigate('/exams');
+        if (isAuthenticated) navigate(resolveAuthenticatedHomePath(user));
         else navigate('/login', { state: { from: { pathname: '/exams' } } });
     };
 

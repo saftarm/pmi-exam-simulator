@@ -4,7 +4,6 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import Icon from '../../components/Icon';
 import { createExam } from '../../services/adminExamService';
 import { getCategories } from '../../services/adminCategoryService';
-import { getSettings } from '../../services/adminSettingsService';
 import LoadingButton from '../../components/loading/LoadingButton';
 
 const EMPTY_DOMAIN = { title: '', description: '', weight: 1 };
@@ -24,21 +23,14 @@ export default function AdminExamCreatePage() {
     });
 
     useEffect(() => {
-        Promise.all([
-            getCategories().catch(() => []),
-            getSettings().catch(() => null),
-        ]).then(([data, settings]) => {
-            setCategories(data);
-            if (data.length > 0) {
-                setForm((f) => ({ ...f, categoryId: data[0].id }));
-            }
-            if (settings?.defaultExamDuration) {
-                setForm((f) => ({
-                    ...f,
-                    durationInMinutes: settings.defaultExamDuration,
-                }));
-            }
-        });
+        getCategories()
+            .catch(() => [])
+            .then((data) => {
+                setCategories(data);
+                if (data.length > 0) {
+                    setForm((f) => ({ ...f, categoryId: data[0].id }));
+                }
+            });
     }, []);
 
     const updateDomain = (index, field, value) => {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { formatApiErrors } from '../services/authService';
+import { resolvePostLoginPath } from '../utils/postLoginPath';
 import { AuthFooter } from '../components/AppFooter';
 import Icon from '../components/Icon';
 import LoadingButton from '../components/loading/LoadingButton';
@@ -9,7 +10,7 @@ import LoadingButton from '../components/loading/LoadingButton';
 export default function AuthPage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { login, register, isAuthenticated } = useAuth();
+    const { login, register, isAuthenticated, user } = useAuth();
 
     const [tab, setTab] = useState('signin');
     const [error, setError] = useState(null);
@@ -29,23 +30,33 @@ export default function AuthPage() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            const from = location.state?.from?.pathname || '/exams';
-            navigate(from, { replace: true });
+            navigate(resolvePostLoginPath(user, location.state?.from?.pathname), { replace: true });
         }
-    }, [isAuthenticated, location.state, navigate]);
+    }, [isAuthenticated, location.state, navigate, user]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
         try {
-            await login(loginForm.userName, loginForm.password);
-            const from = location.state?.from?.pathname || '/exams';
-            navigate(from, { replace: true });
+            const loggedInUser = await login(loginForm.userName, loginForm.password);
+            navigate(
+                resolvePostLoginPath(loggedInUser, location.state?.from?.pathname),
+                { replace: true },
+            );
         } catch (err) {
             const status = err.response?.status;
             if (status === 403) {
-                setError('Your account is suspended or inactive. Contact an administrator.');
+                const detail = err.response?.data?.detail || err.response?.data;
+                if (typeof detail === 'string' && detail.toLowerCase().includes('registration')) {
+                    setError('New user registration is currently disabled.');
+                } else if (status === 403) {
+                    setError('Your account is suspended or inactive. Contact an administrator.');
+                } else {
+                    setError(formatApiErrors(err));
+                }
+            } else if (status === 503) {
+                setError('The service is temporarily unavailable for maintenance. Please try again later.');
             } else {
                 setError(formatApiErrors(err));
             }
@@ -77,7 +88,20 @@ export default function AuthPage() {
             setTab('signin');
             setLoginForm({ userName: signupForm.userName, password: '' });
         } catch (err) {
-            setError(formatApiErrors(err));
+            const status = err.response?.status;
+            if (status === 503) {
+                setError('The service is temporarily unavailable for maintenance. Please try again later.');
+            } else if (status === 403) {
+                const detail = err.response?.data?.detail || err.response?.data || '';
+                const message = typeof detail === 'string' ? detail : '';
+                if (message.toLowerCase().includes('registration')) {
+                    setError('New user registration is currently disabled.');
+                } else {
+                    setError(formatApiErrors(err));
+                }
+            } else {
+                setError(formatApiErrors(err));
+            }
         } finally {
             setLoading(false);
         }

@@ -37,7 +37,6 @@ namespace TestAPI.Persistence.Implementation
     public async Task<ExamAttempt?> GetByIdForFinishAsync(Guid examAttemptId, CancellationToken ct)
     {
       return await _context.ExamAttempts
-          .AsNoTracking()
           .FirstOrDefaultAsync(ea => ea.Id == examAttemptId, ct);
     }
 

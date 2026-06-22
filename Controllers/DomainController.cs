@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
-using TestAPI.DTO.Category;
-using TestAPI.Persistence.Implementation;
-using TestAPI.Persistence.Interfaces;
+using TestAPI.Extensions;
 using TestAPI.Services.Interfaces;
+
 namespace TestAPI.Controllers
 {
   [ApiController]
@@ -12,67 +11,54 @@ namespace TestAPI.Controllers
   {
     private readonly IDomainService _domainService;
 
-    private readonly IDomainRepository _domainRepository;
-    public DomainController(IDomainService domainService,
-        IDomainRepository domainRepository)
+    public DomainController(IDomainService domainService)
     {
       _domainService = domainService;
-      _domainRepository = domainRepository;
     }
+
     [HttpGet("/api/domains/withTitles")]
-    public async Task<ActionResult<Dictionary<Guid, string>>> GetDomainWithItsTitlesByExamId(Guid examId)
+    public async Task<IActionResult> GetDomainWithItsTitlesByExamId(Guid examId)
     {
-      var domainIds = await _domainRepository.GetDomainIdsWithTitlesByExamId(examId);
-      return Ok(domainIds);
+      var result = await _domainService.GetDomainTitlesByExamIdAsync(examId);
+      return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
     }
 
-
-    // Get Domain By Id 
     [HttpGet("/api/domains/{id}")]
-    public async Task<ActionResult<DomainDto>> GetDomain(Guid id)
+    public async Task<IActionResult> GetDomain(Guid id)
     {
-      var category = await _domainService.GetByIdAsync(id);
-      return Ok(category);
+      var result = await _domainService.GetByIdAsync(id);
+      return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
     }
 
-    // Get All Domains
     [HttpGet("/api/domains")]
-
-    public async Task<ActionResult<IEnumerable<DomainDto>>> GetAllDomains()
+    public async Task<IActionResult> GetAllDomains()
     {
-      return Ok(await _domainService.GetAllAsync());
+      var result = await _domainService.GetAllAsync();
+      return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
     }
 
     [Authorize(Policy = "AdminOnly")]
     [HttpPost("/api/domains")]
-
-    public async Task<ActionResult<CategoryDto>> Create(CreateDomainDto dto)
+    public async Task<IActionResult> Create(CreateDomainDto dto, CancellationToken ct)
     {
-      await _domainService.CreateDomain(dto);
-      return Ok();
+      var result = await _domainService.CreateDomainAsync(dto, ct);
+      return result.IsSuccess ? Ok() : result.ToActionResult();
     }
 
-    // Update Domain
     [Authorize(Policy = "AdminOnly")]
     [HttpPut("/api/domains/{id}")]
-
-    public async Task<IActionResult> Update(Guid id, UpdateDomainDto dto)
+    public async Task<IActionResult> Update(Guid id, UpdateDomainDto dto, CancellationToken ct)
     {
-      await _domainService.UpdateDomain(id, dto);
-      return Ok();
+      var result = await _domainService.UpdateDomainAsync(id, dto, ct);
+      return result.IsSuccess ? NoContent() : result.ToActionResult();
     }
 
-    // Delete Domain
     [Authorize(Policy = "AdminOnly")]
     [HttpDelete("/api/domains/{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
-      await _domainService.DeleteAsync(id);
-      return NoContent();
+      var result = await _domainService.DeleteAsync(id, ct);
+      return result.ToActionResult();
     }
-
-
-
   }
 }
-

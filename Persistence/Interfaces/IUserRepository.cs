@@ -13,7 +13,7 @@ namespace TestAPI.Persistence.Interfaces
     public Task<User?> GetByIdOrDefaultAsync(Guid userId);
     public Task<User?> GetByUserNameAsync(string userName);
     public Task AddAsync(User user);
-    public Task Delete(Guid userId);
+    public Task<bool> DeleteAsync(Guid userId);
     public Task<bool> IsEmailUniqueAsync(string email, CancellationToken ct);
     public Task<bool> IsUserNameUniqueAsync(string userName, CancellationToken ct);
     public Task<bool> IsEmailUniqueExceptUserAsync(string email, Guid userId, CancellationToken ct);

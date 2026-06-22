@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using NuGet.Packaging;
 using TestAPI.DTO;
-using TestAPI.DTO.Category;
 using TestAPI.Entities;
 using TestAPI.Persistence.Interfaces;
+using TestAPI.ResultPattern;
 using TestAPI.Services.Interfaces;
-
+using TestAPI.Validation;
 
 namespace TestAPI.Services.Implementation
 {
@@ -13,37 +11,21 @@ namespace TestAPI.Services.Implementation
   {
     private readonly IDomainRepository _domainRepository;
     private readonly IExamRepository _examRepository;
+    private readonly IValidatorResolver _validatorResolver;
 
-    public DomainService(IDomainRepository domainRepository, IExamRepository examRepository)
+    public DomainService(
+        IDomainRepository domainRepository,
+        IExamRepository examRepository,
+        IValidatorResolver validatorResolver)
     {
       _domainRepository = domainRepository;
       _examRepository = examRepository;
-
+      _validatorResolver = validatorResolver;
     }
-    // private static IEnumerable<ExamSummaryDto> MapToExamSummaryDtos(IEnumerable<Exam> exams)
-    // {
-    //     return exams.Select(e =>
-    //     new ExamSummaryDto
-    //     {
-    //         Id = e.Id,
-    //         Title = e.Title,
-    //         DurationInMinutes = e.DurationInMinutes,
-    //         NumberOfQuestions = e.NumberOfQuestions
-    //     });
-    // }
 
     private static IEnumerable<DomainDto> MapToDomainDtos(IEnumerable<Domain> domains)
     {
-      return domains.Select(dto =>
-          new DomainDto
-          {
-            Id = dto.Id,
-            Title = dto.Title,
-            Description = dto.Description,
-            Weight = dto.Weight,
-            ExamId = dto.ExamId
-
-          });
+      return domains.Select(MapToDomainDto);
     }
 
     private static DomainDto MapToDomainDto(Domain domain)
@@ -54,67 +36,98 @@ namespace TestAPI.Services.Implementation
         Title = domain.Title,
         Description = domain.Description,
         Weight = domain.Weight,
-        ExamId = domain.ExamId
+        ExamId = domain.ExamId,
       };
     }
 
-    public async Task<DomainDto> GetByIdAsync(Guid id)
+    public async Task<Result<DomainDto>> GetByIdAsync(Guid id)
     {
-      // validation
-
       var domain = await _domainRepository.GetByIdAsync(id);
       if (domain == null)
       {
-        throw new Exception("Domain by Id not Found");
+        return Result<DomainDto>.Failure(Errors.DomainNotFound);
       }
 
-      return MapToDomainDto(domain);
-
+      return Result<DomainDto>.Success(MapToDomainDto(domain));
     }
 
-    public async Task<IEnumerable<DomainDto>> GetAllAsync()
+    public async Task<Result<IEnumerable<DomainDto>>> GetAllAsync()
     {
       var domains = await _domainRepository.GetAllAsync();
-
-      return MapToDomainDtos(domains);
+      return Result<IEnumerable<DomainDto>>.Success(MapToDomainDtos(domains));
     }
 
-
-    public async Task CreateDomain(CreateDomainDto createDomainDto)
-    { 
-      if (createDomainDto.ExamId == Guid.Empty)
+    public async Task<Result<Dictionary<Guid, string>>> GetDomainTitlesByExamIdAsync(Guid examId)
+    {
+      var exam = await _examRepository.GetByIdAsync(examId);
+      if (exam == null)
       {
-        throw new ArgumentException("ExamId is required when creating a domain.");
+        return Result<Dictionary<Guid, string>>.Failure(Errors.ExamNotFound);
       }
 
-      var exam = await _examRepository.GetByIdAsync(createDomainDto.ExamId)
-          ?? throw new KeyNotFoundException("Exam not found.");
+      var domainIds = await _domainRepository.GetDomainIdsWithTitlesByExamId(examId);
+      return Result<Dictionary<Guid, string>>.Success(domainIds);
+    }
+
+    public async Task<Result> CreateDomainAsync(CreateDomainDto createDomainDto, CancellationToken ct = default)
+    {
+      var validationResult = await _validatorResolver.ValidateAsync(createDomainDto);
+      if (!validationResult.IsValid)
+      {
+        return Result.Failure(Errors.ValidationFailed);
+      }
+
+      var exam = await _examRepository.GetByIdAsync(createDomainDto.ExamId);
+      if (exam == null)
+      {
+        return Result.Failure(Errors.ExamNotFound);
+      }
 
       var newDomain = new Domain(
           createDomainDto.Title,
           createDomainDto.Description,
           createDomainDto.Weight,
           createDomainDto.ExamId);
+
       await _domainRepository.AddAsync(newDomain);
+      return Result.Success();
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<Result> UpdateDomainAsync(
+        Guid id,
+        UpdateDomainDto updateDomainDto,
+        CancellationToken ct = default)
     {
-      await _domainRepository.DeleteAsync(id);
-    }
-    public async Task UpdateDomain(Guid id, UpdateDomainDto updateDomainDto)
-    {
-      // validation
+      var validationResult = await _validatorResolver.ValidateAsync(updateDomainDto);
+      if (!validationResult.IsValid)
+      {
+        return Result.Failure(Errors.ValidationFailed);
+      }
 
-      var domain = await _domainRepository.GetByIdAsync(id) ?? throw new KeyNotFoundException();
-      
+      var domain = await _domainRepository.GetByIdAsync(id);
+      if (domain == null)
+      {
+        return Result.Failure(Errors.DomainNotFound);
+      }
+
       domain.Title = updateDomainDto.Title;
       domain.Description = updateDomainDto.Description;
       domain.Weight = updateDomainDto.Weight;
       await _domainRepository.UpdateAsync(domain);
 
-
+      return Result.Success();
     }
 
+    public async Task<Result> DeleteAsync(Guid id, CancellationToken ct = default)
+    {
+      var domain = await _domainRepository.GetByIdAsync(id);
+      if (domain == null)
+      {
+        return Result.Failure(Errors.DomainNotFound);
+      }
+
+      await _domainRepository.DeleteAsync(id);
+      return Result.Success();
+    }
   }
 }

@@ -6,8 +6,11 @@ namespace TestAPI.Services.Interfaces
 {
   public interface IExamAttemptService
   {
-    Task<Result<SessionDto>> StartSession(Guid userId, Guid examId);
-    Task<Result<SessionResultDto>> FinishSession(FinishSessionRequest request, CancellationToken ct);
-    Task DeleteAsync(Guid id);
+    Task<Result<SessionDto>> StartSession(Guid userId, Guid examId, CancellationToken ct = default);
+    Task<Result<SessionResultDto>> FinishSession(
+        FinishSessionRequest request,
+        Guid actingUserId,
+        CancellationToken ct);
+    Task<Result> DeleteAsync(Guid id);
   }
 }

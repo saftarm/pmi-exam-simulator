@@ -1,11 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.Extensions;
 using TestAPI.Services.Interfaces;
 
 namespace TestAPI.Controllers
 {
-  [Route("api/[controller]")]
   [ApiController]
+  [Authorize]
+  [Route("api/progress")]
   public class ProgressController : ControllerBase
   {
     private readonly IProgressService _progressService;
@@ -16,9 +18,15 @@ namespace TestAPI.Controllers
     }
 
     [HttpGet("domains")]
-    public async Task<IActionResult> GetUserDomainPerformances([FromQuery] Guid userId, CancellationToken ct)
+    public async Task<IActionResult> GetUserDomainPerformances(CancellationToken ct)
     {
-      var result = await _progressService.GetUserDomainPerformancesAsync(userId, ct);
+      var userId = User.GetUserId();
+      if (userId == null)
+      {
+        return Unauthorized();
+      }
+
+      var result = await _progressService.GetUserDomainPerformancesAsync(userId.Value, ct);
       return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
     }
   }

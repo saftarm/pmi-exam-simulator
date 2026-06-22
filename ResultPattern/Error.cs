@@ -25,6 +25,11 @@
     public static Error DomainNotFound {get;} = new ("NOT_FOUND", "Domain not found", ErrorType.NotFound);
     public static Error EmailAlreadyExists {get;} = new ("CONFLICT", "Email is already in use", ErrorType.Conflict);
     public static Error UserNameAlreadyExists {get;} = new ("CONFLICT", "Username is already in use", ErrorType.Conflict);
+    public static Error InvalidCredentials {get;} = new ("UNAUTHORIZED", "Invalid username or password", ErrorType.Unauthorized);
+    public static Error RegistrationDisabled {get;} = new ("FORBIDDEN", "New user registration is currently disabled", ErrorType.Forbidden);
+    public static Error MaintenanceModeActive {get;} = new ("SERVICE_UNAVAILABLE", "The service is temporarily unavailable for maintenance", ErrorType.ServiceUnavailable);
+    public static Error SessionNotOwned {get;} = new ("FORBIDDEN", "You do not have access to this exam session", ErrorType.Forbidden);
+    public static Error SessionAlreadyCompleted {get;} = new ("CONFLICT", "This exam session has already been completed", ErrorType.Conflict);
   }
 
 }

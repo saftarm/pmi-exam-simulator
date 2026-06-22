@@ -35,7 +35,7 @@ export default function ExamDetailPage() {
         if (!user?.userId) return;
         setStarting(true);
         try {
-            const session = await startSession(user.userId, examId);
+            const session = await startSession(examId);
             navigate(`/exams/${examId}/session/${session.sessionId}`, {
                 state: { exam },
             });

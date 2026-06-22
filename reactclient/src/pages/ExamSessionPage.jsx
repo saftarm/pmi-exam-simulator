@@ -81,7 +81,7 @@ export default function ExamSessionPage() {
             setResult(res);
             if (user?.userId) {
                 try {
-                    const progress = await getDomainPerformances(user.userId);
+                    const progress = await getDomainPerformances();
                     const targetExamId = examMeta?.id || examId;
                     setDomainResults(
                         (progress || []).filter(

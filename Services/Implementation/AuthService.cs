@@ -1,16 +1,12 @@
-using System.Security.Claims;
-using System.Text;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using TestAPI.DTO.Auth.Requests;
 using TestAPI.Entities;
 using TestAPI.Enums;
-using TestAPI.Exceptions;
 using TestAPI.Models;
 using TestAPI.Persistence.Interfaces;
+using TestAPI.ResultPattern;
 using TestAPI.Services.Interfaces;
-
+using TestAPI.Validation;
 
 namespace TestAPI.Services.Implementation
 {
@@ -19,75 +15,107 @@ namespace TestAPI.Services.Implementation
         private readonly IUserRepository _userRepository;
         private readonly IJWTService _jwtService;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IValidator<LoginUserRequest> _loginUserRequestValidator;
-        public AuthService(IUserRepository userRepository,
+        private readonly ISiteSettingsRepository _siteSettingsRepository;
+        private readonly IValidatorResolver _validatorResolver;
+
+        public AuthService(
+            IUserRepository userRepository,
             IJWTService jwtService,
             IPasswordHasher<User> passwordHasher,
-            IValidator<LoginUserRequest> loginUserRequestValidator
-            
-            )
+            ISiteSettingsRepository siteSettingsRepository,
+            IValidatorResolver validatorResolver)
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
             _passwordHasher = passwordHasher;
-            _loginUserRequestValidator = loginUserRequestValidator;
+            _siteSettingsRepository = siteSettingsRepository;
+            _validatorResolver = validatorResolver;
         }
 
-
-        public async Task RegisterUser(RegisterUserRequest registerUserRequest)
+        public async Task<Result> RegisterUser(RegisterUserRequest registerUserRequest, CancellationToken ct = default)
         {
-            if (registerUserRequest == null)
+            var settings = await _siteSettingsRepository.GetOrCreateAsync(ct);
+            if (settings.MaintenanceMode)
             {
-                throw new ArgumentNullException(nameof(registerUserRequest), "Invalid data input");
+                return Result.Failure(Errors.MaintenanceModeActive);
             }
 
-            if (registerUserRequest.UserName == null || registerUserRequest.Password == null
-            || registerUserRequest.FirstName == null || registerUserRequest.Email == null)
+            if (!settings.AllowRegistration)
             {
+                return Result.Failure(Errors.RegistrationDisabled);
+            }
 
-                throw new ArgumentException("Sign Up credentials");
+            var validationResult = await _validatorResolver.ValidateAsync(registerUserRequest);
+            if (!validationResult.IsValid)
+            {
+                return Result.Failure(Errors.ValidationFailed);
+            }
+
+            if (!await _userRepository.IsEmailUniqueAsync(registerUserRequest.Email!, ct))
+            {
+                return Result.Failure(Errors.EmailAlreadyExists);
+            }
+
+            if (!await _userRepository.IsUserNameUniqueAsync(registerUserRequest.UserName!, ct))
+            {
+                return Result.Failure(Errors.UserNameAlreadyExists);
             }
 
             var newUser = new User
             {
-
-                UserName = registerUserRequest.UserName,
-                FirstName = registerUserRequest.FirstName,
-                Email = registerUserRequest.Email,
-                DisplayName = registerUserRequest.UserName,
+                UserName = registerUserRequest.UserName!,
+                FirstName = registerUserRequest.FirstName!,
+                Email = registerUserRequest.Email!,
+                DisplayName = registerUserRequest.UserName!,
                 Role = UserRole.Learner,
-                Status = AccountStatus.Active
-
+                Status = AccountStatus.Active,
             };
-            var hashedPassword = new PasswordHasher<User>().HashPassword(newUser, registerUserRequest.Password);
-            newUser.PasswordHash = hashedPassword;
+
+            newUser.PasswordHash = _passwordHasher.HashPassword(newUser, registerUserRequest.Password!);
             await _userRepository.AddAsync(newUser);
+
+            return Result.Success();
         }
 
-        public async Task<TokenResponse> LoginUser(LoginUserRequest loginUserRequest)
+        public async Task<Result<TokenResponse>> LoginUser(
+            LoginUserRequest loginUserRequest,
+            CancellationToken ct = default)
         {
-            // _loginUserRequestValidator.ValidateAndThrow(loginUserRequest);
+            var validationResult = await _validatorResolver.ValidateAsync(loginUserRequest);
+            if (!validationResult.IsValid)
+            {
+                return Result<TokenResponse>.Failure(Errors.ValidationFailed);
+            }
 
             var userInDb = await _userRepository.GetByUserNameAsync(loginUserRequest.UserName!);
 
             if (userInDb == null)
             {
-                throw new RecordNotFoundException("User not found");
+                return Result<TokenResponse>.Failure(Errors.InvalidCredentials);
             }
 
             if (userInDb.Status != AccountStatus.Active)
             {
-                throw new UnauthorizedAccessException("Account is not active");
+                return Result<TokenResponse>.Failure(Errors.AccountNotActive);
             }
 
-            var result = _passwordHasher.VerifyHashedPassword(userInDb, userInDb.PasswordHash, loginUserRequest.Password!);
-            if (result == PasswordVerificationResult.Failed)
+            var passwordResult = _passwordHasher.VerifyHashedPassword(
+                userInDb,
+                userInDb.PasswordHash,
+                loginUserRequest.Password!);
+
+            if (passwordResult == PasswordVerificationResult.Failed)
             {
-                throw new Exception("Invalid password");
+                return Result<TokenResponse>.Failure(Errors.InvalidCredentials);
             }
-            var tokens = await _jwtService.ProvideTokens(userInDb);
 
-            return tokens;
+            var settings = await _siteSettingsRepository.GetOrCreateAsync(ct);
+            if (settings.MaintenanceMode && userInDb.Role != UserRole.Admin)
+            {
+                return Result<TokenResponse>.Failure(Errors.MaintenanceModeActive);
+            }
+
+            return await _jwtService.ProvideTokens(userInDb);
         }
     }
 }

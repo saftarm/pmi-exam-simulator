@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using TestAPI.ResultPattern;
 
 
@@ -22,14 +23,26 @@ public static class ResultExtensions
         return MapError(result.Error!);
     }
 
+    public static IActionResult ToValidationActionResult(this ValidationResult validationResult)
+    {
+        var errors = validationResult.Errors.Select(e => new
+        {
+            propertyName = e.PropertyName,
+            errorMessage = e.ErrorMessage,
+        });
+        return new UnprocessableEntityObjectResult(errors);
+    }
+
     private static IActionResult MapError(Error error) => error.ErrorType switch
     {
-        ErrorType.NotFound     => new NotFoundObjectResult(error.Description),
-        ErrorType.Conflict     => new ConflictObjectResult(error.Description),
-        ErrorType.Validation   => new UnprocessableEntityObjectResult(error.Description),
-        ErrorType.Unauthorized => new UnauthorizedObjectResult(error.Description),
-        ErrorType.Forbidden    => new ObjectResult(error.Description) { StatusCode = StatusCodes.Status403Forbidden },
-        _                      => new ObjectResult(error.Description) { StatusCode = 500 }
+        ErrorType.NotFound            => new NotFoundObjectResult(error.Description),
+        ErrorType.Conflict            => new ConflictObjectResult(error.Description),
+        ErrorType.Validation          => new UnprocessableEntityObjectResult(error.Description),
+        ErrorType.UnprocessableEntity => new UnprocessableEntityObjectResult(error.Description),
+        ErrorType.Unauthorized        => new UnauthorizedObjectResult(error.Description),
+        ErrorType.Forbidden           => new ObjectResult(error.Description) { StatusCode = StatusCodes.Status403Forbidden },
+        ErrorType.ServiceUnavailable  => new ObjectResult(error.Description) { StatusCode = StatusCodes.Status503ServiceUnavailable },
+        _                             => new ObjectResult(error.Description) { StatusCode = 500 }
     };
 }
 

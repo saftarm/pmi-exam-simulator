@@ -1,6 +1,6 @@
 import api from './api';
 
-export async function getDomainPerformances(userId) {
-    const { data } = await api.get('/api/progress/domains', { params: { userId } });
+export async function getDomainPerformances() {
+    const { data } = await api.get('/api/progress/domains');
     return data;
 }

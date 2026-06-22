@@ -1,74 +1,69 @@
-﻿using System.Security.Claims;
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
 using TestAPI.DTO.Auth.Requests;
+using TestAPI.DTO.User;
 using TestAPI.Extensions;
-using TestAPI.Models;
 using TestAPI.Services.Interfaces;
 using TestAPI.Validation;
-using TestAPI.DTO.User;
 
 namespace TestAPI.Controllers
 {
-
     [ApiController]
     public class AuthController : ControllerBase
     {
-
         private readonly IValidatorResolver _validatorResolver;
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly IJWTService _jwtService;
-        private readonly IValidator<RegisterUserRequest> _registerUserRequestValidator;
-        private readonly IValidator<LoginUserRequest> _loginUserRequestValidator;
-        public AuthController( 
+
+        public AuthController(
             IValidatorResolver validatorResolver,
             IUserService userService,
-             IJWTService jWTService,
-             IAuthService authService, 
-             IValidator<RegisterUserRequest> registerUserRequestValidator,
-             IValidator<LoginUserRequest> loginUserRequestValidator
-             )
+            IJWTService jWTService,
+            IAuthService authService)
         {
             _validatorResolver = validatorResolver;
-            _registerUserRequestValidator = registerUserRequestValidator;
-            _loginUserRequestValidator = loginUserRequestValidator;
             _userService = userService;
             _jwtService = jWTService;
             _authService = authService;
         }
 
         [HttpPost("/api/auth/register")]
-        public async Task<IActionResult> Register(RegisterUserRequest registerUserRequest)
+        public async Task<IActionResult> Register(
+            RegisterUserRequest registerUserRequest,
+            CancellationToken ct)
         {
             var validationResult = await _validatorResolver.ValidateAsync(registerUserRequest);
-
             if (!validationResult.IsValid)
             {
-                return BadRequest(validationResult.Errors);
+                return validationResult.ToValidationActionResult();
             }
-            await _authService.RegisterUser(registerUserRequest);
-            return Ok();
+
+            var result = await _authService.RegisterUser(registerUserRequest, ct);
+            return result.IsSuccess ? Ok() : result.ToActionResult();
         }
 
         [HttpPost("/api/auth/login")]
-        public async Task<IActionResult> Login([FromBody] LoginUserRequest loginUserRequest)
+        public async Task<IActionResult> Login(
+            [FromBody] LoginUserRequest loginUserRequest,
+            CancellationToken ct)
         {
-            var validationResult = await _loginUserRequestValidator.ValidateAsync(loginUserRequest);
+            var validationResult = await _validatorResolver.ValidateAsync(loginUserRequest);
             if (!validationResult.IsValid)
             {
-                return BadRequest(validationResult.Errors);
+                return validationResult.ToValidationActionResult();
             }
-            var tokens = await _authService.LoginUser(loginUserRequest);
-            return Ok(tokens);
+
+            var result = await _authService.LoginUser(loginUserRequest, ct);
+            return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
         }
 
         [HttpPost("/api/auth/refresh")]
-        public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request)
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
         {
-            return await _jwtService.RefreshToken(request);
+            var result = await _jwtService.RefreshToken(request);
+            return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
         }
 
         [Authorize]
@@ -87,7 +82,9 @@ namespace TestAPI.Controllers
 
         [Authorize]
         [HttpPatch("/api/auth/me")]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request, CancellationToken ct)
+        public async Task<IActionResult> UpdateProfile(
+            [FromBody] UpdateProfileRequest request,
+            CancellationToken ct)
         {
             var userId = User.GetUserId();
             if (userId == null)

@@ -25,15 +25,17 @@ namespace TestAPI.Persistence.Implementation
       await _context.SaveChangesAsync();
     }
 
-    public async Task Delete(Guid userId)
+    public async Task<bool> DeleteAsync(Guid userId)
     {
       var userInDb = await _context.Users.FindAsync(userId);
       if (userInDb == null)
       {
-        throw new ArgumentNullException($"User with id {userId} not found");
+        return false;
       }
+
       _context.Users.Remove(userInDb);
       await _context.SaveChangesAsync();
+      return true;
     }
 
     public async Task<User?> GetByIdOrDefaultAsync(Guid userId)

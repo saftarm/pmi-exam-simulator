@@ -33,7 +33,10 @@ namespace TestAPI.Services.Implementation
       _progressService = progressService;
     }
 
-    public async Task<Result<SessionDto>> StartSession(Guid userId, Guid examId)
+    public async Task<Result<SessionDto>> StartSession(
+        Guid userId,
+        Guid examId,
+        CancellationToken ct = default)
     {
       var userExists = await _userRepository.UserExistsByUserId(userId);
 
@@ -82,6 +85,7 @@ namespace TestAPI.Services.Implementation
 
     public async Task<Result<SessionResultDto>> FinishSession(
         FinishSessionRequest request,
+        Guid actingUserId,
         CancellationToken ct)
     {
       var sessionInDb = await _examAttemptRepository.GetByIdForFinishAsync(request.SessionId, ct);
@@ -89,6 +93,16 @@ namespace TestAPI.Services.Implementation
       if (sessionInDb == null)
       {
         return Result<SessionResultDto>.Failure(Errors.RecordNotFoundById);
+      }
+
+      if (sessionInDb.UserId != actingUserId)
+      {
+        return Result<SessionResultDto>.Failure(Errors.SessionNotOwned);
+      }
+
+      if (sessionInDb.Status != AttemptStatus.InProgress)
+      {
+        return Result<SessionResultDto>.Failure(Errors.SessionAlreadyCompleted);
       }
 
       var sessionResult = await _examService.CalculateSessionResult(
@@ -117,9 +131,15 @@ namespace TestAPI.Services.Implementation
       return Result<SessionResultDto>.Success(sessionResult.Value.Result);
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<Result> DeleteAsync(Guid id)
     {
+      if (!await _examAttemptRepository.ExistsAsync(id))
+      {
+        return Result.Failure(Errors.RecordNotFoundById);
+      }
+
       await _examAttemptRepository.DeleteAsync(id);
+      return Result.Success();
     }
   }
 }
