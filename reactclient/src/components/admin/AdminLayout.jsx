@@ -1,18 +1,32 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../Icon';
 import { ADMIN_NAV_ITEMS } from './adminNav';
 import { getInitials } from '../../utils/userDisplay';
+import UserAvatar from '../UserAvatar';
 
 function AdminSidebar({ onNavigate }) {
     const { user } = useAuth();
-    const initials = getInitials(user?.displayName || user?.userName);
+    const displayName = user?.displayName || user?.userName || 'Admin';
 
     return (
         <>
-            <div className="h-16 flex items-center px-lg border-b border-white/10">
-                <span className="font-headline-md text-headline-md font-extrabold tracking-tight">PMI Admin</span>
+            <div className="h-16 flex items-center px-lg border-b border-white/10 gap-md min-w-0">
+                <Link
+                    to="/admin"
+                    onClick={onNavigate}
+                    className="font-headline-md text-headline-md font-extrabold tracking-tight hover:text-secondary-fixed-dim transition-colors shrink-0"
+                >
+                    PMI Admin
+                </Link>
+                <div className="hidden lg:flex items-center gap-sm min-w-0 border-l border-white/10 pl-md">
+                    <UserAvatar name={displayName} size="sm" className="ring-white/20" />
+                    <div className="min-w-0">
+                        <p className="font-label-sm text-label-sm truncate">{displayName}</p>
+                        <p className="text-[10px] opacity-60 truncate">{user?.role || 'Administrator'}</p>
+                    </div>
+                </div>
             </div>
             <nav className="flex-1 mt-md px-sm space-y-sm overflow-y-auto">
                 {ADMIN_NAV_ITEMS.map((item) => (
@@ -34,13 +48,13 @@ function AdminSidebar({ onNavigate }) {
                     </NavLink>
                 ))}
             </nav>
-            <div className="p-lg border-t border-white/10">
+            <div className="p-lg border-t border-white/10 lg:hidden">
                 <div className="flex items-center gap-md">
                     <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-white font-bold">
-                        {initials}
+                        {getInitials(displayName)}
                     </div>
-                    <div>
-                        <p className="font-label-lg text-label-lg">{user?.displayName || user?.userName || 'Admin'}</p>
+                    <div className="min-w-0">
+                        <p className="font-label-lg text-label-lg truncate">{displayName}</p>
                         <p className="text-xs opacity-60">{user?.role || 'Administrator'}</p>
                     </div>
                 </div>
@@ -71,13 +85,6 @@ export function AdminTopBar({ title, children, onNewExam }) {
                     </div>
                 </div>
                 <div className="flex items-center gap-lg">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/exams')}
-                        className="hidden sm:block text-sm text-on-surface-variant hover:text-primary font-medium"
-                    >
-                        Learner view
-                    </button>
                     <button
                         type="button"
                         onClick={() => (onNewExam ? onNewExam() : navigate('/admin/exams/new'))}

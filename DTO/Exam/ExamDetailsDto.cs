@@ -7,6 +7,8 @@ namespace TestAPI.DTO.Exam
     public string? Context { get; set; }
     public int DurationInMinutes { get; set; }
     public int NumberOfQuestions { get; set; }
+    public int AttemptCount { get; set; }
+    public bool IsMostPopular { get; set; }
   }
 }
 

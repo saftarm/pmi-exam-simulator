@@ -1,40 +1,71 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { getSettings, saveSettings } from '../../services/adminLocalSettings';
+import { getSettings, updateSettings } from '../../services/adminSettingsService';
+import { FormSkeleton } from '../../components/loading';
 
 export default function AdminSettingsPage() {
-    const [settings, setSettings] = useState(() => getSettings());
+    const [settings, setSettings] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        getSettings()
+            .then(setSettings)
+            .catch(() => setError('Failed to load settings.'))
+            .finally(() => setLoading(false));
+    }, []);
 
     const update = (field, value) => {
         setSettings((s) => ({ ...s, [field]: value }));
         setSaved(false);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        saveSettings(settings);
-        setSaved(true);
+        setSaving(true);
+        setError(null);
+        try {
+            const updated = await updateSettings(settings);
+            setSettings(updated);
+            setSaved(true);
+        } catch (err) {
+            setError(err.response?.data?.title || err.message || 'Failed to save settings.');
+        } finally {
+            setSaving(false);
+        }
     };
+
+    if (loading) {
+        return (
+            <AdminLayout title="Settings">
+                <FormSkeleton fields={8} />
+            </AdminLayout>
+        );
+    }
+
+    if (!settings) {
+        return (
+            <AdminLayout title="Settings">
+                <p className="text-red-600">{error || 'Settings unavailable.'}</p>
+            </AdminLayout>
+        );
+    }
 
     return (
         <AdminLayout title="Settings">
-            <div className="mb-lg p-md bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-                Local preferences are stored in your browser only and are not synced to the server.
-            </div>
+            <p className="mb-lg text-sm text-on-surface-variant">
+                Platform settings are stored on the server and apply to all users.
+            </p>
 
-            <div className="mb-lg p-md bg-surface-container-low border border-outline-variant rounded-lg text-sm text-on-surface-variant">
-                <p className="font-bold mb-sm">Planned — needs API</p>
-                <ul className="list-disc list-inside space-y-xs">
-                    <li>Persisted platform settings (site name, registration toggle, maintenance mode)</li>
-                    <li>Server-enforced exam defaults and pass threshold</li>
-                    <li>Email notification delivery</li>
-                </ul>
-            </div>
+            {error && (
+                <div className="mb-lg p-md bg-red-50 text-red-700 rounded-lg border border-red-200">{error}</div>
+            )}
 
             <form onSubmit={handleSubmit} className="max-w-2xl space-y-lg">
                 <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">Local preferences (not synced to server)</h2>
+                    <h2 className="font-headline-sm text-headline-sm font-bold">General</h2>
                     <div>
                         <label className="block text-sm font-bold mb-sm">Site name</label>
                         <input
@@ -59,7 +90,7 @@ export default function AdminSettingsPage() {
                             onChange={(e) => update('allowRegistration', e.target.checked)}
                             className="rounded border-outline-variant"
                         />
-                        <span className="text-sm font-medium">Allow new user registration (UI preference only)</span>
+                        <span className="text-sm font-medium">Allow new user registration</span>
                     </label>
                     <label className="flex items-center gap-md cursor-pointer">
                         <input
@@ -68,12 +99,12 @@ export default function AdminSettingsPage() {
                             onChange={(e) => update('maintenanceMode', e.target.checked)}
                             className="rounded border-outline-variant"
                         />
-                        <span className="text-sm font-medium">Maintenance mode (UI preference only)</span>
+                        <span className="text-sm font-medium">Maintenance mode</span>
                     </label>
                 </section>
 
                 <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">Exam defaults (local)</h2>
+                    <h2 className="font-headline-sm text-headline-sm font-bold">Exam defaults</h2>
                     <div>
                         <label className="block text-sm font-bold mb-sm">Default exam duration (minutes)</label>
                         <input
@@ -98,7 +129,8 @@ export default function AdminSettingsPage() {
                 </section>
 
                 <section className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg space-y-md">
-                    <h2 className="font-headline-sm text-headline-sm font-bold">Notifications (local)</h2>
+                    <h2 className="font-headline-sm text-headline-sm font-bold">Notifications</h2>
+                    <p className="text-xs text-on-surface-variant">Flags are stored for future email delivery integration.</p>
                     <label className="flex items-center gap-md cursor-pointer">
                         <input
                             type="checkbox"
@@ -122,12 +154,13 @@ export default function AdminSettingsPage() {
                 <div className="flex items-center gap-md">
                     <button
                         type="submit"
-                        className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold"
+                        disabled={saving}
+                        className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold disabled:opacity-50"
                     >
-                        Save local preferences
+                        {saving ? 'Saving…' : 'Save settings'}
                     </button>
                     {saved && (
-                        <span className="text-sm text-green-600 font-medium">Saved in this browser.</span>
+                        <span className="text-sm text-green-600 font-medium">Saved to server.</span>
                     )}
                 </div>
             </form>

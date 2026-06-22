@@ -48,5 +48,12 @@ namespace TestAPI.Entities
         {
             Status = status;
         }
+
+        public void UpdateProfile(string displayName, string firstName, string email)
+        {
+            DisplayName = displayName;
+            FirstName = firstName;
+            Email = email;
+        }
     }
 }

@@ -1,23 +1,49 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchCurrentUser } from '../services/authService';
+import { fetchCurrentUser, updateProfile, formatApiErrors } from '../services/authService';
 import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
 import StatusBadge from '../components/admin/StatusBadge';
 import { formatDate, getInitials } from '../utils/userDisplay';
-import { ProfileSkeleton, ContentReveal } from '../components/loading';
+import { ProfileSkeleton, ContentReveal, LoadingButton } from '../components/loading';
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState(null);
+    const [form, setForm] = useState({ displayName: '', firstName: '', email: '' });
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [saved, setSaved] = useState(false);
 
     useEffect(() => {
         fetchCurrentUser()
-            .then(setProfile)
+            .then((data) => {
+                setProfile(data);
+                setForm({
+                    displayName: data.displayName || '',
+                    firstName: data.firstName || '',
+                    email: data.email || '',
+                });
+            })
             .catch(() => setError('Failed to load profile.'))
             .finally(() => setLoading(false));
     }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        setError(null);
+        setSaved(false);
+        try {
+            const updated = await updateProfile(form);
+            setProfile(updated);
+            setSaved(true);
+        } catch (err) {
+            setError(formatApiErrors(err));
+        } finally {
+            setSaving(false);
+        }
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-[#F4F5F7]">
@@ -27,7 +53,7 @@ export default function ProfilePage() {
                 <h1 className="font-headline-xl text-headline-xl text-primary mb-xl">Your Profile</h1>
 
                 {loading && <ProfileSkeleton />}
-                {error && <p className="text-red-600 loading-enter">{error}</p>}
+                {error && !profile && <p className="text-red-600 loading-enter">{error}</p>}
 
                 <ContentReveal show={!!profile}>
                     <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-xl">
@@ -41,15 +67,48 @@ export default function ProfilePage() {
                             </div>
                         </div>
 
-                        <dl className="space-y-md text-sm">
-                            <div className="flex justify-between border-b border-outline-variant pb-md">
-                                <dt className="text-on-surface-variant">Email</dt>
-                                <dd className="font-medium">{profile.email}</dd>
+                        <form onSubmit={handleSubmit} className="space-y-md text-sm mb-xl">
+                            <div>
+                                <label className="block text-on-surface-variant mb-xs">Display name</label>
+                                <input
+                                    value={form.displayName}
+                                    onChange={(e) => setForm({ ...form, displayName: e.target.value })}
+                                    className="w-full border border-outline-variant rounded-lg px-md py-sm"
+                                    required
+                                />
                             </div>
-                            <div className="flex justify-between border-b border-outline-variant pb-md">
-                                <dt className="text-on-surface-variant">First name</dt>
-                                <dd className="font-medium">{profile.firstName || '—'}</dd>
+                            <div>
+                                <label className="block text-on-surface-variant mb-xs">First name</label>
+                                <input
+                                    value={form.firstName}
+                                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                                    className="w-full border border-outline-variant rounded-lg px-md py-sm"
+                                    required
+                                />
                             </div>
+                            <div>
+                                <label className="block text-on-surface-variant mb-xs">Email</label>
+                                <input
+                                    type="email"
+                                    value={form.email}
+                                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                    className="w-full border border-outline-variant rounded-lg px-md py-sm"
+                                    required
+                                />
+                            </div>
+                            {error && profile && <p className="text-red-600 text-sm">{error}</p>}
+                            <LoadingButton
+                                type="submit"
+                                loading={saving}
+                                loadingText="Saving…"
+                                className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold disabled:opacity-50"
+                            >
+                                Save profile
+                            </LoadingButton>
+                            {saved && <p className="text-green-600 text-sm">Profile updated.</p>}
+                        </form>
+
+                        <dl className="space-y-md text-sm border-t border-outline-variant pt-md">
                             <div className="flex justify-between border-b border-outline-variant pb-md">
                                 <dt className="text-on-surface-variant">Role</dt>
                                 <dd className="font-medium">{profile.role}</dd>
@@ -75,12 +134,8 @@ export default function ProfilePage() {
                             </div>
                         </dl>
 
-                        <p className="mt-xl text-xs text-on-surface-variant">
-                            Profile is read-only. Contact an administrator to update your account.
-                        </p>
-
                         <Link
-                            to="/progress"
+                            to="/"
                             className="mt-lg inline-block text-secondary-container font-bold text-sm hover:underline"
                         >
                             View your progress →

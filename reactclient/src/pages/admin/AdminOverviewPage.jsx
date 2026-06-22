@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { StatCard } from '../../components/admin/StatusBadge';
 import StatusBadge from '../../components/admin/StatusBadge';
 import Icon from '../../components/Icon';
-import { getAllExams } from '../../services/adminExamService';
+import { getAllExams, getExamOverviewStats } from '../../services/adminExamService';
 import { getUserCount, getUsers } from '../../services/adminUserService';
 import { isPublishedExam } from '../../utils/examStatus';
 import { formatDate, getInitials } from '../../utils/userDisplay';
@@ -13,6 +13,7 @@ import { TableSkeleton } from '../../components/loading';
 export default function AdminOverviewPage() {
     const navigate = useNavigate();
     const [exams, setExams] = useState([]);
+    const [examStats, setExamStats] = useState([]);
     const [totalUsers, setTotalUsers] = useState(0);
     const [recentUsers, setRecentUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -20,11 +21,13 @@ export default function AdminOverviewPage() {
     useEffect(() => {
         Promise.all([
             getAllExams().catch(() => []),
+            getExamOverviewStats().catch(() => []),
             getUserCount().catch(() => 0),
             getUsers({ pageNumber: 1, pageSize: 6 }).catch(() => ({ items: [] })),
         ])
-            .then(([examData, count, usersData]) => {
+            .then(([examData, stats, count, usersData]) => {
                 setExams(examData);
+                setExamStats(stats);
                 setTotalUsers(count);
                 setRecentUsers(usersData.items || []);
             })
@@ -33,6 +36,16 @@ export default function AdminOverviewPage() {
 
     const activeExams = exams.filter(isPublishedExam).length;
     const draftExams = exams.length - activeExams;
+
+    const rankedStats = useMemo(
+        () => examStats.map((row, index) => ({ ...row, rank: index + 1 })),
+        [examStats],
+    );
+
+    const maxAttempts = useMemo(
+        () => Math.max(...examStats.map((s) => s.attemptCount), 1),
+        [examStats],
+    );
 
     return (
         <AdminLayout title="Dashboard Overview">
@@ -79,12 +92,77 @@ export default function AdminOverviewPage() {
                 />
             </div>
 
+            <div className="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden mb-xl">
+                <div className="p-lg border-b border-outline-variant">
+                    <h2 className="font-headline-sm text-headline-sm font-bold">Exam Performance</h2>
+                    <p className="text-xs text-on-surface-variant mt-xs">
+                        Popularity, average score, and unique learners per exam (completed sessions only)
+                    </p>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+                            <tr>
+                                <th className="px-lg py-md font-semibold">Rank</th>
+                                <th className="px-lg py-md font-semibold">Exam</th>
+                                <th className="px-lg py-md font-semibold">Popularity</th>
+                                <th className="px-lg py-md font-semibold">Attempts</th>
+                                <th className="px-lg py-md font-semibold">Learners</th>
+                                <th className="px-lg py-md font-semibold">Avg. Score</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-outline-variant">
+                            {loading ? (
+                                <TableSkeleton rows={4} columns={6} />
+                            ) : rankedStats.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="px-lg py-xl text-center text-on-surface-variant">
+                                        No exam attempt data yet.
+                                    </td>
+                                </tr>
+                            ) : (
+                                rankedStats.map((row) => (
+                                    <tr key={row.examId} className="hover:bg-surface-container-low/50">
+                                        <td className="px-lg py-md font-bold text-on-surface-variant">#{row.rank}</td>
+                                        <td className="px-lg py-md font-medium">{row.examTitle}</td>
+                                        <td className="px-lg py-md">
+                                            <div className="flex items-center gap-sm min-w-[120px]">
+                                                <div className="flex-1 h-2 bg-surface-container-low rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-secondary-container rounded-full transition-all"
+                                                        style={{
+                                                            width: `${(row.attemptCount / maxAttempts) * 100}%`,
+                                                        }}
+                                                    />
+                                                </div>
+                                                <span className="text-xs text-on-surface-variant w-8 text-right">
+                                                    {row.attemptCount > 0
+                                                        ? Math.round((row.attemptCount / maxAttempts) * 100)
+                                                        : 0}%
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-lg py-md">{row.attemptCount}</td>
+                                        <td className="px-lg py-md">{row.uniqueUsersCount}</td>
+                                        <td className="px-lg py-md">
+                                            <span className="font-bold text-primary">
+                                                {Number(row.averageScore).toFixed(1)}%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
                 <div className="lg:col-span-2 bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
                     <div className="p-lg border-b border-outline-variant flex justify-between items-center">
                         <div>
                             <h2 className="font-headline-sm text-headline-sm font-bold">Recent Registrations</h2>
-                            <p className="text-xs text-on-surface-variant mt-xs">From GET /api/admin/users</p>
+                            <p className="text-xs text-on-surface-variant mt-xs">Latest user sign-ups</p>
                         </div>
                         <Link to="/admin/analytics" className="text-secondary-container text-sm font-bold hover:underline">
                             View reports
@@ -95,7 +173,7 @@ export default function AdminOverviewPage() {
                             <thead className="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
                                 <tr>
                                     <th className="px-lg py-md font-semibold">User</th>
-                                    <th className="px-lg py-md font-semibold">Action</th>
+                                    <th className="px-lg py-md font-semibold">Email</th>
                                     <th className="px-lg py-md font-semibold">Joined</th>
                                     <th className="px-lg py-md font-semibold">Status</th>
                                 </tr>
@@ -120,7 +198,7 @@ export default function AdminOverviewPage() {
                                                     <span className="font-medium">{user.displayName}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-lg py-md text-on-surface-variant">Registered</td>
+                                            <td className="px-lg py-md text-on-surface-variant">{user.email}</td>
                                             <td className="px-lg py-md text-on-surface-variant text-sm">
                                                 {formatDate(user.createdAt)}
                                             </td>
@@ -144,72 +222,31 @@ export default function AdminOverviewPage() {
                     </div>
                 </div>
 
-                <div className="space-y-lg">
-                    <div className="bg-white p-lg rounded-xl border border-outline-variant shadow-sm">
-                        <h2 className="font-headline-sm text-headline-sm font-bold mb-lg">Quick Actions</h2>
-                        <div className="grid grid-cols-2 gap-md">
-                            <button
-                                type="button"
-                                onClick={() => navigate('/admin/exams/new')}
-                                className="flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group"
-                            >
-                                <Icon name="add_circle" className="text-secondary-container mb-sm group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold">Create Exam</span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/admin/users')}
-                                className="flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group"
-                            >
-                                <Icon name="person_add" className="text-secondary-container mb-sm group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold">Add User</span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/admin/categories')}
-                                className="flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group"
-                            >
-                                <Icon name="category" className="text-secondary-container mb-sm group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold">Categories</span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/admin/questions')}
-                                className="flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group"
-                            >
-                                <Icon name="library_books" className="text-secondary-container mb-sm group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold">Question Pool</span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/admin/settings')}
-                                className="flex flex-col items-center justify-center p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group"
-                            >
-                                <Icon name="settings" className="text-secondary-container mb-sm group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold">Settings</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="bg-primary p-lg rounded-xl text-white shadow-lg relative overflow-hidden">
-                        <div className="relative z-10">
-                            <h2 className="font-headline-sm text-headline-sm font-bold mb-sm">System Status</h2>
-                            <p className="text-sm opacity-80 mb-lg">
-                                {activeExams} published exam{activeExams !== 1 ? 's' : ''} live for learners.
-                            </p>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/admin/analytics')}
-                                className="w-full bg-secondary-container hover:bg-secondary text-white py-sm rounded-lg font-bold text-sm transition-colors"
-                            >
-                                Open Reports
-                            </button>
-                        </div>
-                        <Icon
-                            name="analytics"
-                            className="absolute -right-4 -bottom-4 opacity-10"
-                            style={{ fontSize: 120 }}
-                        />
+                <div className="bg-white p-lg rounded-xl border border-outline-variant shadow-sm h-fit">
+                    <h2 className="font-headline-sm text-headline-sm font-bold mb-lg">Quick Actions</h2>
+                    <div className="grid grid-cols-1 gap-md">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/admin/users')}
+                            className="flex items-center gap-md p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group text-left"
+                        >
+                            <Icon name="person_add" className="text-secondary-container group-hover:scale-110 transition-transform" />
+                            <div>
+                                <span className="text-sm font-bold block">Add User</span>
+                                <span className="text-xs text-on-surface-variant">Manage learner accounts</span>
+                            </div>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/admin/questions')}
+                            className="flex items-center gap-md p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group text-left"
+                        >
+                            <Icon name="library_books" className="text-secondary-container group-hover:scale-110 transition-transform" />
+                            <div>
+                                <span className="text-sm font-bold block">Question Pool</span>
+                                <span className="text-xs text-on-surface-variant">Import or edit questions</span>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -44,7 +44,7 @@ namespace TestAPI.Controllers
     }
 
     [Authorize(Policy = "AdminOnly")]
-    [HttpPost("api/domains")]
+    [HttpPost("/api/domains")]
 
     public async Task<ActionResult<CategoryDto>> Create(CreateDomainDto dto)
     {
@@ -54,7 +54,7 @@ namespace TestAPI.Controllers
 
     // Update Domain
     [Authorize(Policy = "AdminOnly")]
-    [HttpPut("api/domains/{id}")]
+    [HttpPut("/api/domains/{id}")]
 
     public async Task<IActionResult> Update(Guid id, UpdateDomainDto dto)
     {

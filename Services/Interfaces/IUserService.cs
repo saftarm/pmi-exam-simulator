@@ -14,5 +14,6 @@ namespace TestAPI.Services.Interfaces
         Task<Result> UpdateStatusAsync(Guid id, UpdateUserStatusRequest request, Guid actingUserId, CancellationToken ct);
         Task<Result<int>> GetTotalCountAsync(CancellationToken ct);
         Task<Result<UserStatsDto>> GetStatsAsync(CancellationToken ct);
+        Task<Result<UserDto>> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken ct);
     }
 }

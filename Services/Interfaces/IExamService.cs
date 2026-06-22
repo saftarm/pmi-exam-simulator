@@ -25,5 +25,6 @@ namespace TestAPI.Services.Interfaces
         IEnumerable<UserExamResponseDto> responses);
     Task<Result> UpdateAsync(Guid id, UpdateExamRequest request);
     Task DeleteRangeAsync(IEnumerable<Guid> examIds);
+    Task<Result<IReadOnlyList<ExamOverviewStatsDto>>> GetExamOverviewStatsAsync(CancellationToken ct = default);
   }
 }

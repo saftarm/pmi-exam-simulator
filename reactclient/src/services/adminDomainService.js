@@ -5,7 +5,8 @@ export async function getAllDomains() {
     return Array.isArray(data) ? data : [];
 }
 
-export async function getDomainsByExam(examId) {    const { data } = await api.get('/api/domains/withTitles', { params: { examId } });
+export async function getDomainsByExam(examId) {
+    const { data } = await api.get('/api/domains/withTitles', { params: { examId } });
     const entries = normalizeDomainEntries(data);
     if (entries.length === 0) return [];
 
@@ -34,16 +35,14 @@ export async function getDomain(id) {
     return data;
 }
 
+export async function createDomain(examId, payload) {
+    await api.post('/api/domains', { examId, ...payload });
+}
+
 export async function updateDomain(id, payload) {
-    await api.put(`api/domains/${id}`, payload);
+    await api.put(`/api/domains/${id}`, payload);
 }
 
 export async function deleteDomain(id) {
-    await api.delete(`api/domains/${id}`);
-}
-
-// Deferred: POST /api/domains requires examId on CreateDomainDto (backend change).
-// Do not call until DomainService associates new domains with an exam.
-export async function createDomain(_payload) {
-    throw new Error('Adding domains to an existing exam requires a backend update (examId on POST /api/domains).');
+    await api.delete(`/api/domains/${id}`);
 }

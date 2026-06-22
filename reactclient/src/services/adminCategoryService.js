@@ -11,11 +11,11 @@ export async function getCategory(id) {
 }
 
 export async function createCategory(payload) {
-    await api.post('api/categories', payload);
+    await api.post('/api/categories', payload);
 }
 
 export async function updateCategory(payload) {
-    await api.put(`api/categories/${payload.categoryId}`, payload);
+    await api.put(`/api/categories/${payload.categoryId}`, payload);
 }
 
 export async function deleteCategory(id) {

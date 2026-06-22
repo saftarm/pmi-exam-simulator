@@ -169,7 +169,7 @@ export default function ExamSessionPage() {
                                 Back to Exams
                             </button>
                             <Link
-                                to="/progress"
+                                to="/"
                                 className="block w-full border border-outline-variant text-primary font-label-lg py-md rounded-lg hover:bg-surface-container-low transition-all"
                             >
                                 View full progress

@@ -44,7 +44,7 @@ namespace TestAPI.Controllers
 
     // Update Exam 
     [Authorize(Policy = "AdminOnly")]
-    [HttpPatch("api/exams/{id}/update")]
+    [HttpPatch("/api/exams/{id}/update")]
     public async Task<IActionResult> UpdateExam([FromRoute] Guid id, UpdateExamRequest request)
     {
       var result = await _examService.UpdateAsync(id, request);
@@ -53,7 +53,7 @@ namespace TestAPI.Controllers
 
     // Hard Delete Exam
     [Authorize(Policy = "AdminOnly")]
-    [HttpDelete("api/exams/{id}")]
+    [HttpDelete("/api/exams/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
       await _examService.DeleteAsync(id);
@@ -63,7 +63,7 @@ namespace TestAPI.Controllers
 
     // Publish Exam by Id
     [Authorize(Policy = "AdminOnly")]
-    [HttpPost("api/exams/{id}/publish")]
+    [HttpPost("/api/exams/{id}/publish")]
     public async Task<IActionResult> PublishExam(Guid id)
     {
       var result = await _examService.PublishExam(id);
@@ -88,6 +88,14 @@ namespace TestAPI.Controllers
       // validation
       var result = await _examService.CreateExamAsync(dto);
       return result.IsSuccess ? Created() : result.ToActionResult();
+    }
+
+    [Authorize(Policy = "AdminOnly")]
+    [HttpGet("/api/admin/exams/stats")]
+    public async Task<IActionResult> GetExamOverviewStats(CancellationToken ct)
+    {
+      var result = await _examService.GetExamOverviewStatsAsync(ct);
+      return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
     }
   }
 }

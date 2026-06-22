@@ -1,11 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import UserMenu from './UserMenu';
+import Icon from './Icon';
 
 const NAV_LINKS = [
     { label: 'Home', to: '/' },
     { label: 'Exams', to: '/exams' },
-    { label: 'Progress', to: '/progress', authOnly: true },
-    { label: 'About', to: '#about' },
+    { label: 'About', to: '/about' },
 ];
 
 export default function AppHeader({
@@ -14,7 +15,7 @@ export default function AppHeader({
     onExamsClick,
 }) {
     const navigate = useNavigate();
-    const { isAuthenticated, isAdmin, logout } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     const isExamHeader = variant === 'exam';
 
@@ -23,14 +24,23 @@ export default function AppHeader({
     }
 
     return (
-        <header className="bg-surface dark:bg-surface-container-low border-b border-outline-variant dark:border-outline w-full h-16 sticky top-0 z-50">
+        <header
+            className={`w-full h-16 sticky top-0 z-50 border-b transition-colors duration-200 ${
+                isAuthenticated
+                    ? 'bg-white border-outline-variant shadow-sm'
+                    : 'bg-surface dark:bg-surface-container-low border-outline-variant dark:border-outline'
+            }`}
+        >
             <nav className="flex justify-between items-center px-margin-desktop max-w-container-max mx-auto h-full">
-                <Link
-                    to="/"
-                    className="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight"
-                >
-                    PMI Exam Simulator
-                </Link>
+                <div className="flex items-center gap-md">
+                    <Link
+                        to="/"
+                        className="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight"
+                    >
+                        PMI Exam Simulator
+                    </Link>
+                </div>
+
                 <div className="hidden md:flex items-center gap-xl h-full">
                     {NAV_LINKS.filter((link) => !link.authOnly || isAuthenticated).map((link) => {
                         const isActive = link.label === activeLink;
@@ -55,54 +65,26 @@ export default function AppHeader({
                         );
                     })}
                 </div>
+
                 <div className="flex items-center gap-md">
                     {isAuthenticated ? (
-                        <>
-                            {isAdmin && (
-                                <button
-                                    type="button"
-                                    onClick={() => navigate('/admin')}
-                                    className="hidden md:block font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-md py-sm rounded"
-                                >
-                                    Admin
-                                </button>
-                            )}
-                            <button
-                                type="button"
-                                onClick={() => navigate('/profile')}
-                                className="hidden md:block font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-md py-sm rounded"
-                            >
-                                Profile
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/exams')}
-                                className="hidden md:block font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors px-md py-sm rounded"
-                            >
-                                My Exams
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => { logout(); navigate('/'); }}
-                                className="font-label-lg text-label-lg px-md py-sm rounded-lg text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors"
-                            >
-                                Log Out
-                            </button>
-                        </>
+                        <UserMenu />
                     ) : (
                         <>
                             <button
                                 type="button"
                                 onClick={() => navigate('/login')}
-                                className="hidden sm:block text-on-surface-variant font-label-lg px-lg py-sm hover:bg-surface-container-low transition-colors duration-200"
+                                className="hidden sm:flex items-center gap-xs text-on-surface-variant font-label-lg px-lg py-sm hover:bg-surface-container-low rounded-lg transition-colors duration-200"
                             >
+                                <Icon name="login" style={{ fontSize: 18 }} />
                                 Log In
                             </button>
                             <button
                                 type="button"
                                 onClick={() => navigate('/login')}
-                                className="bg-secondary-container text-on-secondary-container font-label-lg px-lg py-sm rounded transition-all duration-200 active:scale-95 shadow-md hover:brightness-110"
+                                className="bg-secondary-container text-on-secondary-container font-label-lg px-lg py-sm rounded-lg transition-all duration-200 active:scale-95 shadow-md hover:brightness-110 flex items-center gap-xs"
                             >
+                                <Icon name="rocket_launch" style={{ fontSize: 18 }} />
                                 Get Started
                             </button>
                         </>

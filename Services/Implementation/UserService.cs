@@ -180,6 +180,31 @@ namespace TestAPI.Services.Implementation
             return Result<UserStatsDto>.Success(stats);
         }
 
+        public async Task<Result<UserDto>> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken ct)
+        {
+            var validationResult = await _validatorResolver.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                return Result<UserDto>.Failure(Errors.ValidationFailed);
+            }
+
+            var user = await _userRepository.GetByIdOrDefaultAsync(userId);
+            if (user == null)
+            {
+                return Result<UserDto>.Failure(Errors.UserNotFoundById);
+            }
+
+            if (!await _userRepository.IsEmailUniqueExceptUserAsync(request.Email, userId, ct))
+            {
+                return Result<UserDto>.Failure(Errors.EmailAlreadyExists);
+            }
+
+            user.UpdateProfile(request.DisplayName, request.FirstName, request.Email);
+            await _userRepository.UpdateAsync(user, ct);
+
+            return Result<UserDto>.Success(MapToDto(user));
+        }
+
         private static UserDto MapToDto(User user) => new()
         {
             Id = user.Id,
@@ -198,7 +223,8 @@ namespace TestAPI.Services.Implementation
             DisplayName = user.DisplayName,
             Email = user.Email,
             Role = user.Role,
-            Status = user.Status
+            Status = user.Status,
+            CreatedAt = user.CreatedAt,
         };
     }
 }

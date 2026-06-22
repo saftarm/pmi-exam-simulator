@@ -24,10 +24,12 @@ namespace TestAPI.Entities
     public ICollection<UserExamResponse> UserExamResponses { get; set; } = [];
 
 
-   public Domain(string title, string description, int weight ) {
+   public Domain(string title, string description, int weight, Guid examId = default)
+   {
      Title = title;
      Description = description;
      Weight = weight;
+     ExamId = examId;
    }
 
 

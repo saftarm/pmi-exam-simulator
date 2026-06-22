@@ -1,10 +1,9 @@
-namespace TestAPI.Models
+namespace TestAPI.Models;
+
+public class AdminSeedSettings
 {
-    public class AdminSeedSettings
-    {
-        public string UserName { get; set; } = "admin";
-        public string Password { get; set; } = "Admin123!";
-        public string Email { get; set; } = "admin@pmi.local";
-        public string FirstName { get; set; } = "Admin";
-    }
+    public string UserName { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
 }

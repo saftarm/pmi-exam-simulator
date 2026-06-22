@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getPublishedExams, startSession } from '../services/examService';
+import { getDomainPerformances } from '../services/progressService';
 import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
 import ExamCard from '../components/ExamCard';
@@ -26,6 +27,8 @@ export default function ExamsDashboardPage() {
     const [searchFilter, setSearchFilter] = useState('');
     const [sortBy, setSortBy] = useState('title-asc');
     const [showFilters, setShowFilters] = useState(false);
+    const [performances, setPerformances] = useState([]);
+    const [perfLoading, setPerfLoading] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -44,6 +47,29 @@ export default function ExamsDashboardPage() {
         fetchExams();
         return () => { cancelled = true; };
     }, []);
+
+    useEffect(() => {
+        if (!user?.userId) {
+            setPerformances([]);
+            return;
+        }
+        setPerfLoading(true);
+        getDomainPerformances(user.userId)
+            .then(setPerformances)
+            .catch(() => setPerformances([]))
+            .finally(() => setPerfLoading(false));
+    }, [user?.userId]);
+
+    const performanceSummary = useMemo(() => {
+        if (!performances.length) return null;
+        const examIds = new Set(performances.map((p) => p.examId));
+        const avgScore = performances.reduce((sum, p) => sum + (p.percentageScore ?? 0), 0) / performances.length;
+        return {
+            examsAttempted: examIds.size,
+            domainsTracked: performances.length,
+            averageScore: Math.round(avgScore),
+        };
+    }, [performances]);
 
     const displayedExams = useMemo(() => {
         let list = [...exams];
@@ -86,8 +112,6 @@ export default function ExamsDashboardPage() {
             setStartingId(null);
         }
     };
-
-    const totalQuestions = exams.reduce((a, e) => a + (e.numberOfQuestions ?? 0), 0);
 
     return (
         <div className="font-body-md text-on-surface antialiased min-h-screen flex flex-col bg-[#F4F5F7]">
@@ -147,11 +171,10 @@ export default function ExamsDashboardPage() {
 
                 <ContentReveal show={!loading && !error}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-xl">
-                        {displayedExams.map((exam, index) => (
+                        {displayedExams.map((exam) => (
                             <ExamCard
                                 key={exam.id}
                                 exam={exam}
-                                index={index}
                                 onStart={handleStart}
                                 starting={startingId === exam.id}
                             />
@@ -171,18 +194,41 @@ export default function ExamsDashboardPage() {
                     <h2 className="font-headline-lg text-headline-lg text-primary mb-lg">Your Performance</h2>
                     <div className="bg-white rounded-xl border border-outline-variant p-xl flex flex-col md:flex-row justify-between items-center gap-lg">
                         <div>
-                            <p className="text-on-surface-variant mb-sm">
-                                {exams.length} exam{exams.length !== 1 ? 's' : ''} available · {totalQuestions} total questions in catalog
-                            </p>
-                            <p className="text-sm text-on-surface-variant">
-                                Domain scores appear after you complete a session.
-                            </p>
+                            {!user?.userId ? (
+                                <>
+                                    <p className="text-on-surface-variant mb-sm">Sign in to track your exam progress.</p>
+                                    <p className="text-sm text-on-surface-variant">
+                                        Domain scores appear after you complete a session.
+                                    </p>
+                                </>
+                            ) : perfLoading ? (
+                                <p className="text-on-surface-variant">Loading your progress…</p>
+                            ) : performanceSummary ? (
+                                <>
+                                    <p className="text-on-surface-variant mb-sm">
+                                        {performanceSummary.examsAttempted} exam{performanceSummary.examsAttempted !== 1 ? 's' : ''} attempted ·{' '}
+                                        {performanceSummary.domainsTracked} domain{performanceSummary.domainsTracked !== 1 ? 's' : ''} tracked ·{' '}
+                                        {performanceSummary.averageScore}% average score
+                                    </p>
+                                    <p className="text-sm text-on-surface-variant">
+                                        Based on completed sessions from your progress data.
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="text-on-surface-variant mb-sm">No completed sessions yet.</p>
+                                    <p className="text-sm text-on-surface-variant">
+                                        Launch an exam to start tracking domain-level performance.
+                                    </p>
+                                </>
+                            )}
                         </div>
                         <Link
-                            to="/progress"
+                            to={user?.userId ? '/' : '/login'}
+                            state={user?.userId ? undefined : { from: { pathname: '/' } }}
                             className="bg-secondary-container text-white px-lg py-md rounded-lg font-bold flex items-center gap-sm hover:brightness-110"
                         >
-                            View progress
+                            {user?.userId ? 'View progress' : 'Sign in'}
                             <Icon name="arrow_forward" style={{ fontSize: 18 }} />
                         </Link>
                     </div>

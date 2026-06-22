@@ -8,7 +8,7 @@ using TestAPI.Extensions;
 using TestAPI.Models;
 using TestAPI.Services.Interfaces;
 using TestAPI.Validation;
-using TestAPI.Validation.Authentication;
+using TestAPI.DTO.User;
 
 namespace TestAPI.Controllers
 {
@@ -65,7 +65,7 @@ namespace TestAPI.Controllers
             return Ok(tokens);
         }
 
-        [HttpPost("api/auth/refresh")]
+        [HttpPost("/api/auth/refresh")]
         public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request)
         {
             return await _jwtService.RefreshToken(request);
@@ -82,6 +82,20 @@ namespace TestAPI.Controllers
             }
 
             var result = await _userService.GetByIdAsync(userId.Value, ct);
+            return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
+        }
+
+        [Authorize]
+        [HttpPatch("/api/auth/me")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await _userService.UpdateProfileAsync(userId.Value, request, ct);
             return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
         }
     }

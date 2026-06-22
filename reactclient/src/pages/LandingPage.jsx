@@ -1,8 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
 import Icon from '../components/Icon';
+import { getPublicStats } from '../services/publicStatsService';
+import { Skeleton } from '../components/loading';
 
 const FEATURES = [
     {
@@ -24,13 +27,27 @@ const FEATURES = [
         color: 'text-tertiary-fixed',
         bg: 'bg-tertiary-container/10',
         title: 'Performance Analytics',
-        text: 'Track domain-level scores after each session on your Progress dashboard — strengths and weaknesses across exam domains.',
+        text: 'Track domain-level scores after each session on your home dashboard — strengths and weaknesses across exam domains.',
     },
 ];
+
+function formatCount(n) {
+    if (n >= 1000) return `${Math.floor(n / 1000)}k+`;
+    return String(n);
+}
 
 export default function LandingPage() {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
+    const [stats, setStats] = useState(null);
+    const [statsLoading, setStatsLoading] = useState(true);
+
+    useEffect(() => {
+        getPublicStats()
+            .then(setStats)
+            .catch(() => setStats(null))
+            .finally(() => setStatsLoading(false));
+    }, []);
 
     const handleGetStarted = () => {
         if (isAuthenticated) navigate('/exams');
@@ -41,6 +58,14 @@ export default function LandingPage() {
         if (isAuthenticated) navigate('/exams');
         else navigate('/login', { state: { from: { pathname: '/exams' } } });
     };
+
+    const statTiles = stats
+        ? [
+              { num: formatCount(stats.totalQuestions), lbl: 'Realistic Questions' },
+              { num: String(stats.publishedExamCount), lbl: 'Published Exams' },
+              { num: formatCount(stats.totalUsers), lbl: 'Registered Users' },
+          ]
+        : [];
 
     return (
         <div className="bg-background text-on-surface font-body-md selection:bg-secondary-fixed-dim selection:text-on-secondary-container min-h-screen flex flex-col">
@@ -67,12 +92,12 @@ export default function LandingPage() {
                                 Start Free Practice Exam
                                 <Icon name="arrow_forward" />
                             </button>
-                            <button
-                                type="button"
+                            <Link
+                                to="/about"
                                 className="border border-primary-fixed/30 text-white font-label-lg px-xl py-4 rounded-lg hover:bg-white/5 transition-all flex items-center justify-center gap-sm"
                             >
-                                View Study Plans
-                            </button>
+                                Learn more
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -81,16 +106,25 @@ export default function LandingPage() {
             </header>
 
             <section className="bg-surface-container-lowest -mt-12 relative z-20 max-w-5xl mx-auto rounded-xl shadow-xl border border-outline-variant flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-outline-variant overflow-hidden mx-margin-mobile md:mx-auto">
-                {[
-                    { num: '1500+', lbl: 'Realistic Questions' },
-                    { num: '100%', lbl: 'Free To Start' },
-                    { num: '50k+', lbl: 'Active Users' },
-                ].map((s) => (
-                    <div key={s.lbl} className="flex-1 px-xl py-lg text-center bento-card-hover">
-                        <h3 className={`font-headline-xl text-headline-xl ${s.lbl === 'Realistic Questions' ? 'text-secondary' : 'text-primary'}`}>{s.num}</h3>
-                        <p className="font-label-lg text-on-surface-variant uppercase tracking-wider">{s.lbl}</p>
+                {statsLoading ? (
+                    [0, 1, 2].map((i) => (
+                        <div key={i} className="flex-1 px-xl py-lg text-center">
+                            <Skeleton className="h-10 w-24 mx-auto mb-sm" />
+                            <Skeleton className="h-4 w-32 mx-auto" />
+                        </div>
+                    ))
+                ) : statTiles.length > 0 ? (
+                    statTiles.map((s) => (
+                        <div key={s.lbl} className="flex-1 px-xl py-lg text-center bento-card-hover">
+                            <h3 className={`font-headline-xl text-headline-xl ${s.lbl === 'Realistic Questions' ? 'text-secondary' : 'text-primary'}`}>{s.num}</h3>
+                            <p className="font-label-lg text-on-surface-variant uppercase tracking-wider">{s.lbl}</p>
+                        </div>
+                    ))
+                ) : (
+                    <div className="flex-1 px-xl py-lg text-center text-on-surface-variant text-sm">
+                        Platform statistics are unavailable.
                     </div>
-                ))}
+                )}
             </section>
 
             <section className="py-32 bg-[#F4F5F7]" id="features">
@@ -131,52 +165,17 @@ export default function LandingPage() {
                                 </p>
                             </div>
                         </div>
-                        <div className="lg:col-span-4 grid grid-rows-2 gap-lg">
-                            <div className="bg-surface-container p-lg rounded-xl flex flex-col justify-between border border-outline-variant">
+                        <div className="lg:col-span-4 grid grid-rows-1 gap-lg">
+                            <div className="bg-surface-container p-lg rounded-xl flex flex-col justify-between border border-outline-variant h-full">
                                 <div>
                                     <Icon name="workspace_premium" className="text-secondary mb-sm" filled />
                                     <h4 className="font-headline-md text-headline-md text-primary mb-xs">Certified Feedback</h4>
                                     <p className="text-on-surface-variant text-body-md">Personalized insights based on your simulation results to target your study time.</p>
                                 </div>
-                                <span className="text-secondary font-label-lg flex items-center gap-xs">
+                                <Link to="/about" className="text-secondary font-label-lg flex items-center gap-xs mt-md">
                                     Learn More <Icon name="chevron_right" />
-                                </span>
+                                </Link>
                             </div>
-                            <div className="bg-primary-container text-white p-lg rounded-xl flex flex-col justify-between overflow-hidden relative">
-                                <div className="relative z-10">
-                                    <h4 className="font-headline-md text-headline-md mb-xs">Flashcards API</h4>
-                                    <p className="text-primary-fixed-dim text-body-md">Access 2,000+ terms and definitions on the go with our adaptive mobile app.</p>
-                                </div>
-                                <button type="button" className="relative z-10 w-fit text-white font-label-lg border-b border-white hover:text-secondary-fixed-dim transition-colors">
-                                    Download App
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section className="py-24 bg-[#F4F5F7] border-y border-outline-variant" id="about">
-                <div className="max-w-container-max mx-auto px-margin-desktop text-center">
-                    <div className="flex justify-center mb-lg gap-xs">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <Icon key={i} name="star" className="text-secondary" filled />
-                        ))}
-                    </div>
-                    <blockquote className="font-headline-lg text-headline-lg text-primary italic max-w-4xl mx-auto mb-xl">
-                        &quot;The simulation accuracy was incredible. I recognized multiple logic patterns in the actual PMP exam that I had mastered through this simulator. It&apos;s the ultimate prep tool.&quot;
-                    </blockquote>
-                    <div className="flex items-center justify-center gap-md">
-                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
-                            <img
-                                className="w-full h-full object-cover"
-                                alt="Sarah Jenkins"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuACe-1xkMdBw9bw5g-yCIKmwGi91u_maEvG15hCwktRyIVckl5vYlDoMSmOuZHqKdm2yX-cQLkKC2PktRtYqjNgy97DDBQCqzbVEALum7DmxJN6ygLrKJHZ8tgrILfq0Ih1_t1IyjH-6N5AG-g8zl11ZOuMmqljIOsFkce6iqGKyCDKMGSqGP8aHO4I2IMJjtGKiKCHdefhtPGBgoyExpEPTueGoZGKylJ92IgGDMNzDHQpCpTHQoBJb_qa4v_1Si8FiWBARf5RNyU"
-                            />
-                        </div>
-                        <div className="text-left">
-                            <p className="font-label-lg text-primary">Sarah Jenkins, PMP</p>
-                            <p className="text-label-sm text-on-surface-variant">Senior Project Lead at TechCorp</p>
                         </div>
                     </div>
                 </div>

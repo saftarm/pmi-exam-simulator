@@ -104,6 +104,23 @@ export async function register({ userName, password, firstName, displayName, ema
     await api.post('/api/auth/register', { userName, password, firstName, displayName, email });
 }
 
+export async function updateProfile(payload) {
+    const { data } = await api.patch('/api/auth/me', payload);
+    const profile = {
+        userId: data.id,
+        id: data.id,
+        userName: data.userName,
+        displayName: data.displayName,
+        email: data.email,
+        firstName: data.firstName,
+        role: data.role,
+        status: data.status,
+        createdAt: data.createdAt,
+    };
+    storeProfile(profile);
+    return profile;
+}
+
 export function logout() {
     clearTokens();
     localStorage.removeItem(USER_PROFILE_KEY);

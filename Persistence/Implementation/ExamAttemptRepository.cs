@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
+using TestAPI.DTO.Exam;
 using TestAPI.Entities;
+using TestAPI.Enums;
 using TestAPI.Persistence.Interfaces;
 
 namespace TestAPI.Persistence.Implementation
@@ -85,6 +87,42 @@ namespace TestAPI.Persistence.Implementation
     public async Task<bool> ExistsAsync(Guid id)
     {
       return await _context.ExamAttempts.AnyAsync(a => a.Id == id);
+    }
+
+    public async Task<IReadOnlyList<ExamOverviewStatsDto>> GetOverviewStatsAsync(CancellationToken ct = default)
+    {
+      var completedAttempts = _context.ExamAttempts
+          .AsNoTracking()
+          .Where(a => a.Status == AttemptStatus.Completed);
+
+      var stats = await (
+          from exam in _context.Exams.AsNoTracking()
+          join attempt in completedAttempts on exam.Id equals attempt.ExamId into attempts
+          select new ExamOverviewStatsDto
+          {
+            ExamId = exam.Id,
+            ExamTitle = exam.Title,
+            AttemptCount = attempts.Count(),
+            UniqueUsersCount = attempts.Select(a => a.UserId).Distinct().Count(),
+            AverageScore = attempts.Any()
+                ? attempts.Average(a => a.PercentageScore)
+                : 0m,
+          })
+          .OrderByDescending(s => s.AttemptCount)
+          .ThenBy(s => s.ExamTitle)
+          .ToListAsync(ct);
+
+      return stats;
+    }
+
+    public async Task<Dictionary<Guid, int>> GetCompletedAttemptCountsByExamAsync(CancellationToken ct = default)
+    {
+      return await _context.ExamAttempts
+          .AsNoTracking()
+          .Where(a => a.Status == AttemptStatus.Completed)
+          .GroupBy(a => a.ExamId)
+          .Select(g => new { ExamId = g.Key, Count = g.Count() })
+          .ToDictionaryAsync(x => x.ExamId, x => x.Count, ct);
     }
   }
 }

@@ -1,3 +1,4 @@
+using TestAPI.DTO.Exam;
 using TestAPI.Entities;
 
 namespace TestAPI.Persistence.Interfaces
@@ -15,5 +16,7 @@ namespace TestAPI.Persistence.Interfaces
     Task<IEnumerable<UserExamResponse>> GetResponsesAsync(Guid id);
     Task<IEnumerable<ExamAttempt>> GetAttemptsByExamAndUserIdAsync(Guid userId, Guid examId, CancellationToken ct);
     Task<bool> ExistsAsync(Guid id);
+    Task<IReadOnlyList<ExamOverviewStatsDto>> GetOverviewStatsAsync(CancellationToken ct = default);
+    Task<Dictionary<Guid, int>> GetCompletedAttemptCountsByExamAsync(CancellationToken ct = default);
   }
 }

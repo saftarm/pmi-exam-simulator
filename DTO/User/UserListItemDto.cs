@@ -9,5 +9,6 @@ namespace TestAPI.DTO.User
         public string Email { get; set; } = string.Empty;
         public UserRole Role { get; set; }
         public AccountStatus Status { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

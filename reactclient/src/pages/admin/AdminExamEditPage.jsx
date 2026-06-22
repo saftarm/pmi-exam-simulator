@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import Icon from '../../components/Icon';
 import { getExamDetails, updateExam } from '../../services/adminExamService';
-import { getDomainsByExam, updateDomain, deleteDomain } from '../../services/adminDomainService';
+import { getDomainsByExam, updateDomain, deleteDomain, createDomain } from '../../services/adminDomainService';
 import { FormSkeleton, LoadingButton } from '../../components/loading';
 
 export default function AdminExamEditPage() {
@@ -14,6 +14,7 @@ export default function AdminExamEditPage() {
     const [form, setForm] = useState({ durationInMinutes: 0, numberOfQuestions: 0 });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [addingDomain, setAddingDomain] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -70,6 +71,23 @@ export default function AdminExamEditPage() {
         setDomains((list) =>
             list.map((d) => (d.id === id ? { ...d, [field]: value } : d))
         );
+    };
+
+    const handleAddDomain = async () => {
+        setAddingDomain(true);
+        try {
+            await createDomain(examId, {
+                title: 'New domain',
+                description: '',
+                weight: 1,
+            });
+            const domainList = await getDomainsByExam(examId);
+            setDomains(domainList || []);
+        } catch (err) {
+            alert(err.message || 'Failed to add domain');
+        } finally {
+            setAddingDomain(false);
+        }
     };
 
     if (loading) {
@@ -137,16 +155,13 @@ export default function AdminExamEditPage() {
                     <h2 className="font-headline-sm text-headline-sm font-bold">Domains</h2>
                     <button
                         type="button"
-                        disabled
-                        title="Requires backend: examId on POST /api/domains"
-                        className="text-sm font-bold text-on-surface-variant opacity-50 cursor-not-allowed"
+                        onClick={handleAddDomain}
+                        disabled={addingDomain}
+                        className="text-sm font-bold text-secondary-container hover:underline disabled:opacity-50"
                     >
-                        + Add domain
+                        {addingDomain ? 'Adding…' : '+ Add domain'}
                     </button>
                 </div>
-                <p className="text-xs text-on-surface-variant mb-md">
-                    Adding domains to an existing exam requires a backend update (examId on POST /api/domains).
-                </p>
                 {domains.length === 0 ? (
                     <p className="text-on-surface-variant text-sm">No domains.</p>
                 ) : (

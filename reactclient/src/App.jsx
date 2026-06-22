@@ -1,10 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
 import ExamsDashboardPage from './pages/ExamsDashboardPage';
 import ExamSessionPage from './pages/ExamSessionPage';
 import ExamDetailPage from './pages/ExamDetailPage';
-import ProgressPage from './pages/ProgressPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminOverviewPage from './pages/admin/AdminOverviewPage';
 import AdminExamsPage from './pages/admin/AdminExamsPage';
@@ -28,7 +28,8 @@ function AdminRoutes({ children }) {
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<AuthPage />} />
             <Route
                 path="/exams"
@@ -58,7 +59,7 @@ function App() {
                 path="/progress"
                 element={
                     <ProtectedRoute>
-                        <ProgressPage />
+                        <Navigate to="/" replace />
                     </ProtectedRoute>
                 }
             />

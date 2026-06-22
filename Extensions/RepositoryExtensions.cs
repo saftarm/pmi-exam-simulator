@@ -15,6 +15,7 @@ namespace TestAPI.Extensions
             services.AddScoped<IDomainRepository, DomainRepository>();
             services.AddScoped<IExamAttemptRepository, ExamAttemptRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
             return services;
 
 

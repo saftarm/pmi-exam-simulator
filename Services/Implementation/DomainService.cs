@@ -82,8 +82,19 @@ namespace TestAPI.Services.Implementation
 
     public async Task CreateDomain(CreateDomainDto createDomainDto)
     { 
-      // validation
-      var newDomain = new Domain(createDomainDto.Title, createDomainDto.Description, createDomainDto.Weight);
+      if (createDomainDto.ExamId == Guid.Empty)
+      {
+        throw new ArgumentException("ExamId is required when creating a domain.");
+      }
+
+      var exam = await _examRepository.GetByIdAsync(createDomainDto.ExamId)
+          ?? throw new KeyNotFoundException("Exam not found.");
+
+      var newDomain = new Domain(
+          createDomainDto.Title,
+          createDomainDto.Description,
+          createDomainDto.Weight,
+          createDomainDto.ExamId);
       await _domainRepository.AddAsync(newDomain);
     }
 

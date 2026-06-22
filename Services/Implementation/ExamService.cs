@@ -187,12 +187,18 @@ namespace TestAPI.Services.Implementation
         return Result<ExamDetailsDto>.Failure(Errors.ExamNotFound);
       }
 
+      var attemptCounts = await _examAttemptRepository.GetCompletedAttemptCountsByExamAsync();
+      var attemptCount = attemptCounts.GetValueOrDefault(examId);
+
       var examDetailsDto = new ExamDetailsDto
       {
+        Id = examInDb.Id,
         Title = examInDb.Title,
         Context = examInDb.Context,
         NumberOfQuestions = examInDb.NumberOfQuestions,
-        DurationInMinutes = examInDb.DurationInMinutes
+        DurationInMinutes = examInDb.DurationInMinutes,
+        AttemptCount = attemptCount,
+        IsMostPopular = false,
       };
       return Result<ExamDetailsDto>.Success(examDetailsDto);
     }
@@ -212,14 +218,23 @@ namespace TestAPI.Services.Implementation
         return Result<IEnumerable<ExamDetailsDto>>.Failure(Errors.RangeOfRecordsNotFound);
       }
 
+      var attemptCounts = await _examAttemptRepository.GetCompletedAttemptCountsByExamAsync();
+      var maxAttempts = attemptCounts.Values.DefaultIfEmpty(0).Max();
+
       var examsDetailsDtos = paginatedExams.Select(
-          e => new ExamDetailsDto
+          e =>
           {
-            Id = e.Id,
-            Title = e.Title,
-            Context = e.Context,
-            DurationInMinutes = e.DurationInMinutes,
-            NumberOfQuestions = e.NumberOfQuestions
+            var count = attemptCounts.GetValueOrDefault(e.Id);
+            return new ExamDetailsDto
+            {
+              Id = e.Id,
+              Title = e.Title,
+              Context = e.Context,
+              DurationInMinutes = e.DurationInMinutes,
+              NumberOfQuestions = e.NumberOfQuestions,
+              AttemptCount = count,
+              IsMostPopular = maxAttempts > 0 && count == maxAttempts,
+            };
           });
       return Result<IEnumerable<ExamDetailsDto>>.Success(examsDetailsDtos);
     }
@@ -253,6 +268,12 @@ namespace TestAPI.Services.Implementation
       await _examRepository.UpdateAsync(exam);
 
       return Result.Success();
+    }
+
+    public async Task<Result<IReadOnlyList<ExamOverviewStatsDto>>> GetExamOverviewStatsAsync(CancellationToken ct = default)
+    {
+      var stats = await _examAttemptRepository.GetOverviewStatsAsync(ct);
+      return Result<IReadOnlyList<ExamOverviewStatsDto>>.Success(stats);
     }
   }
 }

@@ -20,6 +20,7 @@ namespace TestAPI.Data
     public DbSet<DomainPerformance> DomainPerformances { get; set; }
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<SiteSettings> SiteSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

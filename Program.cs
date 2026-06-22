@@ -1,7 +1,10 @@
 using Scalar.AspNetCore;
 using TestAPI.Extensions;
 
-await AdminSeedExtensions.RunDatabaseSeedAsync(args);
+if (await SeedAdminCliExtensions.TryRunSeedAdminAsync(args))
+{
+    return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,11 +57,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-if (app.Environment.IsDevelopment())
-{
-    await app.SeedAdminUserAsync();
-    await app.EnsureSaftarAdminAsync();
-}
 
 app.Run();

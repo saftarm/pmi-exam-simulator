@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using TestAPI.Entities;
-using TestAPI.Models;
 using TestAPI.Persistence.Implementation;
 using TestAPI.Persistence.Interfaces;
 using TestAPI.Services;
@@ -28,11 +27,13 @@ namespace TestAPI.Extensions
             services.AddScoped<IJWTService, JWTService>();
             services.AddScoped<IValidatorResolver, ValidatorResolver>();
             services.AddScoped<IQuestionImportService, QuestionImportService>();
+            services.AddScoped<IPublicStatsService, PublicStatsService>();
+            services.AddScoped<ISiteSettingsService, SiteSettingsService>();
+            services.AddScoped<IAnalyticsService, AnalyticsService>();
             services.AddValidatorsFromAssemblyContaining<Program>();
             services.AddHttpClient();
 
             services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
-            services.Configure<AdminSeedSettings>(configuration.GetSection("AdminSeed"));
 
             return services;
         }

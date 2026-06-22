@@ -8,11 +8,42 @@ This project consists of two parts:
 
 1. **Node.js** and **npm** installed
 2. **.NET SDK** installed
-3. Dependencies installed:
+3. **PostgreSQL** running locally (or update the connection string in user secrets)
+4. Dependencies installed:
    ```bash
    cd reactclient
    npm install
    ```
+
+## TestAPI local configuration (user secrets)
+
+`appsettings.Development.json` is not committed. Copy the example file for non-secret defaults, then set secrets on your machine:
+
+```bash
+cp appsettings.Development.example.json appsettings.Development.json
+```
+
+From the `TestAPI` project directory:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:PostgreSqlConnection" "Host=localhost;Database=TestAPIDb;Username=postgres;Password=YOUR_PASSWORD"
+dotnet user-secrets set "AuthSettings:Issuer" "TestAPI"
+dotnet user-secrets set "AuthSettings:Audience" "ReactClient"
+dotnet user-secrets set "AuthSettings:SecretKey" "YOUR_JWT_SECRET_AT_LEAST_32_CHARS"
+dotnet user-secrets set "AuthSettings:Expires" "01:00:00"
+```
+
+User secrets are stored outside the repo (see `UserSecretsId` in `TestAPI.csproj`).
+
+To (re)create the sole admin account from local secrets (removes any existing admins first):
+
+```bash
+dotnet user-secrets set "AdminSeed:UserName" "your-admin"
+dotnet user-secrets set "AdminSeed:Password" "your-password"
+dotnet user-secrets set "AdminSeed:Email" "admin@example.com"
+dotnet user-secrets set "AdminSeed:FirstName" "Admin"
+dotnet run -- --seed-admin
+```
 
 ## Method 1: Using npm concurrently (Recommended)
 

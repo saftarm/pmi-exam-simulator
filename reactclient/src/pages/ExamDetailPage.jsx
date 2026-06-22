@@ -69,7 +69,9 @@ export default function ExamDetailPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
                         <div className="lg:col-span-2 bg-white rounded-xl border border-outline-variant shadow-sm p-xl">
                             <h1 className="font-headline-xl text-headline-xl text-primary mb-md">{exam.title}</h1>
-                            <p className="text-on-surface-variant mb-xl">{exam.context || 'PMI certification exam simulation.'}</p>
+                            {exam.context && (
+                                <p className="text-on-surface-variant mb-xl">{exam.context}</p>
+                            )}
                             <dl className="grid grid-cols-2 gap-md text-sm mb-xl">
                                 <div>
                                     <dt className="text-on-surface-variant">Duration</dt>
