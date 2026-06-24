@@ -5,29 +5,29 @@ using TestAPI.Services.Interfaces;
 
 namespace TestAPI.Controllers
 {
-  [ApiController]
-  [Authorize]
-  [Route("api/progress")]
-  public class ProgressController : ControllerBase
-  {
-    private readonly IProgressService _progressService;
-
-    public ProgressController(IProgressService progressService)
+    [ApiController]
+    [Authorize]
+    [Route("api/progress")]
+    public class ProgressController : ControllerBase
     {
-      _progressService = progressService;
-    }
+        private readonly IProgressService _progressService;
 
-    [HttpGet("domains")]
-    public async Task<IActionResult> GetUserDomainPerformances(CancellationToken ct)
-    {
-      var userId = User.GetUserId();
-      if (userId == null)
-      {
-        return Unauthorized();
-      }
+        public ProgressController(IProgressService progressService)
+        {
+            _progressService = progressService;
+        }
 
-      var result = await _progressService.GetUserDomainPerformancesAsync(userId.Value, ct);
-      return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
+        [HttpGet("domains")]
+        public async Task<IActionResult> GetUserDomainPerformances(CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await _progressService.GetUserDomainPerformancesAsync(userId.Value, ct);
+            return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
+        }
     }
-  }
 }

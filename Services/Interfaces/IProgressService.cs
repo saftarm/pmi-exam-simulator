@@ -4,9 +4,13 @@ using TestAPI.ResultPattern;
 
 namespace TestAPI.Services.Interfaces
 {
-  public interface IProgressService
-  {
-    Task<Result<IEnumerable<DomainPerformanceDto>>> GetUserDomainPerformancesAsync(Guid userId, CancellationToken ct);
-    Task UpdateDomainPerformanceAsync(Guid userId, Guid examId, IEnumerable<UserExamResponse> responses, CancellationToken ct);
-  }
+    public interface IProgressService
+    {
+        Task<Result<IEnumerable<DomainPerformanceDto>>> GetUserDomainPerformancesAsync(Guid userId, CancellationToken ct);
+        Task UpdateDomainPerformanceAsync(
+            Guid userId,
+            Guid examId,
+            IReadOnlyDictionary<Guid, (decimal ScorePoints, int QuestionCount)> statsByDomain,
+            CancellationToken ct);
+    }
 }

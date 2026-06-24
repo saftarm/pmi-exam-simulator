@@ -1,9 +1,8 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using TestAPI.Entities;
 using TestAPI.Persistence.Implementation;
 using TestAPI.Persistence.Interfaces;
-using TestAPI.Services;
 using TestAPI.Services.Implementation;
 using TestAPI.Services.Interfaces;
 using TestAPI.Validation;
@@ -30,6 +29,7 @@ namespace TestAPI.Extensions
             services.AddScoped<IPublicStatsService, PublicStatsService>();
             services.AddScoped<ISiteSettingsService, SiteSettingsService>();
             services.AddScoped<IAnalyticsService, AnalyticsService>();
+            services.AddScoped<ISessionScoringService, SessionScoringService>();
             services.AddValidatorsFromAssemblyContaining<Program>();
             services.AddHttpClient();
 

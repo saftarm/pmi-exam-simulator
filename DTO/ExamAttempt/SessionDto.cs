@@ -1,10 +1,12 @@
-﻿using TestAPI.DTO.Question;
+using TestAPI.DTO.Question;
 
-namespace TestAPI.DTO.ExamAttempt {
+namespace TestAPI.DTO.ExamAttempt
+{
 
-public record SessionDto {
-  public Guid SessionId {get;set;}
-  public IEnumerable<QuestionDto> Questions {get;set;} = [];
+    public record SessionDto
+    {
+        public Guid SessionId { get; set; }
+        public IEnumerable<QuestionDto> Questions { get; set; } = [];
 
-}
+    }
 }
