@@ -13,10 +13,10 @@ namespace TestAPI.Validation
         public UpdateCategoryRequestValidator(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
-            
+
             RuleFor(r => r.CategoryId)
-            .MustAsync(async (categoryId, ct) => 
-                   await _categoryRepository.ExistsByIdAsync(categoryId,ct))
+            .MustAsync(async (categoryId, ct) =>
+                   await _categoryRepository.ExistsByIdAsync(categoryId, ct))
                   .WithMessage("Category with given Id not found");
 
             RuleFor(r => r.Title)

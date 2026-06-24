@@ -1,4 +1,4 @@
-﻿namespace TestAPI.Models
+namespace TestAPI.Models
 {
     public enum DifficultyLevel
     {

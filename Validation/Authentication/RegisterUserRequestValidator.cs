@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using TestAPI.DTO.Auth.Requests;
 using TestAPI.Persistence.Interfaces;
 

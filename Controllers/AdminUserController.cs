@@ -49,7 +49,7 @@ namespace TestAPI.Controllers
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken ct)
         {
             var result = await _userService.CreateAsync(request, ct);
-            return result.IsSuccess ? CreatedAtAction(nameof(GetUser), new { id = result.Value!.Id }, result.Value) : result.ToActionResult();
+            return result.IsSuccess ? Created() : result.ToActionResult();
         }
 
         [HttpPut("/api/admin/users/{id:guid}")]

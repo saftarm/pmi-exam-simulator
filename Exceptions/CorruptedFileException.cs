@@ -1,4 +1,4 @@
-﻿namespace TestAPI.Exceptions
+namespace TestAPI.Exceptions
 {
     public class CorruptedFileException : Exception
     {

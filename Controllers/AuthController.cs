@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
 using TestAPI.DTO.Auth.Requests;
@@ -41,7 +41,7 @@ namespace TestAPI.Controllers
             }
 
             var result = await _authService.RegisterUser(registerUserRequest, ct);
-            return result.IsSuccess ? Ok() : result.ToActionResult();
+            return result.IsSuccess ? Created("/api/auth/register", null) : result.ToActionResult();
         }
 
         [HttpPost("/api/auth/login")]

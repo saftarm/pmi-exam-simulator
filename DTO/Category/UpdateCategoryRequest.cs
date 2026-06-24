@@ -5,7 +5,7 @@ namespace TestAPI.DTO
 {
     public record UpdateCategoryRequest
     {
-        public Guid CategoryId {get;set;}
+        public Guid CategoryId { get; set; }
         [Required]
         [MaxLength(200)]
         public string Title { get; set; } = string.Empty;
