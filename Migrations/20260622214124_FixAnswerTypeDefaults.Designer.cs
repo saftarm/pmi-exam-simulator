@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TestAPI.Data;
@@ -11,9 +12,11 @@ using TestAPI.Data;
 namespace TestAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260622214124_FixAnswerTypeDefaults")]
+    partial class FixAnswerTypeDefaults
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,8 +145,8 @@ namespace TestAPI.Migrations
                     b.Property<int>("TotalAnswered")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("TotalCorrect")
-                        .HasColumnType("decimal(8,2)");
+                    b.Property<int>("TotalCorrect")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -208,6 +211,9 @@ namespace TestAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("CorrectCount")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -217,10 +223,7 @@ namespace TestAPI.Migrations
                     b.Property<decimal>("PercentageScore")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("decimal(5,2)")
-                        .HasComputedColumnSql("CASE WHEN \"TotalQuestions\" = 0 THEN 0.0 ELSE (\"ScorePoints\"::numeric / \"TotalQuestions\"::numeric) * 100 END", true);
-
-                    b.Property<decimal>("ScorePoints")
-                        .HasColumnType("decimal(8,2)");
+                        .HasComputedColumnSql("CASE WHEN \"TotalQuestions\" = 0 THEN 0.0 ELSE (\"CorrectCount\"::numeric / \"TotalQuestions\"::numeric) * 100 END", true);
 
                     b.Property<DateTime>("StartedAt")
                         .HasColumnType("timestamp with time zone");

@@ -1,9 +1,11 @@
-namespace TestAPI.Enums {
+namespace TestAPI.Enums
+{
 
 
-    public enum AttemptStatus {
+    public enum AttemptStatus
+    {
         InProgress,
-        Completed, 
+        Completed,
         Abandoned
     }
 }

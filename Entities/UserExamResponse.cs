@@ -1,7 +1,17 @@
-namespace TestAPI.Entities
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TestAPI.Entities;
+
+public class UserExamResponse
 {
-  public class UserExamResponse : BaseEntity
-  {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid Id { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
     public bool IsCorrect { get; private set; }
     public Guid QuestionId { get; private set; }
     public Question? Question { get; set; }
@@ -17,16 +27,12 @@ namespace TestAPI.Entities
         Guid domainId,
         Guid selectedOptionId,
         Guid examAttemptId,
-        bool isCorrect
-        ) {
-      QuestionId = questionId;
-      DomainId = domainId;
-      SelectedOptionId = selectedOptionId;
-      ExamAttemptId = examAttemptId;
-      IsCorrect = isCorrect;
+        bool isCorrect)
+    {
+        QuestionId = questionId;
+        DomainId = domainId;
+        SelectedOptionId = selectedOptionId;
+        ExamAttemptId = examAttemptId;
+        IsCorrect = isCorrect;
     }
-
-
-
-  }
 }

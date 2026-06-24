@@ -1,11 +1,11 @@
-﻿namespace TestAPI.DTO.ExamAttempt
+namespace TestAPI.DTO.ExamAttempt
 {
 
-  public record SessionResultDto
-  {
-    public int CorrectCount {get;set;}
-    public decimal PercentageScore{get;set;}
+    public record SessionResultDto
+    {
+        public decimal ScorePoints { get; set; }
+        public decimal PercentageScore { get; set; }
 
-  }
+    }
 }
 

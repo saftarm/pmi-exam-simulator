@@ -1,10 +1,8 @@
-namespace TestAPI.Enums
+namespace TestAPI.Enums;
+
+public enum ExamStatus
 {
-    public enum ExamStatus
-    {
-        Draft,
-        Compiled,
-        Published,
-        Archived
-    }
+    Draft = 0,
+    Published = 2,
+    Archived = 3,
 }
