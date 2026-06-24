@@ -7,14 +7,14 @@ namespace TestAPI.Validation
 {
     public class UpdateQuestionRequestValidator : AbstractValidator<UpdateQuestionRequest>
     {
-      private readonly IQuestionRepository _questionRepository;
+        private readonly IQuestionRepository _questionRepository;
 
         public UpdateQuestionRequestValidator(IQuestionRepository questionRepository)
         {
             _questionRepository = questionRepository;
 
             RuleFor(r => r.Id)
-                  .MustAsync(async (id, ct) => 
+                  .MustAsync(async (id, ct) =>
                   await _questionRepository.ExistsAsync(id, ct));
 
             RuleFor(r => r.Title)

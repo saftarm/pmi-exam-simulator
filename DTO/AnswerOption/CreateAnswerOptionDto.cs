@@ -4,7 +4,7 @@ namespace TestAPI.DTO
     {
         public string Text { get; set; } = string.Empty;
 
-        public bool IsCorrect {get;set;}
+        public bool IsCorrect { get; set; }
     }
 
 }

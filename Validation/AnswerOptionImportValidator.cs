@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using TestAPI.DTO.ImportService;
 
 namespace TestAPI.Validation

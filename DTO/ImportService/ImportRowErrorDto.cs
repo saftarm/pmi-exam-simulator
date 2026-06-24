@@ -1,4 +1,4 @@
-﻿namespace TestAPI.DTO.ImportService
+namespace TestAPI.DTO.ImportService
 {
     public class ImportRowErrorDto
     {

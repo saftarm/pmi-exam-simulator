@@ -1,8 +1,4 @@
-﻿namespace TestAPI.DTO.Exam.Requests
+namespace TestAPI.DTO.Exam.Requests
 {
-    public record UpdateExamRequest
-    {
-        public int NumberOfQuestions;
-        public int DurationInMinutes;
-    }
+    public record UpdateExamRequest(int NumberOfQuestions, int DurationInMinutes);
 }
