@@ -2,17 +2,22 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LandingPage from './LandingPage';
 import LearnerHomePage from './LearnerHomePage';
+import LoadingState from '../components/loading/LoadingState';
 
 export default function HomePage() {
-    const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, authReady, profileLoading } = useAuth();
 
-    if (!isAuthenticated) {
-        return <LandingPage />;
-    }
+  if (isAuthenticated && (!authReady || profileLoading)) {
+    return <LoadingState fullScreen message="Loading…" />;
+  }
 
-    if (isAdmin) {
-        return <Navigate to="/admin" replace />;
-    }
+  if (!isAuthenticated) {
+    return <LandingPage />;
+  }
 
-    return <LearnerHomePage />;
+  if (isAdmin) {
+    return <Navigate to="/admin" />;
+  }
+
+  return <LearnerHomePage />;
 }

@@ -4,71 +4,85 @@ import * as authService from '../services/authService';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(() => authService.getStoredUser());
-    const [profileLoading, setProfileLoading] = useState(false);
+  const [user, setUser] = useState(() => authService.getStoredUser());
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [authReady, setAuthReady] = useState(() => !authService.isAuthenticated());
 
-    const refreshUser = useCallback(async () => {
-        if (!authService.isAuthenticated()) {
-            setUser(null);
-            return null;
-        }
-        setProfileLoading(true);
-        try {
-            const profile = await authService.fetchCurrentUser();
-            setUser(profile);
-            return profile;
-        } catch {
-            const stored = authService.getStoredUser();
-            setUser(stored);
-            return stored;
-        } finally {
-            setProfileLoading(false);
-        }
-    }, []);
+  const refreshUser = useCallback(async () => {
+    if (!authService.isAuthenticated()) {
+      setUser(null);
+      return null;
+    }
+    setProfileLoading(true);
+    try {
+      const profile = await authService.fetchCurrentUser();
+      setUser(profile);
+      return profile;
+    } catch {
+      const stored = authService.getStoredUser();
+      setUser(stored);
+      return stored;
+    } finally {
+      setProfileLoading(false);
+    }
+  }, []);
 
-    useEffect(() => {
-        if (authService.isAuthenticated() && !user?.role) {
-            refreshUser();
-        }
-    }, [refreshUser, user?.role]);
+  useEffect(() => {
+    let cancelled = false;
 
-    const login = useCallback(async (userName, password) => {
-        const loggedInUser = await authService.login(userName, password);
-        setUser(loggedInUser);
-        return loggedInUser;
-    }, []);
+    if (!authService.isAuthenticated()) {
+      setUser(null);
+      setAuthReady(true);
+      return undefined;
+    }
 
-    const register = useCallback(async (payload) => {
-        await authService.register(payload);
-    }, []);
+    refreshUser().finally(() => {
+      if (!cancelled) setAuthReady(true);
+    });
 
-    const logout = useCallback(() => {
-        authService.logout();
-        setUser(null);
-    }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshUser]);
 
-    const isAdmin = user?.role === 'Admin';
+  const login = useCallback(async (userName, password) => {
+    const loggedInUser = await authService.login(userName, password);
+    setUser(loggedInUser);
+    return loggedInUser;
+  }, []);
 
-    return (
-        <AuthContext.Provider
-            value={{
-                user,
-                isAuthenticated: !!user && authService.isAuthenticated(),
-                isAdmin,
-                profileLoading,
-                refreshUser,
-                login,
-                register,
-                logout,
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
-    );
+  const register = useCallback(async (payload) => {
+    await authService.register(payload);
+  }, []);
+
+  const logout = useCallback(() => {
+    authService.logout();
+    setUser(null);
+  }, []);
+
+  const isAdmin = user?.role === 'Admin';
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user && authService.isAuthenticated(),
+        isAdmin,
+        profileLoading,
+        authReady,
+        refreshUser,
+        login,
+        register,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
-    const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-    return ctx;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
 }

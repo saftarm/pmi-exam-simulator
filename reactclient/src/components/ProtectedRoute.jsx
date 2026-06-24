@@ -1,15 +1,38 @@
+import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import LoadingState from './loading/LoadingState';
 
 function ProtectedRoute({ children }) {
-    const { isAuthenticated } = useAuth();
-    const location = useLocation();
+  const { isAuthenticated, refreshUser } = useAuth();
+  const location = useLocation();
+  const [checked, setChecked] = useState(false);
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
+  useEffect(() => {
+    let cancelled = false;
+    if (isAuthenticated && !checked) {
+      refreshUser()
+        .catch(() => {})
+        .finally(() => {
+          if (!cancelled) setChecked(true);
+        });
+    } else if (!isAuthenticated) {
+      setChecked(true);
     }
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, refreshUser, checked]);
 
-    return children;
+  if (!checked) {
+    return <LoadingState fullScreen message="Loading…" />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
 }
 
 export default ProtectedRoute;
