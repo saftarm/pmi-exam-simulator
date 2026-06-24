@@ -4,7 +4,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using TestAPI.Data;
 using TestAPI.DTO;
 using TestAPI.Entities;
 using TestAPI.Models;
@@ -12,27 +11,26 @@ using TestAPI.Persistence.Interfaces;
 using TestAPI.ResultPattern;
 using TestAPI.Services.Interfaces;
 using TestAPI.Validation;
-using Microsoft.EntityFrameworkCore;
 
 namespace TestAPI.Services.Implementation
 {
     public class JWTService : IJWTService
     {
-        private readonly ApplicationDbContext _context;
         private readonly ITokenRepository _tokenRepository;
         private readonly IOptions<AuthSettings> _authSettings;
         private readonly IValidatorResolver _validatorResolver;
+        private readonly IUnitOfWork _unitOfWork;
 
         public JWTService(
             IOptions<AuthSettings> authSettings,
-            ApplicationDbContext context,
             ITokenRepository tokenRepository,
-            IValidatorResolver validatorResolver)
+            IValidatorResolver validatorResolver,
+            IUnitOfWork unitOfWork)
         {
             _authSettings = authSettings;
-            _context = context;
             _tokenRepository = tokenRepository;
             _validatorResolver = validatorResolver;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<TokenResponse>> ProvideTokens(User user)
@@ -67,26 +65,33 @@ namespace TestAPI.Services.Implementation
                 RefreshToken = refreshTokens.RawToken,
             };
 
-            var existingRefreshToken = await _context.RefreshTokens
-                .OrderByDescending(t => t.CreatedAt)
-                .FirstOrDefaultAsync(t => t.UserId == user.Id);
+            var existingRefreshToken = await _tokenRepository.GetRefreshTokenByUserIdAsync(user.Id);
 
-            if (existingRefreshToken != null)
+            await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                existingRefreshToken.Revoked = true;
-                await _context.SaveChangesAsync();
+                if (existingRefreshToken != null)
+                {
+                    existingRefreshToken.Revoked = true;
+                    await _tokenRepository.RevokeRefreshToken(existingRefreshToken);
+                }
+
+                var newRefreshToken = new RefreshToken
+                {
+                    UserId = user.Id,
+                    TokenHash = refreshTokens.HashToken,
+                    ExpiresAt = DateTime.UtcNow.AddDays(14),
+                    Revoked = false,
+                };
+
+                await _tokenRepository.SaveRefreshToken(newRefreshToken);
+                await _unitOfWork.CommitTransactionAsync();
             }
-
-            var newRefreshToken = new RefreshToken
+            catch
             {
-                UserId = user.Id,
-                TokenHash = refreshTokens.HashToken,
-                ExpiresAt = DateTime.UtcNow.AddDays(14),
-                Revoked = false,
-            };
-
-            await _context.RefreshTokens.AddAsync(newRefreshToken);
-            await _context.SaveChangesAsync();
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
 
             return Result<TokenResponse>.Success(tokens);
         }
@@ -96,7 +101,7 @@ namespace TestAPI.Services.Implementation
             var validationResult = await _validatorResolver.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                return Result<RefreshTokenResponse>.Failure(Errors.ValidationFailed);
+                return Result<RefreshTokenResponse>.Failure(validationResult.ToError());
             }
 
             ClaimsPrincipal principal;

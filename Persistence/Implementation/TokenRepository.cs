@@ -14,24 +14,24 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
 
-        public async Task<RefreshToken?> GetRefreshTokenByUserIdAsync(Guid userId) {
+        public async Task<RefreshToken?> GetRefreshTokenByUserIdAsync(Guid userId)
+        {
 
             return await _context.RefreshTokens
             .OrderByDescending(t => t.CreatedAt)
             .FirstOrDefaultAsync(rt => rt.UserId == userId);
         }
 
-        public async Task RevokeRefreshToken(RefreshToken refreshToken) {
-            
+        public Task RevokeRefreshToken(RefreshToken refreshToken)
+        {
             _context.RefreshTokens.Update(refreshToken);
-            await _context.SaveChangesAsync();
-
+            return Task.CompletedTask;
         }
 
-        public async Task SaveRefreshToken(RefreshToken newRefreshToken) {
+        public async Task SaveRefreshToken(RefreshToken newRefreshToken)
+        {
             await _context.RefreshTokens.AddAsync(newRefreshToken);
-            await _context.SaveChangesAsync();
-        } 
+        }
 
         public async Task RevokeAllForUserAsync(Guid userId, CancellationToken ct)
         {

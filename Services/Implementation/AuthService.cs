@@ -17,29 +17,27 @@ namespace TestAPI.Services.Implementation
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly ISiteSettingsRepository _siteSettingsRepository;
         private readonly IValidatorResolver _validatorResolver;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AuthService(
             IUserRepository userRepository,
             IJWTService jwtService,
             IPasswordHasher<User> passwordHasher,
             ISiteSettingsRepository siteSettingsRepository,
-            IValidatorResolver validatorResolver)
+            IValidatorResolver validatorResolver,
+            IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
             _passwordHasher = passwordHasher;
             _siteSettingsRepository = siteSettingsRepository;
             _validatorResolver = validatorResolver;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> RegisterUser(RegisterUserRequest registerUserRequest, CancellationToken ct = default)
         {
-            var settings = await _siteSettingsRepository.GetOrCreateAsync(ct);
-            if (settings.MaintenanceMode)
-            {
-                return Result.Failure(Errors.MaintenanceModeActive);
-            }
-
+            var (settings, _) = await _siteSettingsRepository.GetOrCreateAsync(ct);
             if (!settings.AllowRegistration)
             {
                 return Result.Failure(Errors.RegistrationDisabled);
@@ -48,7 +46,7 @@ namespace TestAPI.Services.Implementation
             var validationResult = await _validatorResolver.ValidateAsync(registerUserRequest);
             if (!validationResult.IsValid)
             {
-                return Result.Failure(Errors.ValidationFailed);
+                return Result.Failure(validationResult.ToError());
             }
 
             if (!await _userRepository.IsEmailUniqueAsync(registerUserRequest.Email!, ct))
@@ -73,6 +71,7 @@ namespace TestAPI.Services.Implementation
 
             newUser.PasswordHash = _passwordHasher.HashPassword(newUser, registerUserRequest.Password!);
             await _userRepository.AddAsync(newUser);
+            await _unitOfWork.SaveChangesAsync(ct);
 
             return Result.Success();
         }
@@ -84,7 +83,7 @@ namespace TestAPI.Services.Implementation
             var validationResult = await _validatorResolver.ValidateAsync(loginUserRequest);
             if (!validationResult.IsValid)
             {
-                return Result<TokenResponse>.Failure(Errors.ValidationFailed);
+                return Result<TokenResponse>.Failure(validationResult.ToError());
             }
 
             var userInDb = await _userRepository.GetByUserNameAsync(loginUserRequest.UserName!);
@@ -107,12 +106,6 @@ namespace TestAPI.Services.Implementation
             if (passwordResult == PasswordVerificationResult.Failed)
             {
                 return Result<TokenResponse>.Failure(Errors.InvalidCredentials);
-            }
-
-            var settings = await _siteSettingsRepository.GetOrCreateAsync(ct);
-            if (settings.MaintenanceMode && userInDb.Role != UserRole.Admin)
-            {
-                return Result<TokenResponse>.Failure(Errors.MaintenanceModeActive);
             }
 
             return await _jwtService.ProvideTokens(userInDb);

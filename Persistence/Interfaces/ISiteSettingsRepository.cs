@@ -5,6 +5,6 @@ namespace TestAPI.Persistence.Interfaces;
 
 public interface ISiteSettingsRepository
 {
-    Task<SiteSettings> GetOrCreateAsync(CancellationToken ct = default);
+    Task<(SiteSettings Settings, bool Created)> GetOrCreateAsync(CancellationToken ct = default);
     Task UpdateAsync(SiteSettings settings, CancellationToken ct = default);
 }

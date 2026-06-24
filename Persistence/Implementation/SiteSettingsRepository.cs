@@ -9,23 +9,22 @@ public class SiteSettingsRepository(ApplicationDbContext context) : ISiteSetting
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<SiteSettings> GetOrCreateAsync(CancellationToken ct = default)
+    public async Task<(SiteSettings Settings, bool Created)> GetOrCreateAsync(CancellationToken ct = default)
     {
         var settings = await _context.SiteSettings.FirstOrDefaultAsync(ct);
         if (settings != null)
         {
-            return settings;
+            return (settings, false);
         }
 
         settings = new SiteSettings();
         await _context.SiteSettings.AddAsync(settings, ct);
-        await _context.SaveChangesAsync(ct);
-        return settings;
+        return (settings, true);
     }
 
-    public async Task UpdateAsync(SiteSettings settings, CancellationToken ct = default)
+    public Task UpdateAsync(SiteSettings settings, CancellationToken ct = default)
     {
         _context.SiteSettings.Update(settings);
-        await _context.SaveChangesAsync(ct);
+        return Task.CompletedTask;
     }
 }

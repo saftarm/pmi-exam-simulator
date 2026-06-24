@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using TestAPI.DTO.User;
 using TestAPI.Entities;
 using TestAPI.Enums;
@@ -16,17 +16,20 @@ namespace TestAPI.Services.Implementation
         private readonly ITokenRepository _tokenRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IValidatorResolver _validatorResolver;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UserService(
             IUserRepository userRepository,
             ITokenRepository tokenRepository,
             IPasswordHasher<User> passwordHasher,
-            IValidatorResolver validatorResolver)
+            IValidatorResolver validatorResolver,
+            IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _tokenRepository = tokenRepository;
             _passwordHasher = passwordHasher;
             _validatorResolver = validatorResolver;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<PagedList<UserListItemDto>>> GetPagedAsync(UserQueryParameters query, CancellationToken ct)
@@ -53,7 +56,7 @@ namespace TestAPI.Services.Implementation
             var validationResult = await _validatorResolver.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                return Result<UserDto>.Failure(Errors.ValidationFailed);
+                return Result<UserDto>.Failure(validationResult.ToError());
             }
 
             if (!await _userRepository.IsEmailUniqueAsync(request.Email, ct))
@@ -78,6 +81,7 @@ namespace TestAPI.Services.Implementation
 
             user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
             await _userRepository.AddAsync(user);
+            await _unitOfWork.SaveChangesAsync(ct);
 
             return Result<UserDto>.Success(MapToDto(user));
         }
@@ -87,7 +91,7 @@ namespace TestAPI.Services.Implementation
             var validationResult = await _validatorResolver.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                return Result.Failure(Errors.ValidationFailed);
+                return Result.Failure(validationResult.ToError());
             }
 
             var user = await _userRepository.GetByIdOrDefaultAsync(id);
@@ -112,6 +116,7 @@ namespace TestAPI.Services.Implementation
 
             user.UpdateAdminProfile(request.DisplayName, request.Email, request.Role, request.Status);
             await _userRepository.UpdateAsync(user, ct);
+            await _unitOfWork.SaveChangesAsync(ct);
 
             if (request.Status == AccountStatus.Suspended)
             {
@@ -145,6 +150,7 @@ namespace TestAPI.Services.Implementation
 
             user.SetStatus(request.Status);
             await _userRepository.UpdateAsync(user, ct);
+            await _unitOfWork.SaveChangesAsync(ct);
 
             if (request.Status == AccountStatus.Suspended)
             {
@@ -185,7 +191,7 @@ namespace TestAPI.Services.Implementation
             var validationResult = await _validatorResolver.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
-                return Result<UserDto>.Failure(Errors.ValidationFailed);
+                return Result<UserDto>.Failure(validationResult.ToError());
             }
 
             var user = await _userRepository.GetByIdOrDefaultAsync(userId);
@@ -201,6 +207,7 @@ namespace TestAPI.Services.Implementation
 
             user.UpdateProfile(request.DisplayName, request.FirstName, request.Email);
             await _userRepository.UpdateAsync(user, ct);
+            await _unitOfWork.SaveChangesAsync(ct);
 
             return Result<UserDto>.Success(MapToDto(user));
         }

@@ -15,10 +15,9 @@ namespace TestAPI.Persistence.Implementation
             _context = context;
         }
         // Adding new category
-        public async Task<int> AddAsync(Category category)
+        public async Task AddAsync(Category category)
         {
             await _context.Categories.AddAsync(category);
-            return await _context.SaveChangesAsync();
         }
 
 
@@ -42,7 +41,7 @@ namespace TestAPI.Persistence.Implementation
         {
             return await _context.Categories.ToListAsync();
         }
-        
+
         // Get Category title by examId
         public async Task<string?> GetTitleByExamId(Guid examId, CancellationToken ct)
         {
@@ -60,10 +59,10 @@ namespace TestAPI.Persistence.Implementation
         }
 
         // Updating category
-        public async Task Update(Category updatedCategory)
+        public Task Update(Category updatedCategory)
         {
             _context.Categories.Update(updatedCategory);
-            await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         // Get all exams by CategoryId
@@ -73,8 +72,22 @@ namespace TestAPI.Persistence.Implementation
         }
 
         // Check if Category exists by its ID
-        public async Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct) {
+        public async Task<bool> ExistsByIdAsync(Guid id, CancellationToken ct)
+        {
             return await _context.Categories.AnyAsync(c => c.Id == id, ct);
+        }
+
+        public async Task<int> GetExamCountByCategoryIdAsync(Guid categoryId, CancellationToken ct = default)
+        {
+            return await _context.Exams.CountAsync(e => e.CategoryId == categoryId, ct);
+        }
+
+        public async Task<Dictionary<Guid, int>> GetExamCountsByCategoryAsync(CancellationToken ct = default)
+        {
+            return await _context.Exams
+                .GroupBy(e => e.CategoryId)
+                .Select(g => new { CategoryId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.CategoryId, x => x.Count, ct);
         }
 
     }
