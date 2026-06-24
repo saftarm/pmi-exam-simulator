@@ -1,48 +1,48 @@
 import api from './api';
 
 export async function getAllDomains() {
-    const { data } = await api.get('/api/domains');
-    return Array.isArray(data) ? data : [];
+  const { data } = await api.get('/api/domains');
+  return Array.isArray(data) ? data : [];
 }
 
 export async function getDomainsByExam(examId) {
-    const { data } = await api.get('/api/domains/withTitles', { params: { examId } });
-    const entries = normalizeDomainEntries(data);
-    if (entries.length === 0) return [];
+  const { data } = await api.get('/api/domains/withTitles', { params: { examId } });
+  const entries = normalizeDomainEntries(data);
+  if (entries.length === 0) return [];
 
-    const domains = await Promise.all(
-        entries.map(async ([id, title]) => {
-            try {
-                return await getDomain(id);
-            } catch {
-                return { id, title, description: '', weight: 1 };
-            }
-        }),
-    );
-    return domains;
+  const domains = await Promise.all(
+    entries.map(async ([id, title]) => {
+      try {
+        return await getDomain(id);
+      } catch {
+        return { id, title, description: '', weight: 1 };
+      }
+    }),
+  );
+  return domains;
 }
 
 function normalizeDomainEntries(data) {
-    if (!data) return [];
-    if (Array.isArray(data)) {
-        return data.map((d) => [d.id, d.title]);
-    }
-    return Object.entries(data);
+  if (!data) return [];
+  if (Array.isArray(data)) {
+    return data.map((d) => [d.id, d.title]);
+  }
+  return Object.entries(data);
 }
 
 export async function getDomain(id) {
-    const { data } = await api.get(`/api/domains/${id}`);
-    return data;
+  const { data } = await api.get(`/api/domains/${id}`);
+  return data;
 }
 
 export async function createDomain(examId, payload) {
-    await api.post('/api/domains', { examId, ...payload });
+  await api.post('/api/domains', { examId, ...payload });
 }
 
 export async function updateDomain(id, payload) {
-    await api.put(`/api/domains/${id}`, payload);
+  await api.put(`/api/domains/${id}`, payload);
 }
 
 export async function deleteDomain(id) {
-    await api.delete(`/api/domains/${id}`);
+  await api.delete(`/api/domains/${id}`);
 }
