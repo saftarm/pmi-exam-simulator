@@ -4,10 +4,10 @@ using FluentValidation.Results;
 
 namespace TestAPI.Validation
 {
-      public interface IValidatorResolver
-      {
-            public Task<ValidationResult> ValidateAsync(object model);
-      }
+    public interface IValidatorResolver
+    {
+        public Task<ValidationResult> ValidateAsync(object model);
+    }
 }
 
 

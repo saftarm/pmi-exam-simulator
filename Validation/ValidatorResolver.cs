@@ -7,14 +7,15 @@ namespace TestAPI.Validation
 {
     public class ValidatorResolver : IValidatorResolver
     {
-      private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         public ValidatorResolver(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<ValidationResult> ValidateAsync(object model){
+        public async Task<ValidationResult> ValidateAsync(object model)
+        {
             var validatorType = typeof(IValidator<>).MakeGenericType(model.GetType());
 
             if (_serviceProvider.GetService(validatorType) is not IValidator validator)

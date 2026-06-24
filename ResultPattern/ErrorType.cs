@@ -1,4 +1,4 @@
-﻿namespace TestAPI.ResultPattern
+namespace TestAPI.ResultPattern
 {
     public enum ErrorType
     {
