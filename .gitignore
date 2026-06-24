@@ -3,6 +3,9 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# Cursor IDE local plans and artifacts
+.cursor/
+
 # dotenv files
 .env
 
