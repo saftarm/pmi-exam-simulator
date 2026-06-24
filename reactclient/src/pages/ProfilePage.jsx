@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { fetchCurrentUser, updateProfile, formatApiErrors } from '../services/authService';
 import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
@@ -8,143 +9,149 @@ import { formatDate, getInitials } from '../utils/userDisplay';
 import { ProfileSkeleton, ContentReveal, LoadingButton } from '../components/loading';
 
 export default function ProfilePage() {
-    const [profile, setProfile] = useState(null);
-    const [form, setForm] = useState({ displayName: '', firstName: '', email: '' });
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState(null);
-    const [saved, setSaved] = useState(false);
+  const { refreshUser } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [form, setForm] = useState({ displayName: '', firstName: '', email: '' });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [saved, setSaved] = useState(false);
 
-    useEffect(() => {
-        fetchCurrentUser()
-            .then((data) => {
-                setProfile(data);
-                setForm({
-                    displayName: data.displayName || '',
-                    firstName: data.firstName || '',
-                    email: data.email || '',
-                });
-            })
-            .catch(() => setError('Failed to load profile.'))
-            .finally(() => setLoading(false));
-    }, []);
+  useEffect(() => {
+    fetchCurrentUser()
+      .then((data) => {
+        setProfile(data);
+        setForm({
+          displayName: data.displayName || '',
+          firstName: data.firstName || '',
+          email: data.email || '',
+        });
+      })
+      .catch(() => setError('Failed to load profile.'))
+      .finally(() => setLoading(false));
+  }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSaving(true);
-        setError(null);
-        setSaved(false);
-        try {
-            const updated = await updateProfile(form);
-            setProfile(updated);
-            setSaved(true);
-        } catch (err) {
-            setError(formatApiErrors(err));
-        } finally {
-            setSaving(false);
-        }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const updated = await updateProfile(form);
+      setProfile(updated);
+      await refreshUser();
+      setSaved(true);
+    } catch (err) {
+      setError(formatApiErrors(err));
+    } finally {
+      setSaving(false);
+    }
+  };
 
-    return (
-        <div className="min-h-screen flex flex-col bg-[#F4F5F7]">
-            <AppHeader activeLink="Profile" />
+  return (
+    <div className="min-h-screen flex flex-col bg-[#F4F5F7]">
+      <AppHeader activeLink="Profile" />
 
-            <main className="flex-1 max-w-lg mx-auto px-margin-desktop py-xl w-full">
-                <h1 className="font-headline-xl text-headline-xl text-primary mb-xl">Your Profile</h1>
+      <main className="flex-1 max-w-lg mx-auto px-margin-desktop py-xl w-full">
+        <h1 className="font-headline-xl text-headline-xl text-primary mb-xl">Your Profile</h1>
 
-                {loading && <ProfileSkeleton />}
-                {error && !profile && <p className="text-red-600 loading-enter">{error}</p>}
+        {loading && <ProfileSkeleton />}
+        {error && !profile && <p className="text-red-600 loading-enter">{error}</p>}
 
-                <ContentReveal show={!!profile}>
-                    <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-xl">
-                        <div className="flex items-center gap-lg mb-xl">
-                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
-                                {getInitials(profile.displayName || profile.userName)}
-                            </div>
-                            <div>
-                                <h2 className="font-headline-md text-headline-md font-bold">{profile.displayName}</h2>
-                                <p className="text-on-surface-variant">@{profile.userName}</p>
-                            </div>
-                        </div>
+        {profile && (
+        <ContentReveal show>
+          <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-xl">
+            <div className="flex items-center gap-lg mb-xl">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
+                {getInitials(profile.displayName || profile.userName)}
+              </div>
+              <div>
+                <h2 className="font-headline-md text-headline-md font-bold">
+                  {profile.displayName}
+                </h2>
+                <p className="text-on-surface-variant">@{profile.userName}</p>
+              </div>
+            </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-md text-sm mb-xl">
-                            <div>
-                                <label className="block text-on-surface-variant mb-xs">Display name</label>
-                                <input
-                                    value={form.displayName}
-                                    onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-                                    className="w-full border border-outline-variant rounded-lg px-md py-sm"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-on-surface-variant mb-xs">First name</label>
-                                <input
-                                    value={form.firstName}
-                                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                                    className="w-full border border-outline-variant rounded-lg px-md py-sm"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-on-surface-variant mb-xs">Email</label>
-                                <input
-                                    type="email"
-                                    value={form.email}
-                                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                    className="w-full border border-outline-variant rounded-lg px-md py-sm"
-                                    required
-                                />
-                            </div>
-                            {error && profile && <p className="text-red-600 text-sm">{error}</p>}
-                            <LoadingButton
-                                type="submit"
-                                loading={saving}
-                                loadingText="Saving…"
-                                className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold disabled:opacity-50"
-                            >
-                                Save profile
-                            </LoadingButton>
-                            {saved && <p className="text-green-600 text-sm">Profile updated.</p>}
-                        </form>
+            <form onSubmit={handleSubmit} className="space-y-md text-sm mb-xl">
+              <div>
+                <label className="block text-on-surface-variant mb-xs">Display name</label>
+                <input
+                  value={form.displayName}
+                  onChange={(e) => setForm({ ...form, displayName: e.target.value })}
+                  className="w-full border border-outline-variant rounded-lg px-md py-sm"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-on-surface-variant mb-xs">First name</label>
+                <input
+                  value={form.firstName}
+                  onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                  className="w-full border border-outline-variant rounded-lg px-md py-sm"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-on-surface-variant mb-xs">Email</label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full border border-outline-variant rounded-lg px-md py-sm"
+                  required
+                />
+              </div>
+              {error && profile && <p className="text-red-600 text-sm">{error}</p>}
+              <LoadingButton
+                type="submit"
+                loading={saving}
+                loadingText="Saving…"
+                className="bg-secondary-container text-white px-lg py-sm rounded-lg font-bold disabled:opacity-50"
+              >
+                Save profile
+              </LoadingButton>
+              {saved && <p className="text-green-600 text-sm">Profile updated.</p>}
+            </form>
 
-                        <dl className="space-y-md text-sm border-t border-outline-variant pt-md">
-                            <div className="flex justify-between border-b border-outline-variant pb-md">
-                                <dt className="text-on-surface-variant">Role</dt>
-                                <dd className="font-medium">{profile.role}</dd>
-                            </div>
-                            <div className="flex justify-between border-b border-outline-variant pb-md">
-                                <dt className="text-on-surface-variant">Status</dt>
-                                <dd>
-                                    <StatusBadge
-                                        status={profile.status}
-                                        type={
-                                            profile.status === 'Active'
-                                                ? 'success'
-                                                : profile.status === 'Suspended'
-                                                  ? 'error'
-                                                  : 'warning'
-                                        }
-                                    />
-                                </dd>
-                            </div>
-                            <div className="flex justify-between">
-                                <dt className="text-on-surface-variant">Member since</dt>
-                                <dd className="font-medium">{formatDate(profile.createdAt)}</dd>
-                            </div>
-                        </dl>
+            <dl className="space-y-md text-sm border-t border-outline-variant pt-md">
+              <div className="flex justify-between border-b border-outline-variant pb-md">
+                <dt className="text-on-surface-variant">Role</dt>
+                <dd className="font-medium">{profile.role}</dd>
+              </div>
+              <div className="flex justify-between border-b border-outline-variant pb-md">
+                <dt className="text-on-surface-variant">Status</dt>
+                <dd>
+                  <StatusBadge
+                    status={profile.status}
+                    type={
+                      profile.status === 'Active'
+                        ? 'success'
+                        : profile.status === 'Suspended'
+                          ? 'error'
+                          : 'warning'
+                    }
+                  />
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-on-surface-variant">Member since</dt>
+                <dd className="font-medium">{formatDate(profile.createdAt)}</dd>
+              </div>
+            </dl>
 
-                        <Link
-                            to="/"
-                            className="mt-lg inline-block text-secondary-container font-bold text-sm hover:underline"
-                        >
-                            View your progress →
-                        </Link>
-                    </div>
-                </ContentReveal>
-            </main>
+            <Link
+              to="/exams"
+              className="mt-lg inline-block text-secondary-container font-bold text-sm hover:underline"
+            >
+              View your progress →
+            </Link>
+          </div>
+        </ContentReveal>
+        )}
+      </main>
 
-            <AppFooter />
-        </div>
-    );
+      <AppFooter />
+    </div>
+  );
 }
