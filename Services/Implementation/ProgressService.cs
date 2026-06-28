@@ -49,7 +49,7 @@ namespace TestAPI.Services.Implementation
         public async Task UpdateDomainPerformanceAsync(
             Guid userId,
             Guid examId,
-            IReadOnlyDictionary<Guid, (decimal ScorePoints, int QuestionCount)> statsByDomain,
+            IReadOnlyDictionary<Guid, (int CorrectCount, int TotalCount)> statsByDomain,
             CancellationToken ct)
         {
             await _domainPerformanceRepository.UpsertSessionStatsAsync(userId, examId, statsByDomain, ct);

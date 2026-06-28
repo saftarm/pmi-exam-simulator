@@ -1,5 +1,8 @@
+using NuGet.Packaging;
+using StackExchange.Redis;
 using TestAPI.DTO;
 using TestAPI.DTO.ExamAttempt;
+using TestAPI.DTO.Question;
 using TestAPI.Entities;
 using TestAPI.Models.Session;
 using TestAPI.Persistence.Interfaces;
@@ -11,159 +14,240 @@ namespace TestAPI.Services.Implementation;
 public class SessionScoringService : ISessionScoringService
 {
     private readonly IQuestionRepository _questionRepository;
+    private readonly ILogger<SessionScoringService> _logger;
 
-    public SessionScoringService(IQuestionRepository questionRepository)
+    public SessionScoringService(
+        IQuestionRepository questionRepository,
+        ILogger<SessionScoringService> logger)
     {
         _questionRepository = questionRepository;
+        _logger = logger;
     }
 
     public async Task<Result<SessionCalculationResult>> ValidateAndScoreAsync(
         SessionSnapshot snapshot,
-        Guid actingUserId,
         Guid sessionId,
         IEnumerable<UserExamResponseDto> responses,
         CancellationToken ct = default)
     {
-        if (snapshot.SessionId != sessionId || snapshot.UserId != actingUserId)
-        {
+
+        // validation
+
+
+        var submittedQuestionIds = responses.Select(q => q.QuestionId).AsEnumerable();
+        var sessionQuestionIds = snapshot.Questions.Select(e => e.QuestionId).AsEnumerable();
+
+           var questionTypeByQuestionId = snapshot.Questions
+        .ToDictionary( q => q.QuestionId, q => q.QuestionType);
+
+        var selectedOptionIdsByQuestionIds = responses.ToDictionary(
+            response => response.QuestionId,
+            response => response.SelectedOptionIds
+        );
+
+        var allowedOptionIdsByQuestionId = await _questionRepository.QueryOptionIdsInGroupByQuestionId(sessionQuestionIds);
+
+
+        var validationContext = new SessionResponseValidationContext {
+            SubmittedQuestionIds =  submittedQuestionIds,
+            SessionQuestionIds = sessionQuestionIds,
+            SelectedOptionIdsByQuestionId = selectedOptionIdsByQuestionIds,
+            AllowedOptionIdsByQuestionId = allowedOptionIdsByQuestionId,
+            QuestionTypeByQuestionId = questionTypeByQuestionId
+            };
+
+
+        var areResponsesValid = ValidateSubmittedResponses(validationContext);
+        if(!areResponsesValid){
+            _logger.LogInformation("Session responses validation hasfailed");
             return Result<SessionCalculationResult>.Failure(Errors.InvalidSessionResponse);
         }
 
-        var snapshotByQuestionId = snapshot.Questions.ToDictionary(q => q.QuestionId);
-        var responsesList = responses.ToList();
-        var responsesByQuestionId = responsesList
-            .GroupBy(r => r.QuestionId)
-            .ToDictionary(g => g.Key, g => g.ToList());
+        // --------------------
 
-        foreach (var (questionId, questionResponses) in responsesByQuestionId)
+     
+
+        var domainIdBySelectedQuestionId = snapshot.Questions
+        .Where(q => submittedQuestionIds
+        .Contains(q.QuestionId))
+        .ToDictionary(q => q.QuestionId, q => q.DomainId);
+        
+
+        var correctOptionIdsByQuestionId = await _questionRepository.QueryCorrectOptionsGroupedByQuestionIds(submittedQuestionIds);
+
+        var calculationContext = new SessionResultCalculationContext {
+            SessionId = snapshot.SessionId,
+            TotalQuestions = snapshot.TotalQuestions,
+            SubmittedOptionsIdsByQuestionId = selectedOptionIdsByQuestionIds,
+            QuestionTypeByQuestionId = questionTypeByQuestionId,
+            CorrectOptionIdsByQuestionId = correctOptionIdsByQuestionId,
+            DomainIdByQuestionId = domainIdBySelectedQuestionId,
+
+        };
+
+        var calculationResult = BuildSessionCalculation(calculationContext);
+
+        return Result<SessionCalculationResult>.Success(calculationResult);
+        
+       
+    }
+  
+
+    private bool ValidateSubmittedResponses(SessionResponseValidationContext context
+          )
         {
-            if (!snapshotByQuestionId.TryGetValue(questionId, out var snapshotQuestion))
-            {
-                return Result<SessionCalculationResult>.Failure(Errors.InvalidSessionResponse);
-            }
 
-            var selectedOptionIds = questionResponses.Select(r => r.SelectedOptionId).ToList();
-            if (selectedOptionIds.Distinct().Count() != selectedOptionIds.Count)
-            {
-                return Result<SessionCalculationResult>.Failure(Errors.InvalidSessionResponse);
-            }
+        HashSet<Guid> submittedQuestionIds = [.. context.SubmittedQuestionIds];
+        HashSet<Guid> sessionQuestionIds = [.. context.SessionQuestionIds];
 
-            if (IsSingleSelectType(snapshotQuestion.QuestionType) && selectedOptionIds.Count > 1)
-            {
-                return Result<SessionCalculationResult>.Failure(Errors.InvalidSessionResponse);
-            }
+        if(!submittedQuestionIds.IsSubsetOf(sessionQuestionIds)){
+            _logger.LogInformation("Responses contain question ids that does not belong to session");
+            return false;
         }
 
-        var questionIds = snapshot.Questions.Select(q => q.QuestionId).ToList();
-        var allOptions = (await _questionRepository.GetAnswerOptionsByQuestionIds(questionIds, ct)).ToList();
-        var optionsByQuestionId = allOptions
-            .GroupBy(o => o.QuestionId)
-            .ToDictionary(g => g.Key, g => g.ToList());
-        var optionsById = allOptions.ToDictionary(o => o.Id);
+        HashSet<Guid> selectedOptionIds = [];
+        HashSet<Guid> allowedOptionIds = [];
 
-        foreach (var response in responsesList)
-        {
-            if (!optionsById.TryGetValue(response.SelectedOptionId, out var option))
-            {
-                return Result<SessionCalculationResult>.Failure(Errors.InvalidSessionResponse);
+        foreach(var questionId in context.SubmittedQuestionIds){
+
+          
+            selectedOptionIds.Clear();
+            allowedOptionIds.Clear();
+            var currentOptions = context.SelectedOptionIdsByQuestionId[questionId];
+
+            
+            selectedOptionIds.AddRange(currentOptions);
+            var allowedOptionIdsForQuestion = context.AllowedOptionIdsByQuestionId[questionId];
+            allowedOptionIds.AddRange(allowedOptionIdsForQuestion);
+
+            if (selectedOptionIds.Count == 0)
+{
+    _logger.LogInformation("Submitted question has no selected options");
+    return false;
+}
+
+            if(!selectedOptionIds.IsSubsetOf(allowedOptionIds)){
+                _logger.LogInformation("One of responses contains option that does not belong to other question");
+                return false;
             }
 
-            if (option.QuestionId != response.QuestionId)
-            {
-                return Result<SessionCalculationResult>.Failure(Errors.InvalidSessionResponse);
+              if(context.QuestionTypeByQuestionId.TryGetValue(questionId, out var questionType)){
+                if (questionType is QuestionType.SingleChoice or QuestionType.TrueFalse
+    && selectedOptionIds.Count > 1) {
+        _logger.LogInformation("Single choice question contains multiple submitted answer options");
+        return false;
+    }
             }
+
         }
+        return true;
 
-        var savedResponses = new List<UserExamResponse>();
-        var domainStats = new Dictionary<Guid, (decimal ScorePoints, int QuestionCount)>();
-        decimal totalScorePoints = 0m;
+    }
 
-        foreach (var snapshotQuestion in snapshot.Questions.OrderBy(q => q.OrderIndex))
-        {
-            var selectedOptionIds = responsesByQuestionId.TryGetValue(snapshotQuestion.QuestionId, out var questionResponses)
-                ? questionResponses.Select(r => r.SelectedOptionId).ToHashSet()
-                : [];
 
-            var questionOptions = optionsByQuestionId.GetValueOrDefault(snapshotQuestion.QuestionId) ?? [];
-            var correctOptionIds = questionOptions.Where(o => o.IsCorrect).Select(o => o.Id).ToHashSet();
-            var domainId = questionOptions.FirstOrDefault()?.DomainId;
+    private static SessionCalculationResult BuildSessionCalculation(SessionResultCalculationContext context)
+{
+        var score = 0m;
+        var sessionResponses = new List<UserExamResponse>();
+        var statsByDomain = new Dictionary<Guid, (int CorrectCount, int TotalCount)>();
+        foreach(var (questionId, correctSessionOptionIds) in context.CorrectOptionIdsByQuestionId) {     
+            bool isCorrect = false;
+    
+            HashSet<Guid> correctOptions = [.. correctSessionOptionIds];
+            
+            if(context.SubmittedOptionsIdsByQuestionId.TryGetValue(questionId, out var currentSelectedOptions) 
+            && context.QuestionTypeByQuestionId.TryGetValue(questionId, out var questionType)
+            && context.DomainIdByQuestionId.TryGetValue(questionId, out var domainId)) {
 
-            var questionScore = CalculateQuestionScore(
-                snapshotQuestion.QuestionType,
-                correctOptionIds,
-                selectedOptionIds);
+                HashSet<Guid> selectedOptions = [.. currentSelectedOptions];
 
-            totalScorePoints += questionScore;
+                if(questionType is QuestionType.MultipleChoice) {
+                    var correctCount = selectedOptions.Count(id => correctSessionOptionIds.Contains(id));
+                    if(selectedOptions.SetEquals(correctSessionOptionIds)){
+                        isCorrect = true;
+                    }
 
-            if (domainId is Guid domainGuid && domainGuid != Guid.Empty)
-            {
-                if (domainStats.TryGetValue(domainGuid, out var existing))
-                {
-                    domainStats[domainGuid] = (existing.ScorePoints + questionScore, existing.QuestionCount + 1);
+                    if(correctSessionOptionIds.Count == 0){
+                        throw new DivideByZeroException();
+                    }
+                    score += (decimal)correctCount/correctSessionOptionIds.Count;
+
+                    foreach(var option in selectedOptions){
+
+                        if(correctSessionOptionIds.Contains(option)){
+                            sessionResponses.Add (new UserExamResponse(
+                            questionId: questionId,
+                            domainId: domainId,
+                            selectedOptionId: option,
+                            examAttemptId: context.SessionId,
+                            isCorrect: true
+                        ));
+
+                        
+                        }
+
+                        else {
+                            sessionResponses.Add (new UserExamResponse(
+                            questionId: questionId,
+                            domainId: domainId,
+                            selectedOptionId: option,
+                            examAttemptId: context.SessionId,
+                            isCorrect: false
+                        ));
+
+                        }
+
+                    }
                 }
-                else
-                {
-                    domainStats[domainGuid] = (questionScore, 1);
+                else {
+                    if(selectedOptions.SetEquals(correctOptions)){
+                        score += 1;
+                        sessionResponses.Add (new UserExamResponse(
+                            questionId: questionId,
+                            domainId: domainId,
+                            selectedOptionId: selectedOptions.FirstOrDefault(),
+                            examAttemptId: context.SessionId,
+                            isCorrect: true
+                        ));
+                        isCorrect = true;
+                
+                    }
+                    else{
+                         sessionResponses.Add (new UserExamResponse(
+                            questionId: questionId,
+                            domainId: domainId,
+                            selectedOptionId: selectedOptions.FirstOrDefault(),
+                            examAttemptId: context.SessionId,
+                            isCorrect: false
+                        ));
+
+                    }
+
                 }
+
             }
 
-            foreach (var selectedOptionId in selectedOptionIds)
+             if(context.DomainIdByQuestionId.TryGetValue(questionId, out var currentDomainId))
             {
-                var option = optionsById[selectedOptionId];
-                savedResponses.Add(new UserExamResponse(
-                    questionId: option.QuestionId,
-                    domainId: option.DomainId,
-                    selectedOptionId: option.Id,
-                    examAttemptId: sessionId,
-                    isCorrect: option.IsCorrect));
+                if(statsByDomain.TryGetValue(currentDomainId, out var currentStats)) {
+                statsByDomain[currentDomainId] = ( 
+                    currentStats.CorrectCount + (isCorrect ? 1 : 0),
+                    currentStats.TotalCount + 1
+                );
+
+            } else {
+                statsByDomain[currentDomainId] = (isCorrect ? 1 : 0, 1);
             }
         }
+        }
 
-        var percentageScore = snapshot.TotalQuestions == 0
-            ? 0m
-            : Math.Round(totalScorePoints / snapshot.TotalQuestions * 100m, 2);
-
-        return Result<SessionCalculationResult>.Success(new SessionCalculationResult
-        {
-            Result = new SessionResultDto
-            {
-                ScorePoints = totalScorePoints,
-                PercentageScore = percentageScore,
+        return new SessionCalculationResult {
+            Result = new SessionResultDto {
+                ScorePoints = Math.Round(score, 2),
+                PercentageScore = score / context.TotalQuestions * 100
             },
-            SavedResponses = savedResponses,
-            DomainStats = domainStats,
-        });
-    }
-
-    private static bool IsSingleSelectType(QuestionType questionType) =>
-        questionType is QuestionType.SingleChoice or QuestionType.TrueFalse;
-
-    private static decimal CalculateQuestionScore(
-        QuestionType questionType,
-        IReadOnlySet<Guid> correctOptionIds,
-        IReadOnlySet<Guid> selectedOptionIds)
-    {
-        if (selectedOptionIds.Count == 0)
-        {
-            return 0m;
+            SavedResponses = sessionResponses,
+            DomainStats = statsByDomain
+        };
         }
-
-        if (questionType == QuestionType.MultipleChoice)
-        {
-            if (correctOptionIds.Count == 0)
-            {
-                return 0m;
-            }
-
-            var correctSelected = selectedOptionIds.Count(correctOptionIds.Contains);
-            return (decimal)correctSelected / correctOptionIds.Count;
-        }
-
-        if (selectedOptionIds.Count != 1)
-        {
-            return 0m;
-        }
-
-        return correctOptionIds.Contains(selectedOptionIds.First()) ? 1m : 0m;
-    }
 }

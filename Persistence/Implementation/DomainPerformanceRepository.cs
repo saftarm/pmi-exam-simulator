@@ -25,7 +25,7 @@ public class DomainPerformanceRepository(ApplicationDbContext context) : IDomain
     public async Task UpsertSessionStatsAsync(
         Guid userId,
         Guid examId,
-        IReadOnlyDictionary<Guid, (decimal ScorePoints, int QuestionCount)> statsByDomain,
+        IReadOnlyDictionary<Guid, (int CorrectCount, int TotalCount)> statsByDomain,
         CancellationToken ct = default)
     {
         if (statsByDomain.Count == 0)
@@ -39,9 +39,9 @@ public class DomainPerformanceRepository(ApplicationDbContext context) : IDomain
 
         var now = DateTime.UtcNow;
 
-        foreach (var (domainId, stats) in statsByDomain)
+        foreach (var stat in statsByDomain)
         {
-            var existing = existingRecords.FirstOrDefault(r => r.DomainId == domainId);
+            var existing = existingRecords.FirstOrDefault(r => r.DomainId == stat.Key);
 
             if (existing == null)
             {
@@ -49,16 +49,16 @@ public class DomainPerformanceRepository(ApplicationDbContext context) : IDomain
                 {
                     UserId = userId,
                     ExamId = examId,
-                    DomainId = domainId,
-                    TotalAnswered = stats.QuestionCount,
-                    TotalCorrect = stats.ScorePoints,
+                    DomainId = stat.Key,
+                    TotalAnswered = stat.Value.TotalCount,
+                    TotalCorrect = stat.Value.CorrectCount,
                     LastUpdated = now,
                 }, ct);
             }
             else
             {
-                existing.TotalCorrect += stats.ScorePoints;
-                existing.TotalAnswered += stats.QuestionCount;
+                existing.TotalCorrect += stat.Value.CorrectCount;
+                existing.TotalAnswered += stat.Value.TotalCount;
                 existing.LastUpdated = now;
             }
         }

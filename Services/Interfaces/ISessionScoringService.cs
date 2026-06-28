@@ -9,7 +9,6 @@ public interface ISessionScoringService
 {
     Task<Result<SessionCalculationResult>> ValidateAndScoreAsync(
         SessionSnapshot snapshot,
-        Guid actingUserId,
         Guid sessionId,
         IEnumerable<UserExamResponseDto> responses,
         CancellationToken ct = default);

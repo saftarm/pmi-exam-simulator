@@ -175,7 +175,6 @@ namespace TestAPI.Services.Implementation
 
             var sessionResult = await _sessionScoringService.ValidateAndScoreAsync(
                 snapshot,
-                actingUserId,
                 sessionInDb.Id,
                 request.SessionResponses,
                 ct);

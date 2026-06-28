@@ -8,6 +8,6 @@ namespace TestAPI.DTO.ExamAttempt
 
         public required IReadOnlyList<UserExamResponse> SavedResponses { get; init; }
 
-        public required IReadOnlyDictionary<Guid, (decimal ScorePoints, int QuestionCount)> DomainStats { get; init; }
+        public required IReadOnlyDictionary<Guid, (int CorrectCount, int TotalCount)> DomainStats { get; init; }
     }
 }

@@ -10,7 +10,7 @@ namespace TestAPI.Services.Interfaces
         Task UpdateDomainPerformanceAsync(
             Guid userId,
             Guid examId,
-            IReadOnlyDictionary<Guid, (decimal ScorePoints, int QuestionCount)> statsByDomain,
+            IReadOnlyDictionary<Guid, (int CorrectCount, int TotalCount)> statsByDomain,
             CancellationToken ct);
     }
 }
