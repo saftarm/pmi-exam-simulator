@@ -151,5 +151,38 @@ namespace TestAPI.Persistence.Implementation
                 .Where(o => ids.Contains(o.QuestionId))
                 .ToListAsync(ct);
         }
+
+        public async Task<Dictionary<Guid, IReadOnlyList<Guid>>> QueryOptionIdsInGroupByQuestionId(IEnumerable<Guid> questionIds) {
+            return await _context.AnswerOptions
+            .AsNoTracking()
+            .Where(o => questionIds.Contains(o.QuestionId))
+            .GroupBy(o => o.QuestionId)
+            .ToDictionaryAsync(
+                group => group.Key,
+                group => group.Select(o => o.Id).ToList() as IReadOnlyList<Guid>
+            );
+        }
+
+          public async Task<Dictionary<Guid, IReadOnlyList<Guid>>> QueryCorrectOptionsGroupedByQuestionIds(IEnumerable<Guid> questionIds) {
+            return await _context.AnswerOptions
+            .AsNoTracking()
+            .Where(o => questionIds.Contains(o.QuestionId) && o.IsCorrect == true)
+            .GroupBy(o => o.QuestionId)
+            .ToDictionaryAsync(
+                group => group.Key,
+                group => group.Select(o => o.Id).ToList() as IReadOnlyList<Guid>
+            );
+        }
+
+        public async Task<Dictionary<Guid, IEnumerable<AnswerOption>>> QueryOptionsGroupedByQuestionIds(IEnumerable<Guid> questionIds) {
+            return await _context.AnswerOptions
+            .AsNoTracking()
+            .Where(o => questionIds.Contains(o.QuestionId))
+            .GroupBy(o => o.QuestionId)
+            .ToDictionaryAsync(
+                group => group.Key,
+                group => group.AsEnumerable()
+            );
+        }
     }
 }

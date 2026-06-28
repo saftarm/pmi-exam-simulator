@@ -15,6 +15,11 @@ namespace TestAPI.Persistence.Interfaces
         Task<Question?> GetByIdWithOptionsAsync(Guid questionId, CancellationToken ct);
         Task<PagedList<QuestionListItemDto>> GetPagedAsync(QuestionQueryParameters query, CancellationToken ct);
         Task<IEnumerable<Question>> QueryQuestionsWithAnswerOptions(Dictionary<Guid, int> domainWeights);
+        Task<Dictionary<Guid, IReadOnlyList<Guid>>> QueryOptionIdsInGroupByQuestionId(IEnumerable<Guid> questionIds);
+        Task<Dictionary<Guid, IReadOnlyList<Guid>>> QueryCorrectOptionsGroupedByQuestionIds(IEnumerable<Guid> questionIds);
+
+        Task<Dictionary<Guid, IEnumerable<AnswerOption>>> QueryOptionsGroupedByQuestionIds(IEnumerable<Guid> questionIds);
+        
         Task<IEnumerable<AnswerOption>> GetAnswerOptionsByIds(IEnumerable<Guid> optionsIds);
         Task<IReadOnlyList<AnswerOption>> GetAnswerOptionsByQuestionIds(
             IEnumerable<Guid> questionIds,
