@@ -18,6 +18,7 @@ public record SessionSnapshot
 public record SessionQuestionEntry
 {
     public Guid QuestionId { get; init; }
+    public Guid DomainId {get; init;}
 
     public QuestionType QuestionType { get; init; }
 

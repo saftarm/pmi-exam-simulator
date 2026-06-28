@@ -299,6 +299,7 @@ namespace TestAPI.Services.Implementation
                     .Select((question, index) => new SessionQuestionEntry
                     {
                         QuestionId = question.Id,
+                        DomainId = question.DomainId,
                         QuestionType = question.QuestionType,
                         OrderIndex = index,
                     })
