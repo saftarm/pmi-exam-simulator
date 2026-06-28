@@ -4,7 +4,7 @@ using TestAPI.Entities;
 
 namespace TestAPI.DTO.Question
 {
-    public class QuestionDto
+    public record QuestionSnapshotDto
     {
         [JsonPropertyName("questionId")]
         public Guid Id { get; set; }
@@ -14,6 +14,9 @@ namespace TestAPI.DTO.Question
 
         [JsonPropertyName("questionType")]
         public QuestionType QuestionType { get; set; }
+
+        [JsonPropertyName("domainId")]
+        public Guid DomainId {get;set;}
 
         [JsonPropertyName("answerOptions")]
         public IEnumerable<AnswerOptionDto>? AnswerOptionsDtos { get; set; }

@@ -17,7 +17,7 @@ namespace TestAPI.Services.Interfaces
         Task DeleteAsync(Guid examId);
         Task<Result> ArchiveAsync(Guid examId);
         Task<Result<IEnumerable<ExamDetailsDto>>> GetPublishedExamsDetailsAsync(PageParameters pageParameters);
-        Task<Result<IReadOnlyList<QuestionDto>>> CompileExam(Guid examId, CancellationToken ct = default);
+        Task<Result<IReadOnlyList<QuestionSnapshotDto>>> CompileExam(Guid examId, CancellationToken ct = default);
         Task<Result> UpdateAsync(Guid id, UpdateExamRequest request);
         Task DeleteRangeAsync(IEnumerable<Guid> examIds);
         Task<Result<IReadOnlyList<ExamOverviewStatsDto>>> GetExamOverviewStatsAsync(CancellationToken ct = default);

@@ -42,19 +42,19 @@ namespace TestAPI.Services.Implementation
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<IReadOnlyList<QuestionDto>>> CompileExam(Guid examId, CancellationToken ct = default)
+        public async Task<Result<IReadOnlyList<QuestionSnapshotDto>>> CompileExam(Guid examId, CancellationToken ct = default)
         {
             var examWithDomains = await _examRepository.QueryExamsWithDomainsById(examId);
             if (examWithDomains is null)
             {
                 _logger.LogWarning("Exam with ID: {ID} not found", examId);
-                return Result<IReadOnlyList<QuestionDto>>.Failure(Errors.RecordNotFoundById);
+                return Result<IReadOnlyList<QuestionSnapshotDto>>.Failure(Errors.RecordNotFoundById);
             }
 
             if (examWithDomains.Domains is null || !examWithDomains.Domains.Any())
             {
                 _logger.LogWarning("Exam with ID: {ID} has no domains", examId);
-                return Result<IReadOnlyList<QuestionDto>>.Failure(Errors.RangeOfRecordsNotFound);
+                return Result<IReadOnlyList<QuestionSnapshotDto>>.Failure(Errors.RangeOfRecordsNotFound);
             }
 
             Dictionary<Guid, int> numberOfQuestionsPerDomain = [];
@@ -73,13 +73,14 @@ namespace TestAPI.Services.Implementation
             if (!examQuestions.Any())
             {
                 _logger.LogWarning("No questions found for exam {ExamId}", examId);
-                return Result<IReadOnlyList<QuestionDto>>.Failure(Errors.RangeOfRecordsNotFound);
+                return Result<IReadOnlyList<QuestionSnapshotDto>>.Failure(Errors.RangeOfRecordsNotFound);
             }
 
-            var compiledQuestionDtos = examQuestions.Select(e => new QuestionDto
+            var compiledQuestionDtos = examQuestions.Select(e => new QuestionSnapshotDto
             {
                 Id = e.Id,
                 Title = e.Title,
+                DomainId = e.DomainId,
                 QuestionType = e.QuestionType,
                 AnswerOptionsDtos = [.. e.AnswerOptions!.Select(o => new AnswerOptionDto
         {
@@ -90,7 +91,7 @@ namespace TestAPI.Services.Implementation
 
             _logger.LogDebug("Compiled {Count} questions for exam {ExamId}", compiledQuestionDtos.Count, examId);
 
-            return Result<IReadOnlyList<QuestionDto>>.Success(compiledQuestionDtos);
+            return Result<IReadOnlyList<QuestionSnapshotDto>>.Success(compiledQuestionDtos);
         }
 
         public async Task<Result> CreateExamAsync(CreateExamDto dto)

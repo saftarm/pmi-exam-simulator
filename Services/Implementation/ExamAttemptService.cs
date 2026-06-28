@@ -1,6 +1,7 @@
 using StackExchange.Redis;
 using TestAPI.DTO;
 using TestAPI.DTO.ExamAttempt;
+using TestAPI.DTO.Question;
 using TestAPI.Entities;
 using TestAPI.Enums;
 using TestAPI.Models.Session;
@@ -286,7 +287,7 @@ namespace TestAPI.Services.Implementation
             Guid sessionId,
             Guid examId,
             Guid userId,
-            IReadOnlyList<DTO.Question.QuestionDto> compiledQuestions)
+            IReadOnlyList<QuestionSnapshotDto> compiledQuestions)
         {
             return new SessionSnapshot
             {
