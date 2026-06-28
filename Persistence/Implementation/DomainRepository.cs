@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
 using TestAPI.Entities;
-using TestAPI.Exceptions;
 using TestAPI.Persistence.Interfaces;
-using TestAPI.ResultPattern;
 
 namespace TestAPI.Persistence.Implementation
 {
@@ -94,6 +92,12 @@ namespace TestAPI.Persistence.Implementation
                 .Where(d => d.Title == title)
                 .Select(d => d.Id)
                 .FirstOrDefaultAsync(ct);
+        }
+
+        public async Task<bool> AnyExistsByTitleAsync(IEnumerable<string> titles) {
+            return await _context.Domains
+            .AsNoTracking()
+            .AnyAsync(d => titles.Contains(d.Title));
         }
 
 

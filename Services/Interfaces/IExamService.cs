@@ -12,7 +12,7 @@ namespace TestAPI.Services.Interfaces
     {
         Task<Result<IReadOnlyList<ExamSummaryDto>>> GetAllExamsAsync(CancellationToken ct = default);
         Task<Result<ExamDetailsDto>> GetDetailsByIdAsync(Guid id);
-        Task<Result> CreateExamAsync(CreateExamDto dto);
+        Task<Result> CreateExamAsync(CreateExamDto dto, CancellationToken ct);
         Task<Result> PublishExam(Guid id);
         Task DeleteAsync(Guid examId);
         Task<Result> ArchiveAsync(Guid examId);

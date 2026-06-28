@@ -70,9 +70,9 @@ namespace TestAPI.Controllers
         }
 
         [HttpPost("/api/exams")]
-        public async Task<IActionResult> Create([FromBody] CreateExamDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateExamDto dto, CancellationToken ct)
         {
-            var result = await _examService.CreateExamAsync(dto);
+            var result = await _examService.CreateExamAsync(dto, ct);
             return result.IsSuccess ? Created("/api/exams", null) : result.ToActionResult();
         }
 

@@ -18,6 +18,7 @@ namespace TestAPI.Services.Implementation
     {
         private readonly ILogger<ExamService> _logger;
         private readonly IExamRepository _examRepository;
+        private readonly IDomainRepository _domainRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IQuestionRepository _questionRepository;
         private readonly IExamAttemptRepository _examAttemptRepository;
@@ -27,6 +28,7 @@ namespace TestAPI.Services.Implementation
         public ExamService(
             ILogger<ExamService> logger,
             IExamRepository examRepository,
+            IDomainRepository domainRepository,
             ICategoryRepository categoryRepository,
             IQuestionRepository questionRepository,
             IExamAttemptRepository examAttemptRepository,
@@ -35,6 +37,7 @@ namespace TestAPI.Services.Implementation
         {
             _logger = logger;
             _examRepository = examRepository;
+            _domainRepository = domainRepository;
             _categoryRepository = categoryRepository;
             _questionRepository = questionRepository;
             _examAttemptRepository = examAttemptRepository;
@@ -94,7 +97,7 @@ namespace TestAPI.Services.Implementation
             return Result<IReadOnlyList<QuestionSnapshotDto>>.Success(compiledQuestionDtos);
         }
 
-        public async Task<Result> CreateExamAsync(CreateExamDto dto)
+        public async Task<Result> CreateExamAsync(CreateExamDto dto, CancellationToken ct)
         {
             var validationResult = await _validatorResolver.ValidateAsync(dto);
             if (!validationResult.IsValid)
@@ -102,6 +105,13 @@ namespace TestAPI.Services.Implementation
                 return Result.Failure(validationResult.ToError());
             }
 
+            var submittedDomainTitles = dto.CreateDomainDtos.Select(d => d.Title).AsEnumerable();
+            var domainExistsByTitle = await _domainRepository.AnyExistsByTitleAsync(submittedDomainTitles);
+
+            if(domainExistsByTitle) {
+                return Result.Failure(new Error("CONFLICT", "Domain already exists with given title", ErrorType.Conflict));
+            }
+            
             var doesExist = await _examRepository.ExamExistsByTitleAsync(dto.Title);
             if (doesExist)
             {
@@ -128,7 +138,7 @@ namespace TestAPI.Services.Implementation
             };
             await _examRepository.AddAsync(newExam);
 
-            var rowsAffected = await _unitOfWork.SaveChangesAsync();
+            var rowsAffected = await _unitOfWork.SaveChangesAsync(ct);
             if (rowsAffected == 0)
             {
                 return Result.Failure(Errors.SessionPersistenceFailed);
@@ -188,8 +198,7 @@ namespace TestAPI.Services.Implementation
 
             if (!paginatedExams.Any())
             {
-                _logger.LogError("No published exams found in database");
-                return Result<IEnumerable<ExamDetailsDto>>.Failure(Errors.RangeOfRecordsNotFound);
+                return Result<IEnumerable<ExamDetailsDto>>.Success([]);
             }
 
             var attemptCounts = await _examAttemptRepository.GetCompletedAttemptCountsByExamAsync();
