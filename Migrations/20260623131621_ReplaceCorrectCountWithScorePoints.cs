@@ -24,18 +24,6 @@ namespace TestAPI.Migrations
                 WHERE "CorrectCount" IS NOT NULL;
                 """);
 
-            migrationBuilder.DropColumn(
-                name: "CorrectCount",
-                table: "ExamAttempts");
-
-            migrationBuilder.AlterColumn<decimal>(
-                name: "TotalCorrect",
-                table: "DomainPerformances",
-                type: "numeric(8,2)",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "integer");
-
             migrationBuilder.AlterColumn<decimal>(
                 name: "PercentageScore",
                 table: "ExamAttempts",
@@ -47,6 +35,18 @@ namespace TestAPI.Migrations
                 oldType: "numeric(5,2)",
                 oldComputedColumnSql: "CASE WHEN \"TotalQuestions\" = 0 THEN 0.0 ELSE (\"CorrectCount\"::numeric / \"TotalQuestions\"::numeric) * 100 END",
                 oldStored: true);
+
+            migrationBuilder.DropColumn(
+                name: "CorrectCount",
+                table: "ExamAttempts");
+
+            migrationBuilder.AlterColumn<decimal>(
+                name: "TotalCorrect",
+                table: "DomainPerformances",
+                type: "numeric(8,2)",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "integer");
         }
 
         /// <inheritdoc />
