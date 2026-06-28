@@ -7,9 +7,12 @@ using TestAPI.Persistence.Interfaces;
 
 namespace TestAPI.Persistence.Implementation
 {
-    public class QuestionRepository(ApplicationDbContext context) : IQuestionRepository
+    public class QuestionRepository(
+        ApplicationDbContext context,
+        IDbContextFactory<ApplicationDbContext> dbFactoryContext) : IQuestionRepository
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactoryContext = dbFactoryContext;
 
         public async Task<IEnumerable<Question>> QueryQuestionsWithAnswerOptions(
             Dictionary<Guid, int> numberOfQuestionsPerDomain)
@@ -21,7 +24,8 @@ namespace TestAPI.Persistence.Implementation
 
             var queryTasks = numberOfQuestionsPerDomain.Select(async kvp =>
             {
-                return await _context.Questions
+                await using var context = await _dbFactoryContext.CreateDbContextAsync();
+                return await context.Questions
               .AsNoTracking()
               .Where(q => q.DomainId == kvp.Key)
               .Include(q => q.AnswerOptions)
