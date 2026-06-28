@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../Icon';
 import { ADMIN_NAV_ITEMS } from './adminNav';
+import { ADMIN_APP_NAME } from '../../constants/branding';
 import { getInitials } from '../../utils/userDisplay';
 import UserAvatar from '../UserAvatar';
 
@@ -49,7 +50,7 @@ function AdminSidebar({ onNavigate }) {
           onClick={onNavigate}
           className="font-headline-md text-headline-md font-extrabold tracking-tight hover:text-secondary-fixed-dim transition-colors shrink-0"
         >
-          PMI Admin
+          {ADMIN_APP_NAME}
         </Link>
         <Link
           to="/profile"

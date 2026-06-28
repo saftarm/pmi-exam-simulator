@@ -1,24 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getExamDetails, startSession } from '../services/examService';
-import { getSessionErrorMessage } from '../utils/sessionAnswers';
+import { getExamDetails } from '../services/examService';
 import { getDomainsByExam } from '../services/adminDomainService';
-import AppHeader from '../components/AppHeader';
-import AppFooter from '../components/AppFooter';
+import { useStartExamSession } from '../hooks/useStartExamSession';
+import BackLink from '../components/BackLink';
 import Icon from '../components/Icon';
+import ErrorBanner from '../components/ErrorBanner';
 import { DetailPageSkeleton, ContentReveal, LoadingButton } from '../components/loading';
 
 export default function ExamDetailPage() {
   const { examId } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
+  const { startExam, starting, startError } = useStartExamSession();
   const [exam, setExam] = useState(null);
   const [domains, setDomains] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [starting, setStarting] = useState(false);
   const [error, setError] = useState(null);
-  const [startError, setStartError] = useState(null);
 
   useEffect(() => {
     Promise.all([getExamDetails(examId), getDomainsByExam(examId).catch(() => [])])
@@ -31,43 +29,23 @@ export default function ExamDetailPage() {
   }, [examId]);
 
   const handleStart = async () => {
-    if (!user?.userId) return;
-    setStarting(true);
-    setStartError(null);
+    if (!user?.userId || !exam) return;
     try {
-      const session = await startSession(examId);
-      navigate(`/exams/${examId}/session/${session.sessionId}`, {
-        state: { exam },
-      });
-    } catch (err) {
-      if (err.response?.status === 403) {
-        setStartError('This exam is not available for practice yet.');
-      } else {
-        setStartError(getSessionErrorMessage(err, 'start'));
-      }
-    } finally {
-      setStarting(false);
+      await startExam(examId, exam);
+    } catch {
+      // startError is set by the hook
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F4F5F7]">
-      <AppHeader activeLink="Exams" />
+    <>
+      <BackLink to="/exams" label="Back to exams" />
 
-      <main className="flex-1 max-w-container-max mx-auto px-margin-desktop py-xl w-full">
-        <Link
-          to="/exams"
-          className="mb-lg text-sm text-secondary-container font-bold hover:underline flex items-center gap-xs"
-        >
-          <Icon name="arrow_back" style={{ fontSize: 18 }} />
-          Back to exams
-        </Link>
+      {loading && <DetailPageSkeleton />}
 
-        {loading && <DetailPageSkeleton />}
+      {error && <p className="text-red-600 loading-enter">{error}</p>}
 
-        {error && <p className="text-red-600 loading-enter">{error}</p>}
-
-        {exam && !error && (
+      {exam && !error && (
         <ContentReveal show>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
             <div className="lg:col-span-2 bg-white rounded-xl border border-outline-variant shadow-sm p-xl">
@@ -83,11 +61,7 @@ export default function ExamDetailPage() {
                   <dd className="font-bold text-lg">{exam.numberOfQuestions}</dd>
                 </div>
               </dl>
-              {startError && (
-                <p className="text-red-600 text-sm mb-md p-md bg-red-50 border border-red-200 rounded-lg">
-                  {startError}
-                </p>
-              )}
+              <ErrorBanner message={startError} />
               <LoadingButton
                 onClick={handleStart}
                 loading={starting}
@@ -120,10 +94,7 @@ export default function ExamDetailPage() {
             </div>
           </div>
         </ContentReveal>
-        )}
-      </main>
-
-      <AppFooter />
-    </div>
+      )}
+    </>
   );
 }

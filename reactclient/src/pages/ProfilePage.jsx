@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchCurrentUser, updateProfile, formatApiErrors } from '../services/authService';
-import AppHeader from '../components/AppHeader';
-import AppFooter from '../components/AppFooter';
 import StatusBadge from '../components/admin/StatusBadge';
 import { formatDate, getInitials } from '../utils/userDisplay';
 import { ProfileSkeleton, ContentReveal, LoadingButton } from '../components/loading';
@@ -49,16 +47,13 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F4F5F7]">
-      <AppHeader activeLink="Profile" />
+    <div className="max-w-lg mx-auto w-full">
+      <h1 className="font-headline-xl text-headline-xl text-primary mb-xl">Your Profile</h1>
 
-      <main className="flex-1 max-w-lg mx-auto px-margin-desktop py-xl w-full">
-        <h1 className="font-headline-xl text-headline-xl text-primary mb-xl">Your Profile</h1>
+      {loading && <ProfileSkeleton />}
+      {error && !profile && <p className="text-red-600 loading-enter">{error}</p>}
 
-        {loading && <ProfileSkeleton />}
-        {error && !profile && <p className="text-red-600 loading-enter">{error}</p>}
-
-        {profile && (
+      {profile && (
         <ContentReveal show>
           <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-xl">
             <div className="flex items-center gap-lg mb-xl">
@@ -66,9 +61,7 @@ export default function ProfilePage() {
                 {getInitials(profile.displayName || profile.userName)}
               </div>
               <div>
-                <h2 className="font-headline-md text-headline-md font-bold">
-                  {profile.displayName}
-                </h2>
+                <h2 className="font-headline-md text-headline-md font-bold">{profile.displayName}</h2>
                 <p className="text-on-surface-variant">@{profile.userName}</p>
               </div>
             </div>
@@ -148,10 +141,7 @@ export default function ProfilePage() {
             </Link>
           </div>
         </ContentReveal>
-        )}
-      </main>
-
-      <AppFooter />
+      )}
     </div>
   );
 }

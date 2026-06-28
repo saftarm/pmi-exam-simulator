@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LandingPage from './LandingPage';
 import LearnerHomePage from './LearnerHomePage';
+import { LearnerPageShell } from '../layouts/LearnerLayout';
 import LoadingState from '../components/loading/LoadingState';
 
 export default function HomePage() {
@@ -19,5 +20,9 @@ export default function HomePage() {
     return <Navigate to="/admin" />;
   }
 
-  return <LearnerHomePage />;
+  return (
+    <LearnerPageShell activeLink="Home">
+      <LearnerHomePage />
+    </LearnerPageShell>
+  );
 }

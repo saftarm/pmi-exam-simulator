@@ -1,7 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import AppHeader from '../components/AppHeader';
-import AppFooter from '../components/AppFooter';
 import Icon from '../components/Icon';
 import { resolveAuthenticatedHomePath } from '../utils/postLoginPath';
 
@@ -43,11 +41,8 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F4F5F7]">
-      <AppHeader activeLink="About" />
-
-      <main className="flex-1">
-        <section className="hero-gradient py-20 md:py-28">
+    <>
+      <section className="hero-gradient py-20 md:py-28">
           <div className="max-w-container-max mx-auto px-margin-desktop">
             <h1 className="font-headline-xl text-headline-xl md:text-[48px] text-white mb-md max-w-3xl">
               About PMI Exam Simulator
@@ -156,9 +151,6 @@ export default function AboutPage() {
             </p>
           )}
         </section>
-      </main>
-
-      <AppFooter />
-    </div>
+    </>
   );
 }
