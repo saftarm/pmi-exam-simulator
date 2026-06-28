@@ -1,7 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using TestAPI.Exceptions;
 
 namespace TestAPI.Services.Implementation;
 
@@ -23,7 +22,6 @@ public class ExceptionHandler : IExceptionHandler
 
         var statusCode = exception switch
         {
-            RecordNotFoundException => StatusCodes.Status404NotFound,
             KeyNotFoundException => StatusCodes.Status404NotFound,
             ArgumentNullException => StatusCodes.Status400BadRequest,
             ArgumentException => StatusCodes.Status400BadRequest,

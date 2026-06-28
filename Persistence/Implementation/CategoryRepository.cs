@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TestAPI.Data;
 using TestAPI.Entities;
-using TestAPI.Exceptions;
 using TestAPI.Persistence.Interfaces;
 
 namespace TestAPI.Persistence.Implementation
