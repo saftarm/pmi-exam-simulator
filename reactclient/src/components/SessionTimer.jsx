@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
 import LoadingButton from './loading/LoadingButton';
+import { APP_NAME } from '../constants/branding';
 
 function formatTime(totalSeconds) {
   const mins = Math.floor(totalSeconds / 60);
@@ -11,6 +12,10 @@ function formatTime(totalSeconds) {
 export default function SessionTimer({ durationMinutes = 230, onExpire }) {
   const [seconds, setSeconds] = useState(durationMinutes * 60);
   const isWarning = seconds < 600;
+
+  useEffect(() => {
+    setSeconds(durationMinutes * 60);
+  }, [durationMinutes]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -51,7 +56,7 @@ export function SessionHeader({
     <header className="bg-primary-container text-white h-16 flex items-center justify-between px-margin-desktop shrink-0 z-50">
       <div className="flex items-center gap-lg">
         <span className="font-headline-md text-headline-md font-bold tracking-tight text-white">
-          PMI Exam Simulator
+          {APP_NAME}
         </span>
         <div className="h-6 w-px bg-on-primary-container/30" />
         <SessionTimer durationMinutes={durationMinutes} onExpire={onExpire} />

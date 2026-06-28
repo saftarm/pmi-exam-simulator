@@ -13,7 +13,18 @@ export function getSessionErrorMessage(error, context = 'start') {
       ? 'Session expired or not found. Please start the exam again from the exam page.'
       : 'Exam session could not be found. Please try starting again.';
   }
+  if (status === 422) {
+    return 'Your answers could not be validated. Check that every answered question has a selection and try again.';
+  }
   return formatApiErrors(error) || (context === 'finish' ? 'Failed to submit exam' : 'Could not start exam session');
+}
+
+export function buildSessionResponses(answers, questions) {
+  return Object.entries(answers).map(([idx, value]) => {
+    const questionId = questions[Number(idx)].questionId;
+    const selectedOptionIds = Array.isArray(value) ? value : [value];
+    return { questionId, selectedOptionIds };
+  });
 }
 
 function hasAnswer(value) {
