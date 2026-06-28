@@ -1,55 +1,26 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { StatCard } from '../../components/admin/StatusBadge';
 import StatusBadge from '../../components/admin/StatusBadge';
 import Icon from '../../components/Icon';
-import { getAllExams, getExamOverviewStats } from '../../services/adminExamService';
-import { getUserCount, getUsers } from '../../services/adminUserService';
+import ErrorBanner from '../../components/ErrorBanner';
+import { useAdminDashboardData } from '../../hooks/useAdminDashboardData';
 import { isPublishedExam } from '../../utils/examStatus';
 import { formatDate, getInitials } from '../../utils/userDisplay';
 import { TableSkeleton } from '../../components/loading';
 
 export default function AdminOverviewPage() {
   const navigate = useNavigate();
-  const [exams, setExams] = useState([]);
-  const [examStats, setExamStats] = useState([]);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [recentUsers, setRecentUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(null);
-
-  useEffect(() => {
-    let failed = false;
-    Promise.all([
-      getAllExams().catch(() => {
-        failed = true;
-        return [];
-      }),
-      getExamOverviewStats().catch(() => {
-        failed = true;
-        return [];
-      }),
-      getUserCount().catch(() => {
-        failed = true;
-        return 0;
-      }),
-      getUsers({ pageNumber: 1, pageSize: 6 }).catch(() => {
-        failed = true;
-        return { items: [] };
-      }),
-    ])
-      .then(([examData, stats, count, usersData]) => {
-        setExams(examData);
-        setExamStats(stats);
-        setTotalUsers(count);
-        setRecentUsers(usersData.items || []);
-        if (failed) {
-          setLoadError('Could not load all dashboard data. Showing partial results.');
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const {
+    exams,
+    examStats,
+    totalUsers,
+    recentUsers,
+    loading,
+    loadError,
+    setLoadError,
+  } = useAdminDashboardData();
 
   const activeExams = exams.filter(isPublishedExam).length;
   const draftExams = exams.length - activeExams;
@@ -66,14 +37,11 @@ export default function AdminOverviewPage() {
 
   return (
     <AdminLayout title="Dashboard Overview" showNewExam>
-      {loadError && (
-        <div className="mb-lg p-md bg-amber-50 text-amber-900 rounded-lg border border-amber-200 flex justify-between gap-md">
-          <span>{loadError}</span>
-          <button type="button" onClick={() => setLoadError(null)} className="shrink-0 font-bold">
-            Dismiss
-          </button>
-        </div>
-      )}
+      <ErrorBanner
+        message={loadError}
+        onDismiss={() => setLoadError(null)}
+        variant="warning"
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
         <StatCard
           label="Total Users"

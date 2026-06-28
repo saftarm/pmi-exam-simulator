@@ -2,80 +2,35 @@ import { useEffect, useMemo, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { StatCard } from '../../components/admin/StatusBadge';
 import StatusBadge from '../../components/admin/StatusBadge';
-import { getAllExams, getExamOverviewStats } from '../../services/adminExamService';
-import { getCategories } from '../../services/adminCategoryService';
-import { getAttemptVolume, getPassRateAnalytics } from '../../services/adminAnalyticsService';
-import { getUserCount, getUserStats, getUsers } from '../../services/adminUserService';
+import ErrorBanner from '../../components/ErrorBanner';
+import Pagination from '../../components/Pagination';
+import { getUsers } from '../../services/adminUserService';
+import { useAdminDashboardData } from '../../hooks/useAdminDashboardData';
 import { isPublishedExam } from '../../utils/examStatus';
 import { formatDate, getInitials } from '../../utils/userDisplay';
-import { TableSkeleton } from '../../components/loading';
 
 const ROLES = ['Learner', 'Pro', 'Admin'];
 const STATUSES = ['Active', 'Suspended', 'Pending'];
 
 export default function AdminAnalyticsPage() {
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [exams, setExams] = useState([]);
-  const [categoryCount, setCategoryCount] = useState(0);
-  const [usersByRole, setUsersByRole] = useState({});
-  const [usersByStatus, setUsersByStatus] = useState({});
-  const [recentUsers, setRecentUsers] = useState([]);
+  const {
+    totalUsers,
+    exams,
+    categoryCount,
+    usersByRole,
+    usersByStatus,
+    attemptVolume,
+    passRate,
+    examStats,
+    loading,
+    loadError,
+    setLoadError,
+  } = useAdminDashboardData({ includeAnalytics: true });
+
   const [userPage, setUserPage] = useState(1);
+  const [recentUsers, setRecentUsers] = useState([]);
   const [userTotal, setUserTotal] = useState(0);
   const [hasNextUsers, setHasNextUsers] = useState(false);
-  const [attemptVolume, setAttemptVolume] = useState([]);
-  const [passRate, setPassRate] = useState(null);
-  const [examStats, setExamStats] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(null);
-
-  useEffect(() => {
-    let failed = false;
-    Promise.all([
-      getUserCount().catch(() => {
-        failed = true;
-        return 0;
-      }),
-      getAllExams().catch(() => {
-        failed = true;
-        return [];
-      }),
-      getCategories().catch(() => {
-        failed = true;
-        return [];
-      }),
-      getUserStats().catch(() => {
-        failed = true;
-        return { byRole: {}, byStatus: {} };
-      }),
-      getAttemptVolume(30).catch(() => {
-        failed = true;
-        return [];
-      }),
-      getPassRateAnalytics().catch(() => {
-        failed = true;
-        return null;
-      }),
-      getExamOverviewStats().catch(() => {
-        failed = true;
-        return [];
-      }),
-    ])
-      .then(([count, examData, categories, stats, volume, pass, overview]) => {
-        setTotalUsers(count);
-        setExams(examData);
-        setCategoryCount(categories.length);
-        setUsersByRole(stats.byRole ?? {});
-        setUsersByStatus(stats.byStatus ?? {});
-        setAttemptVolume(volume);
-        setPassRate(pass);
-        setExamStats(overview);
-        if (failed) {
-          setLoadError('Could not load all report data. Showing partial results.');
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
 
   useEffect(() => {
     getUsers({ pageNumber: userPage, pageSize: 20 })
@@ -101,14 +56,11 @@ export default function AdminAnalyticsPage() {
 
   return (
     <AdminLayout title="Reports">
-      {loadError && (
-        <div className="mb-lg p-md bg-amber-50 text-amber-900 rounded-lg border border-amber-200 flex justify-between gap-md">
-          <span>{loadError}</span>
-          <button type="button" onClick={() => setLoadError(null)} className="shrink-0 font-bold">
-            Dismiss
-          </button>
-        </div>
-      )}
+      <ErrorBanner
+        message={loadError}
+        onDismiss={() => setLoadError(null)}
+        variant="warning"
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
         <StatCard
           label="Total Users"
@@ -270,27 +222,13 @@ export default function AdminAnalyticsPage() {
             </tbody>
           </table>
         </div>
-        <div className="flex justify-between items-center p-lg border-t border-outline-variant text-sm">
-          <span>{userTotal} users total</span>
-          <div className="flex gap-md">
-            <button
-              type="button"
-              disabled={userPage <= 1}
-              onClick={() => setUserPage((p) => p - 1)}
-              className="px-md py-sm border border-outline-variant rounded-lg disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span className="py-sm">Page {userPage}</span>
-            <button
-              type="button"
-              disabled={!hasNextUsers}
-              onClick={() => setUserPage((p) => p + 1)}
-              className="px-md py-sm border border-outline-variant rounded-lg disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+        <div className="p-lg border-t border-outline-variant">
+          <Pagination
+            page={userPage}
+            hasNextPage={hasNextUsers}
+            onPageChange={setUserPage}
+            totalLabel={`${userTotal} users total`}
+          />
         </div>
       </div>
     </AdminLayout>

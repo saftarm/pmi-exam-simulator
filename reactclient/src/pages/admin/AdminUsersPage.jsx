@@ -1,184 +1,59 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import StatusBadge from '../../components/admin/StatusBadge';
+import EditUserModal, { USER_ROLES, USER_STATUSES } from '../../components/admin/EditUserModal';
+import CreateUserForm from '../../components/admin/CreateUserForm';
+import UsersTable from '../../components/admin/UsersTable';
 import Icon from '../../components/Icon';
-import {
-  createUser,
-  getUsers,
-  updateUser,
-  updateUserStatus,
-} from '../../services/adminUserService';
+import ErrorBanner from '../../components/ErrorBanner';
+import Pagination from '../../components/Pagination';
+import { createUser, updateUser, updateUserStatus } from '../../services/adminUserService';
 import { formatApiErrors } from '../../services/authService';
-import { formatDate, getInitials } from '../../utils/userDisplay';
-import LoadingButton from '../../components/loading/LoadingButton';
-import { TableSkeleton, Skeleton } from '../../components/loading';
+import { usePaginatedUsers } from '../../hooks/usePaginatedUsers';
 
-const ROLES = ['Learner', 'Pro', 'Admin'];
-const STATUSES = ['Active', 'Suspended', 'Pending'];
-
-function EditUserModal({ user, saving, onClose, onSave }) {
-  const [form, setForm] = useState({
-    displayName: user.displayName || '',
-    email: user.email || '',
-    role: user.role || 'Learner',
-    status: user.status || 'Active',
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave(form);
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-md bg-black/40 loading-enter">
-      <div className="bg-white rounded-xl border border-outline-variant shadow-lg w-full max-w-md p-lg content-reveal">
-        <h2 className="font-headline-sm text-headline-sm font-bold mb-lg">Edit user</h2>
-        <form onSubmit={handleSubmit} className="space-y-md">
-          <div>
-            <label className="block text-sm font-bold mb-sm">Display name</label>
-            <input
-              required
-              value={form.displayName}
-              onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-              className="w-full border border-outline-variant rounded-lg px-md py-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-bold mb-sm">Email</label>
-            <input
-              required
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-outline-variant rounded-lg px-md py-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-bold mb-sm">Role</label>
-            <select
-              value={form.role}
-              onChange={(e) => setForm({ ...form, role: e.target.value })}
-              className="w-full border border-outline-variant rounded-lg px-md py-sm"
-            >
-              {ROLES.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-bold mb-sm">Status</label>
-            <select
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-              className="w-full border border-outline-variant rounded-lg px-md py-sm"
-            >
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex gap-md justify-end pt-md">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-md py-sm rounded-lg border border-outline-variant font-bold text-sm"
-            >
-              Cancel
-            </button>
-            <LoadingButton
-              type="submit"
-              loading={saving}
-              loadingText="Saving…"
-              className="px-md py-sm rounded-lg bg-secondary-container text-white font-bold text-sm disabled:opacity-50"
-            >
-              Save
-            </LoadingButton>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
+const EMPTY_CREATE_FORM = {
+  firstName: '',
+  userName: '',
+  email: '',
+  password: '',
+  role: 'Learner',
+  status: 'Active',
+};
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [actionError, setActionError] = useState(null);
-  const [form, setForm] = useState({
-    firstName: '',
-    userName: '',
-    email: '',
-    password: '',
-    role: 'Learner',
-    status: 'Active',
-  });
+  const [formError, setFormError] = useState(null);
+  const [form, setForm] = useState(EMPTY_CREATE_FORM);
 
-  const pageSize = 20;
-
-  const loadUsers = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getUsers({
-        pageNumber: page,
-        pageSize,
-        search: search.trim() || undefined,
-        role: roleFilter || undefined,
-        status: statusFilter || undefined,
-      });
-      setUsers(data.items || []);
-      setTotalCount(data.totalCount ?? 0);
-      setHasNextPage(data.hasNextPage ?? false);
-    } catch (err) {
-      setError(formatApiErrors(err));
-      setUsers([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, search, roleFilter, statusFilter]);
-
-  useEffect(() => {
-    const timer = setTimeout(loadUsers, search ? 300 : 0);
-    return () => clearTimeout(timer);
-  }, [loadUsers, search]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [roleFilter, statusFilter]);
+  const {
+    users,
+    page,
+    setPage,
+    totalCount,
+    hasNextPage,
+    loading,
+    error,
+    reload,
+    resetPage,
+  } = usePaginatedUsers({ search, roleFilter, statusFilter });
 
   const handleAdd = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setError(null);
+    setFormError(null);
     try {
       await createUser(form);
-      setForm({
-        firstName: '',
-        userName: '',
-        email: '',
-        password: '',
-        role: 'Learner',
-        status: 'Active',
-      });
+      setForm(EMPTY_CREATE_FORM);
       setShowForm(false);
-      setPage(1);
-      await loadUsers();
+      resetPage();
+      await reload();
     } catch (err) {
-      setError(formatApiErrors(err));
+      setFormError(formatApiErrors(err));
     } finally {
       setSaving(false);
     }
@@ -191,7 +66,7 @@ export default function AdminUsersPage() {
     try {
       await updateUser(editTarget.id, fields);
       setEditTarget(null);
-      await loadUsers();
+      await reload();
     } catch (err) {
       setActionError(formatApiErrors(err));
     } finally {
@@ -204,7 +79,7 @@ export default function AdminUsersPage() {
     setActionError(null);
     try {
       await updateUserStatus(user.id, status);
-      await loadUsers();
+      await reload();
     } catch (err) {
       setActionError(formatApiErrors(err));
     }
@@ -212,19 +87,8 @@ export default function AdminUsersPage() {
 
   return (
     <AdminLayout title="User Management">
-      {actionError && (
-        <div className="mb-lg p-md bg-red-50 text-red-700 rounded-lg border border-red-200 flex justify-between gap-md">
-          <span>{actionError}</span>
-          <button type="button" onClick={() => setActionError(null)} className="shrink-0 font-bold">
-            Dismiss
-          </button>
-        </div>
-      )}
-      {error && (
-        <div className="mb-lg p-md bg-red-50 text-red-700 rounded-lg border border-red-200">
-          {error}
-        </div>
-      )}
+      <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
+      <ErrorBanner message={formError || error} />
 
       <div className="flex flex-col lg:flex-row justify-between gap-md mb-lg">
         <div className="flex flex-col sm:flex-row gap-md flex-1">
@@ -238,7 +102,7 @@ export default function AdminUsersPage() {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                setPage(1);
+                resetPage();
               }}
               placeholder="Search users…"
               className="w-full pl-xl pr-md py-sm border border-outline-variant rounded-lg"
@@ -250,7 +114,7 @@ export default function AdminUsersPage() {
             className="border border-outline-variant rounded-lg px-md py-sm"
           >
             <option value="">All roles</option>
-            {ROLES.map((r) => (
+            {USER_ROLES.map((r) => (
               <option key={r} value={r}>
                 {r}
               </option>
@@ -262,7 +126,7 @@ export default function AdminUsersPage() {
             className="border border-outline-variant rounded-lg px-md py-sm"
           >
             <option value="">All statuses</option>
-            {STATUSES.map((s) => (
+            {USER_STATUSES.map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
@@ -280,177 +144,23 @@ export default function AdminUsersPage() {
       </div>
 
       {showForm && (
-        <form
-          onSubmit={handleAdd}
-          className="bg-white rounded-xl border border-outline-variant p-lg mb-lg grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-md items-end"
-        >
-          <input
-            required
-            placeholder="First name"
-            value={form.firstName}
-            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-            className="border border-outline-variant rounded-lg px-md py-sm"
-          />
-          <input
-            required
-            placeholder="Username"
-            value={form.userName}
-            onChange={(e) => setForm({ ...form, userName: e.target.value })}
-            className="border border-outline-variant rounded-lg px-md py-sm"
-          />
-          <input
-            required
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="border border-outline-variant rounded-lg px-md py-sm"
-          />
-          <input
-            required
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="border border-outline-variant rounded-lg px-md py-sm"
-          />
-          <select
-            value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value })}
-            className="border border-outline-variant rounded-lg px-md py-sm"
-          >
-            {ROLES.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-          <select
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-            className="border border-outline-variant rounded-lg px-md py-sm"
-            aria-label="Account status"
-          >
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-          <LoadingButton
-            type="submit"
-            loading={saving}
-            loadingText="Saving…"
-            className="bg-primary text-white py-sm rounded-lg font-bold disabled:opacity-50"
-          >
-            Save User
-          </LoadingButton>
-        </form>
+        <CreateUserForm form={form} saving={saving} onChange={setForm} onSubmit={handleAdd} />
       )}
 
-      <div className="bg-white rounded-xl border border-outline-variant shadow-sm overflow-x-auto">
-        <table className="w-full text-left min-w-[800px]">
-          <thead className="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
-            <tr>
-              <th className="px-lg py-md font-semibold">User</th>
-              <th className="px-lg py-md font-semibold">Username</th>
-              <th className="px-lg py-md font-semibold">Email</th>
-              <th className="px-lg py-md font-semibold">Joined</th>
-              <th className="px-lg py-md font-semibold">Role</th>
-              <th className="px-lg py-md font-semibold">Status</th>
-              <th className="px-lg py-md font-semibold text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-outline-variant">
-            {loading ? (
-              <TableSkeleton rows={6} columns={7} />
-            ) : users.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-lg py-xl text-center text-on-surface-variant">
-                  No users found.
-                </td>
-              </tr>
-            ) : (
-              users.map((user) => (
-                <tr key={user.id} className="hover:bg-surface-container-low/50">
-                  <td className="px-lg py-md">
-                    <div className="flex items-center gap-md">
-                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                        {getInitials(user.displayName)}
-                      </div>
-                      <span className="font-medium">{user.displayName}</span>
-                    </div>
-                  </td>
-                  <td className="px-lg py-md text-on-surface-variant text-sm">{user.userName}</td>
-                  <td className="px-lg py-md text-on-surface-variant">{user.email}</td>
-                  <td className="px-lg py-md text-on-surface-variant text-sm">
-                    {formatDate(user.createdAt)}
-                  </td>
-                  <td className="px-lg py-md text-sm">{user.role}</td>
-                  <td className="px-lg py-md">
-                    <StatusBadge
-                      status={user.status}
-                      type={
-                        user.status === 'Active'
-                          ? 'success'
-                          : user.status === 'Suspended'
-                            ? 'error'
-                            : 'warning'
-                      }
-                    />
-                  </td>
-                  <td className="px-lg py-md text-right space-x-sm">
-                    <button
-                      type="button"
-                      onClick={() => setEditTarget(user)}
-                      className="text-sm font-bold text-secondary-container hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <select
-                      value={user.status}
-                      onChange={(e) => handleQuickStatus(user, e.target.value)}
-                      className="text-xs border border-outline-variant rounded px-sm py-xs"
-                      aria-label={`Change status for ${user.displayName}`}
-                    >
-                      {STATUSES.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <UsersTable
+        users={users}
+        loading={loading}
+        onEdit={setEditTarget}
+        onStatusChange={handleQuickStatus}
+      />
 
-      <div className="flex justify-between items-center mt-lg text-sm text-on-surface-variant">
-        <span>
-          {totalCount} user{totalCount !== 1 ? 's' : ''} total
-        </span>
-        <div className="flex gap-md">
-          <button
-            type="button"
-            disabled={page <= 1 || loading}
-            onClick={() => setPage((p) => p - 1)}
-            className="px-md py-sm border border-outline-variant rounded-lg disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="py-sm">Page {page}</span>
-          <button
-            type="button"
-            disabled={!hasNextPage || loading}
-            onClick={() => setPage((p) => p + 1)}
-            className="px-md py-sm border border-outline-variant rounded-lg disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <Pagination
+        page={page}
+        hasNextPage={hasNextPage}
+        loading={loading}
+        onPageChange={setPage}
+        totalLabel={`${totalCount} user${totalCount !== 1 ? 's' : ''} total`}
+      />
 
       {editTarget && (
         <EditUserModal

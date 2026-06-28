@@ -7,7 +7,7 @@ import {
   updateCategory,
 } from '../../services/adminCategoryService';
 import { formatApiErrors } from '../../services/authService';
-import { Skeleton } from '../loading';
+import { Skeleton, LoadingButton } from '../loading';
 
 export default function CategoryManagement() {
   const [categories, setCategories] = useState([]);
