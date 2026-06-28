@@ -37,12 +37,14 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task<IEnumerable<Exam>> GetPublishedPaginatedExamsAsync(PageParameters pageParameters)
         {
+            var pageNumber = pageParameters.PageNumber > 0 ? pageParameters.PageNumber : 1;
+            var pageSize = pageParameters.PageSize > 0 ? pageParameters.PageSize : 20;
 
             return await _context.Exams
               .Where(e => e.Status == ExamStatus.Published)
               .OrderBy(e => e.Title)
-              .Skip(pageParameters.PageSize * (pageParameters.PageNumber - 1))
-              .Take(pageParameters.PageSize)
+              .Skip(pageSize * (pageNumber - 1))
+              .Take(pageSize)
               .ToListAsync();
         }
 
@@ -72,12 +74,15 @@ namespace TestAPI.Persistence.Implementation
 
         public async Task<IEnumerable<Exam>> GetPublishedExamsByCategoryIdAsync(Guid categoryId, PageParameters pageParameters, CancellationToken ct)
         {
+            var pageNumber = pageParameters.PageNumber > 0 ? pageParameters.PageNumber : 1;
+            var pageSize = pageParameters.PageSize > 0 ? pageParameters.PageSize : 20;
+
             return await _context.Exams
                 .AsNoTracking()
                 .Where(e => e.CategoryId == categoryId && e.Status == ExamStatus.Published)
                 .OrderBy(e => e.CreatedAt)
-                .Skip((pageParameters.PageNumber - 1) * pageParameters.PageSize)
-                .Take(pageParameters.PageSize)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync(ct);
         }
 
