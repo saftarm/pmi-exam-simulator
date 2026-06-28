@@ -2,8 +2,10 @@ import api, { ACCESS_TOKEN_KEY } from './api';
 
 import { saveSessionQuestions } from '../utils/sessionStorage';
 
-export async function getPublishedExams() {
-  const { data } = await api.get('/api/exams/details');
+export async function getPublishedExams({ pageNumber = 1, pageSize = 50 } = {}) {
+  const { data } = await api.get('/api/exams/details', {
+    params: { pageNumber, pageSize },
+  });
   return data;
 }
 

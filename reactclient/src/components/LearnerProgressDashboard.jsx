@@ -1,25 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getDomainPerformances } from '../services/progressService';
+import { useDomainPerformances } from '../hooks/useDomainPerformances';
 import Icon from './Icon';
 import { formatDate } from '../utils/userDisplay';
 import { ProgressSkeleton, ContentReveal } from './loading';
 
 export default function LearnerProgressDashboard({ showWelcome = true }) {
   const { user } = useAuth();
-  const [performances, setPerformances] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!user?.userId) return;
-    setLoading(true);
-    getDomainPerformances()
-      .then(setPerformances)
-      .catch(() => setError('Failed to load progress data.'))
-      .finally(() => setLoading(false));
-  }, [user?.userId]);
+  const { performances, loading, error } = useDomainPerformances(user?.userId);
 
   const groupedByExam = useMemo(() => {
     const map = new Map();
@@ -43,8 +32,7 @@ export default function LearnerProgressDashboard({ showWelcome = true }) {
             Welcome back, {displayName}
           </h1>
           <p className="text-on-surface-variant max-w-2xl">
-            Domain-level performance from completed exam sessions. Finish an exam to see scores
-            here.
+            Domain-level performance from completed exam sessions. Finish an exam to see scores here.
           </p>
         </div>
       )}
@@ -84,7 +72,7 @@ export default function LearnerProgressDashboard({ showWelcome = true }) {
                     <tr>
                       <th className="px-lg py-md">Domain</th>
                       <th className="px-lg py-md">Score</th>
-                      <th className="px-lg py-md">Correct</th>
+                      <th className="px-lg py-md">Questions correct</th>
                       <th className="px-lg py-md">Answered</th>
                       <th className="px-lg py-md">Last updated</th>
                     </tr>
@@ -98,7 +86,7 @@ export default function LearnerProgressDashboard({ showWelcome = true }) {
                             {Number(row.percentageScore).toFixed(1)}%
                           </span>
                         </td>
-                        <td className="px-lg py-md">{Number(row.totalCorrect).toFixed(1)}</td>
+                        <td className="px-lg py-md">{Math.round(row.totalCorrect)}</td>
                         <td className="px-lg py-md">{row.totalAnswered}</td>
                         <td className="px-lg py-md text-on-surface-variant">
                           {formatDate(row.lastUpdated)}
