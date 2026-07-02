@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestAPI.DTO;
@@ -5,6 +6,7 @@ using TestAPI.DTO.Exam.Requests;
 using TestAPI.Extensions;
 using TestAPI.Models.Pagination;
 using TestAPI.Services.Interfaces;
+using TestAPI.Validation;
 
 namespace TestAPI.Controllers
 {
@@ -13,8 +15,12 @@ namespace TestAPI.Controllers
     public class ExamController : ControllerBase
     {
         private readonly IExamService _examService;
-        public ExamController(IExamService examService)
+        private readonly IValidatorResolver _validatorResolver;
+        public ExamController(
+            IExamService examService,
+            IValidatorResolver validatorResolver)
         {
+            _validatorResolver = validatorResolver;
             _examService = examService;
         }
 
@@ -44,6 +50,10 @@ namespace TestAPI.Controllers
         [HttpPatch("/api/exams/{id}/update")]
         public async Task<IActionResult> UpdateExam([FromRoute] Guid id, UpdateExamRequest request)
         {
+            var validationResult = await _validatorResolver.ValidateAsync(request);
+            if(!validationResult.IsValid){
+                return BadRequest();
+            }
             var result = await _examService.UpdateAsync(id, request);
             return result.ToActionResult();
         }
@@ -51,8 +61,8 @@ namespace TestAPI.Controllers
         [HttpDelete("/api/exams/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _examService.DeleteAsync(id);
-            return NoContent();
+            var result = await _examService.DeleteAsync(id);
+            return result.ToActionResult();
         }
 
         [HttpPost("/api/exams/{id}/publish")]
@@ -72,6 +82,11 @@ namespace TestAPI.Controllers
         [HttpPost("/api/exams")]
         public async Task<IActionResult> Create([FromBody] CreateExamDto dto, CancellationToken ct)
         {
+            var validationResult = await _validatorResolver.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest();
+            }
             var result = await _examService.CreateExamAsync(dto, ct);
             return result.IsSuccess ? Created("/api/exams", null) : result.ToActionResult();
         }

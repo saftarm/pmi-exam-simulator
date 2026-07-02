@@ -235,9 +235,10 @@ namespace TestAPI.Services.Implementation
             return Result.Success();
         }
 
-        public async Task DeleteAsync(Guid examId)
+        public async Task<Result> DeleteAsync(Guid examId)
         {
             await _examRepository.DeleteAsync(examId);
+            return Result.Success();
         }
 
         public async Task<Result> PublishExam(Guid id)
