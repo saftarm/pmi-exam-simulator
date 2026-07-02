@@ -1,16 +1,65 @@
-# React + Vite
+# PMI Exam Simulator — React Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TypeScript React frontend for the TestAPI backend. Uses Vite, React Router, and a feature-sliced folder layout.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start Vite dev server |
+| `npm run build` | Typecheck and production build |
+| `npm run typecheck` | Run TypeScript without emitting |
+| `npm run lint` | ESLint across the project |
+| `npm run test` | Node test runner (`postLoginPath` unit tests) |
+| `npm run preview` | Preview production build |
+| `npm run api` | Start the ASP.NET API (`dotnet run` in repo root) |
+| `npm run start` | Run API and dev server together |
 
-## React Compiler
+## Folder structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+src/
+  app/                 Entry point, routes, app-level layouts
+    main.tsx
+    App.tsx
+    routes.tsx
+    layouts/
+  features/            Feature slices (pages, components, api, types)
+    auth/
+    public-home/
+    learner-exams/
+    exam-session/
+    learner-progress/
+    profile/
+    admin-dashboard/
+    admin-exams/
+    admin-questions/
+    admin-categories/
+    admin-users/
+    admin-analytics/
+    admin-settings/
+  shared/              Cross-feature reuse only
+    api/               HTTP client, primitives, error helpers
+    components/        UI primitives (Icon, loading, modals, etc.)
+    constants/
+    utils/
+```
 
-## Expanding the ESLint configuration
+**Import direction:** `app` → `features` → `shared`. Feature types stay in each feature's `types.ts`; shared code must not import features.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Local development
+
+1. From `reactclient/`, run `npm install` if needed.
+2. Start both stacks: `npm run start` (or run `npm run api` and `npm run dev` in separate terminals).
+3. Open the Vite URL (typically `http://localhost:5173`).
+
+Ensure the API is configured (connection string, JWT, etc.) per the root `TestAPI` project.
+
+## Validation
+
+```bash
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+```

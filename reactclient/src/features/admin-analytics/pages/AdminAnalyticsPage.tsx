@@ -1,0 +1,237 @@
+import { useEffect, useMemo, useState } from 'react';
+import { AdminLayout } from '../../auth';
+import { StatCard } from '../../../shared/components/StatusBadge';
+import StatusBadge from '../../../shared/components/StatusBadge';
+import ErrorBanner from '../../../shared/components/ErrorBanner';
+import Pagination from '../../../shared/components/Pagination';
+import { getUsers } from '../../admin-users/api';
+import type { UserListItemDto } from '../../admin-users/types';
+import { useAdminDashboardData } from '../../admin-dashboard/hooks/useAdminDashboardData';
+import { isPublishedExam } from '../../admin-exams/utils/examStatus';
+import { formatDate, getInitials } from '../../../shared/utils/userDisplay';
+
+const ROLES = ['Learner', 'Pro', 'Admin'];
+const STATUSES = ['Active', 'Suspended', 'Pending'];
+
+export default function AdminAnalyticsPage() {
+  const {
+    totalUsers,
+    exams,
+    categoryCount,
+    usersByRole,
+    usersByStatus,
+    attemptVolume,
+    passRate,
+    examStats,
+    loading,
+    loadError,
+    setLoadError,
+  } = useAdminDashboardData({ includeAnalytics: true });
+
+  const [userPage, setUserPage] = useState(1);
+  const [recentUsers, setRecentUsers] = useState<UserListItemDto[]>([]);
+  const [userTotal, setUserTotal] = useState(0);
+  const [hasNextUsers, setHasNextUsers] = useState(false);
+
+  useEffect(() => {
+    getUsers({ pageNumber: userPage, pageSize: 20 })
+      .then((data) => {
+        setRecentUsers(data.items || []);
+        setUserTotal(data.totalCount ?? 0);
+        setHasNextUsers(data.hasNextPage ?? false);
+      })
+      .catch(() => {
+        setRecentUsers([]);
+      });
+  }, [userPage]);
+
+  const publishedExams = useMemo(() => exams.filter(isPublishedExam).length, [exams]);
+  const totalAttempts30d = useMemo(
+    () => attemptVolume.reduce((sum, row) => sum + (row.count ?? 0), 0),
+    [attemptVolume],
+  );
+  const maxVolume = useMemo(
+    () => Math.max(...attemptVolume.map((r) => r.count ?? 0), 1),
+    [attemptVolume],
+  );
+
+  return (
+    <AdminLayout title="Reports">
+      <ErrorBanner
+        message={loadError}
+        onDismiss={() => setLoadError(null)}
+        variant="warning"
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
+        <StatCard
+          label="Total Users"
+          value={totalUsers.toLocaleString()}
+          change="Live"
+          icon="group"
+          iconBg="bg-blue-50"
+          iconColor="text-primary"
+          loading={loading}
+        />
+        <StatCard
+          label="Attempts (30d)"
+          value={String(totalAttempts30d)}
+          change="Live"
+          icon="history"
+          iconBg="bg-green-50"
+          iconColor="text-green-600"
+          loading={loading}
+        />
+        <StatCard
+          label="Pass Rate"
+          value={passRate ? `${passRate.passRate}%` : '—'}
+          change={passRate ? `≥${passRate.passThreshold}%` : ''}
+          icon="verified"
+          iconBg="bg-amber-50"
+          iconColor="text-amber-600"
+          loading={loading}
+        />
+        <StatCard
+          label="Avg Score"
+          value={passRate ? `${passRate.averageScore}%` : '—'}
+          change={passRate ? `${passRate.totalCompletedAttempts} attempts` : ''}
+          icon="query_stats"
+          iconBg="bg-purple-50"
+          iconColor="text-purple-600"
+          loading={loading}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg mb-lg">
+        <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg">
+          <h2 className="font-headline-sm text-headline-sm font-bold mb-lg">
+            Attempt volume (30 days)
+          </h2>
+          {attemptVolume.length === 0 ? (
+            <p className="text-sm text-on-surface-variant">No completed attempts in this period.</p>
+          ) : (
+            <div className="flex items-end gap-1 h-32">
+              {attemptVolume.map((row) => (
+                <div
+                  key={row.date}
+                  className="flex-1 bg-secondary-container/80 rounded-t-sm min-h-[2px]"
+                  style={{ height: `${((row.count ?? 0) / maxVolume) * 100}%` }}
+                  title={`${row.date}: ${row.count} attempts`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg">
+          <h2 className="font-headline-sm text-headline-sm font-bold mb-lg">Exam popularity</h2>
+          {examStats.length === 0 ? (
+            <p className="text-sm text-on-surface-variant">No attempt data yet.</p>
+          ) : (
+            <ul className="space-y-sm max-h-40 overflow-y-auto">
+              {examStats.slice(0, 8).map((row) => (
+                <li key={row.examId} className="flex justify-between text-sm">
+                  <span className="text-on-surface-variant truncate pr-md">{row.examTitle}</span>
+                  <span className="font-bold shrink-0">{row.attemptCount} attempts</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg mb-lg">
+        <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg">
+          <h2 className="font-headline-sm text-headline-sm font-bold mb-lg">Users by role</h2>
+          <ul className="space-y-sm">
+            {ROLES.map((role) => (
+              <li key={role} className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">{role}</span>
+                <span className="font-bold">{usersByRole[role] ?? 0}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="bg-white rounded-xl border border-outline-variant shadow-sm p-lg">
+          <h2 className="font-headline-sm text-headline-sm font-bold mb-lg">Catalog summary</h2>
+          <ul className="space-y-sm">
+            <li className="flex justify-between text-sm">
+              <span className="text-on-surface-variant">Total exams</span>
+              <span className="font-bold">{exams.length}</span>
+            </li>
+            <li className="flex justify-between text-sm">
+              <span className="text-on-surface-variant">Published exams</span>
+              <span className="font-bold">{publishedExams}</span>
+            </li>
+            <li className="flex justify-between text-sm">
+              <span className="text-on-surface-variant">Categories</span>
+              <span className="font-bold">{categoryCount}</span>
+            </li>
+            {STATUSES.map((status) => (
+              <li key={status} className="flex justify-between text-sm">
+                <span className="text-on-surface-variant">Users · {status}</span>
+                <span className="font-bold">{usersByStatus[status] ?? 0}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+        <div className="p-lg border-b border-outline-variant">
+          <h2 className="font-headline-sm text-headline-sm font-bold">Recent users</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-surface-container-low text-on-surface-variant text-xs uppercase">
+              <tr>
+                <th className="px-lg py-md">User</th>
+                <th className="px-lg py-md">Email</th>
+                <th className="px-lg py-md">Role</th>
+                <th className="px-lg py-md">Joined</th>
+                <th className="px-lg py-md">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-outline-variant">
+              {recentUsers.map((user) => (
+                <tr key={user.id}>
+                  <td className="px-lg py-md">
+                    <div className="flex items-center gap-sm">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                        {getInitials(user.displayName)}
+                      </div>
+                      {user.displayName}
+                    </div>
+                  </td>
+                  <td className="px-lg py-md text-on-surface-variant">{user.email}</td>
+                  <td className="px-lg py-md">{user.role}</td>
+                  <td className="px-lg py-md text-on-surface-variant">
+                    {formatDate(user.createdAt)}
+                  </td>
+                  <td className="px-lg py-md">
+                    <StatusBadge
+                      status={user.status}
+                      type={
+                        user.status === 'Active'
+                          ? 'success'
+                          : user.status === 'Suspended'
+                            ? 'error'
+                            : 'warning'
+                      }
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="p-lg border-t border-outline-variant">
+          <Pagination
+            page={userPage}
+            hasNextPage={hasNextUsers}
+            onPageChange={setUserPage}
+            totalLabel={`${userTotal} users total`}
+          />
+        </div>
+      </div>
+    </AdminLayout>
+  );
+}
