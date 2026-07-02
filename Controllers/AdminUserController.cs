@@ -45,21 +45,6 @@ namespace TestAPI.Controllers
             return result.IsSuccess ? Ok(result.Value) : result.ToActionResult();
         }
 
-        [HttpPost("/api/admin/users")]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken ct)
-        {
-            var result = await _userService.CreateAsync(request, ct);
-            return result.IsSuccess ? Created() : result.ToActionResult();
-        }
-
-        [HttpPut("/api/admin/users/{id:guid}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserRequest request, CancellationToken ct)
-        {
-            var actingUserId = User.GetUserId() ?? Guid.Empty;
-            var result = await _userService.UpdateAsync(id, request, actingUserId, ct);
-            return result.ToActionResult();
-        }
-
         [HttpPatch("/api/admin/users/{id:guid}/status")]
         public async Task<IActionResult> UpdateUserStatus(Guid id, [FromBody] UpdateUserStatusRequest request, CancellationToken ct)
         {
